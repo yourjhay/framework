@@ -20,7 +20,7 @@ class Session {
         $_SESSION[$key] = $data;
     }
     
-    public function getSession()
+    public function getSession($key=null)
     {
         if($key!=null) {
             return isset($_SESSION[$key])?$_SESSION[$key]:null;
