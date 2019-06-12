@@ -273,9 +273,7 @@ class BladeOne
     public function showError($id, $text, $critic = false)
     {
         ob_get_clean();
-        echo "<div style='background-color: red; color: black; padding: 3px; border: solid 1px black;'>";
-        echo "BladeOne Error [{$id}]:<br>";
-        echo "<span style='color:white'>$text</span><br></div>\n";
+        throw new \Exception("BladeOne Error [{$id}]: $text");
         if ($critic) {
             die(1);
         }
