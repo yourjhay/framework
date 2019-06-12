@@ -74,10 +74,10 @@ class Error {
             </div>
             ';
         } else {
-            if (!file_exists(dirname(__DIR__) . '/Logs')) {
-                mkdir(dirname(__DIR__) . '/Logs/', 0777, true);
+            if (!file_exists('../Logs')) {
+                mkdir('../Logs/', 0777, true);
             }
-            $log = dirname(__DIR__) . '/Logs/' . date('Y-m-d') . '.txt';
+            $log = '../Logs/' . date('Y-m-d') . '.txt';
             ini_set('error_log', $log);
             $m = 'Uncaught exception: [' .get_class($exception).']';
             $m .= ' with message ['.$exception->getMessage().']'.PHP_EOL;

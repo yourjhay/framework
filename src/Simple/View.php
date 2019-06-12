@@ -20,7 +20,7 @@ class View {
     public static function renderNormal($view, $args = [], $html = false) {
         extract($args, EXTR_SKIP);
         $view = self::create($view, $html);
-        $file = dirname(__DIR__)."/App/Views/$view";
+        $file = "../App/Views/$view";
         if(is_readable($file)){
             require $file;
         } else {
@@ -50,8 +50,8 @@ class View {
      * @return void
      */
     public static function render($template, $args = []){
-        $views = dirname(__DIR__) . '/App/views';
-        $cache = __DIR__ . '/Cache/Views';
+        $views =  '../App/views';
+        $cache =  '../Cache/Views';
         $blade = new BladeOne($views,$cache,BladeOne::MODE_AUTO);
         $blade->setIsCompiled(CACHE_VIEWS);
         echo $blade->run($template,$args);
