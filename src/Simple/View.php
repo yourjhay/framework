@@ -8,6 +8,7 @@
 namespace Simple;
 
 Use Simple\Engine\BladeOne;
+Use Simple\Session;
 
 class View {
 
@@ -26,6 +27,7 @@ class View {
         } else {
             throw new \Exception("View [$file] not found!");
         }
+        self::flush();
     }
 
     private static function create($view, $html=false)
@@ -55,6 +57,18 @@ class View {
         $blade = new BladeOne($views,$cache,BladeOne::MODE_AUTO);
         $blade->setIsCompiled(CACHE_VIEWS);
         echo $blade->run($template,$args);
+        self::flush();
+    }
+
+    protected static function flush() 
+    {
+        $session = new Session();
+        foreach($session->getSession() as $key => $val) {
+          if(strpos($key, 'flash'))
+          {
+              $session->unsetSession($key);
+          }
+        }
     }
 
 }

@@ -46,4 +46,10 @@ class Request {
         return $_REQUEST;
     } 
 
+    public static function redirect($url)
+    {
+        header('location: http://'.$_SERVER['HTTP_HOST'].$url,true,303);
+        exit();
+    }
+
 }
