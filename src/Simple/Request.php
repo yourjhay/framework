@@ -1,18 +1,15 @@
 <?php
-/**
- * Base class for Request
- * 
- */
 namespace Simple;
 
-class Request {
-
+class Request 
+{
     /**
      * Filters a request wether a POST, GET etc..
      * @param string Request Method: POST, GET, DELETE, PUT
      * @return bool 
      */
-    public static function filterRequest($user_request) {
+    public static function filterRequest($user_request) 
+    {
         $request = $_SERVER['REQUEST_METHOD'];
         if($request == $user_request) {
             return true;
@@ -26,8 +23,8 @@ class Request {
      * Get the dat from $_POST array
      * @return string
      */
-    public static function inputdata($data) {
-      
+    public static function inputdata($data) 
+    { 
         $file = file_get_contents("php://input");
         $file = explode("&", $file);
         for ($i = 0; $i < count($file); $i++) {
@@ -42,7 +39,8 @@ class Request {
      * Return data from GET, POST $_COOKIES
      * @return array 
      */
-    public static function input(){
+    public static function input()
+    {
         return $_REQUEST;
     } 
 

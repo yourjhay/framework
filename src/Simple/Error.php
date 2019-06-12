@@ -7,8 +7,8 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 
-class Error {
-
+class Error
+{
     /**
      * Error handler: Convert any errors to exeptions by throwing an ErrorException
      * @param int $level - Error Level
@@ -18,13 +18,15 @@ class Error {
      * 
      * @return void
      */
-    public static function errorHandler($level, $message, $file, $line) {
+    public static function errorHandler($level, $message, $file, $line) 
+    {
         if(error_reporting() !== 0) {
             throw new \ErrorException($message, 0, $level, $file, $line);
         }
     }
 
-    public static function exceptionHandler($exception) {
+    public static function exceptionHandler($exception) 
+    {
         $code = $exception->getCode();
         if($code != 404) {
             $code = 500;

@@ -1,5 +1,4 @@
 <?php /** @noinspection PhpComposerExtensionStubsInspection */
-
 namespace Simple\Engine;
 
 use function array_key_exists;

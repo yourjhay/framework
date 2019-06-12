@@ -10,7 +10,8 @@ namespace Simple;
 Use Simple\Engine\BladeOne;
 Use Simple\Session;
 
-class View {
+class View 
+{
 
     /**
      * Render A view 
@@ -18,7 +19,8 @@ class View {
      * @param array $args - Data to be pass in the view
      * @return void
      */
-    public static function renderNormal($view, $args = [], $html = false) {
+    public static function renderNormal($view, $args = [], $html = false)
+    {
         extract($args, EXTR_SKIP);
         $view = self::create($view, $html);
         $file = "../App/Views/$view";
@@ -51,7 +53,8 @@ class View {
      * @param array $args - Data to be pass in the view
      * @return void
      */
-    public static function render($template, $args = []){
+    public static function render($template, $args = [])
+    {
         $views =  '../App/views';
         $cache =  '../Simply/Cache/Views';
         $blade = new BladeOne($views,$cache,BladeOne::MODE_AUTO);

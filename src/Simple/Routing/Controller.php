@@ -6,10 +6,9 @@
 | *** BASE CONTROLLER Class ***
 ------------------------------------------------------------------*/
 namespace Simple\Routing;
-/**
- * abstract class - call object only on class inhereting this class
- */
-abstract class Controller {
+
+abstract class Controller 
+{
 
     /**
      * Parameters from the matched routes
@@ -19,7 +18,8 @@ abstract class Controller {
     /**
      * @param array $route_params - Parameters from the route
      */
-    public function __construct($route_params) {
+    public function __construct($route_params)
+    {
         self::$route_params = $route_params;
     }
 
@@ -55,6 +55,7 @@ abstract class Controller {
      */
     protected function before()
     {
+
     }
 
     /**
@@ -64,6 +65,6 @@ abstract class Controller {
      */
     protected function after()
     {
-    }
 
+    }
 }
