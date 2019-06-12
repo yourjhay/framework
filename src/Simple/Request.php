@@ -3,7 +3,6 @@
  * Base class for Request
  * 
  */
-
 namespace Simple;
 
 class Request {

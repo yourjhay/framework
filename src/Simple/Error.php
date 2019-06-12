@@ -1,7 +1,7 @@
 <?php
 /*----------------------------------------------------------------
 |
-| The Simple PHP Framework v1.0
+| The Simple PHP Framework
 | @reyjhonbaquirin
 | *** ERROR Handling Class ***
 ------------------------------------------------------------------*/
