@@ -51,7 +51,7 @@ class View {
      */
     public static function render($template, $args = []){
         $views =  '../App/views';
-        $cache =  '../Cache/Views';
+        $cache =  '../Simply/Cache/Views';
         $blade = new BladeOne($views,$cache,BladeOne::MODE_AUTO);
         $blade->setIsCompiled(CACHE_VIEWS);
         echo $blade->run($template,$args);
