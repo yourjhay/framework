@@ -12,7 +12,6 @@
         }
     ],
     "require": {
-        "eftec/bladeone": "3.29",
         "latitude/latitude": "^3.3"
     },
     "suggest": {

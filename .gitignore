@@ -6,3 +6,4 @@ Thumbs.db
 /phpunit.xml
 /.vscode
 .phpunit.result.cache
+.simple

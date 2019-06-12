@@ -7,7 +7,7 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 
-Use eftec\bladeone\BladeOne;
+Use Simple\Engine\BladeOne;
 
 class View {
 
