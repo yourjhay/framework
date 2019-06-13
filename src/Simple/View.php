@@ -29,7 +29,7 @@ class View
         } else {
             throw new \Exception("View [$file] not found!");
         }
-        self::flush();
+        
     }
 
     private static function create($view, $html=false)
@@ -59,19 +59,9 @@ class View
         $cache =  '../Simply/Cache/Views';
         $blade = new BladeOne($views,$cache,BladeOne::MODE_AUTO);
         $blade->setIsCompiled(CACHE_VIEWS);
+        $blade->share('flushable',isset($_SESSION['flush'])?$_SESSION['flush']:null);
         echo $blade->run($template,$args);
-        self::flush();
-    }
-
-    protected static function flush() 
-    {
-        $session = new Session();
-        foreach($session->getSession() as $key => $val) {
-          if(strpos($key, 'flash'))
-          {
-              $session->unsetSession($key);
-          }
-        }
+        Session::getFlushable();
     }
 
 }

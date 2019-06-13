@@ -16,17 +16,17 @@ class Session
         }
     }
 
-    public function getSessionId()
+    public static function getSessionId()
     {
         return session_id();
     }
 
-    public function setSession($key , $data=[]) 
+    public static function setSession($key , $data=[]) 
     {
         $_SESSION[$key] = $data;
     }
     
-    public function getSession($key=null)
+    public static function getSession($key=null)
     {
         if($key!=null) {
             return isset($_SESSION[$key])?$_SESSION[$key]:null;
@@ -35,20 +35,25 @@ class Session
         }
     }
 
-    public function flashable($key, $data=[])
+    public static function flush($message)
     {
-        $key = $key.'_flash';
-        $_SESSION[$key] = $data;
+        if(!isset($_SESSION['flush'])) {
+            $_SESSION['flush'] = [];
+        }
+        $_SESSION['flush'][] = $message;
     }
     
-    public static function getFlashable($key)
+    public static function getFlushable()
     {
         self::init();
-        $keynew = $key.'_flash';
-        return isset($_SESSION[$keynew])?$_SESSION[$keynew]:null;
+        if(isset($_SESSION['flush'])) {
+            $flash = $_SESSION['flush'];
+            unset($_SESSION['flush']);
+            return $flash;
+        }
     }
 
-    public function unsetSession($key)
+    public static function unsetSession($key)
     {
         if(isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
