@@ -60,6 +60,8 @@ class View
         $blade = new BladeOne($views,$cache,BladeOne::MODE_AUTO);
         $blade->setIsCompiled(CACHE_VIEWS);
         $blade->share('flushable',isset($_SESSION['flush'])?$_SESSION['flush']:null);
+        $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
+        $blade->setBaseUrl($protocol . $_SERVER['HTTP_HOST']);
         echo $blade->run($template,$args);
         Session::getFlushable();
     }

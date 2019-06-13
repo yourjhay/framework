@@ -46,7 +46,7 @@ class Router
      * Return all available routes
      * @return array
      */
-    public function getRoutes() 
+    public static function getRoutes() 
     {
         return self::$routes;
     }
@@ -88,6 +88,7 @@ class Router
     public static function dispatch($url) 
     {
         $url = self::removeQueryString($url);
+
         if(self::match($url)) {
 
             $controller = self::$params['controller'];
@@ -147,10 +148,10 @@ class Router
             if(strpos($parts[0], '=') === false){
                 $url = $parts[0];
             } else {
-                $url = '';
+                $url = explode('?',$parts[0]);
             }
         }
-        return $url;
+        return is_array($url)?$url[0]:$url;
     }
 
      /**
