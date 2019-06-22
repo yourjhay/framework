@@ -10,8 +10,9 @@ namespace Simple;
 Use Simple\Engine\BladeOne;
 Use Simple\Session;
 
-class View 
+class View extends BladeOne
 {
+    
 
     /**
      * Render A view 
@@ -57,13 +58,20 @@ class View
     {
         $views =  '../App/views';
         $cache =  '../Simply/Cache/Views';
-        $blade = new BladeOne($views,$cache,BladeOne::MODE_AUTO);
-        $blade->setIsCompiled(CACHE_VIEWS);
-        $blade->share('flushable',isset($_SESSION['flush'])?$_SESSION['flush']:null);
         $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
-        $blade->setBaseUrl($protocol . $_SERVER['HTTP_HOST']);
-        echo $blade->run($template,$args);
-        Session::getFlushable();
+        $url = $protocol . $_SERVER['HTTP_HOST'];
+        $temp = self::create($template, true);
+        $loader = new \Twig\Loader\FilesystemLoader($views);
+        if(CACHE_VIEWS == true) {
+            $twig = new \Twig\Environment($loader, [
+                'cache' => $cache,
+            ]);
+        } else {
+            $twig = new \Twig\Environment($loader);
+        }
+        $twig->addGlobal('flushable',Session::getFlushable());
+        $twig->addGlobal('baseurl',$url);
+        echo $twig->render($temp, $args);
     }
 
 }

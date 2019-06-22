@@ -12,7 +12,8 @@
         }
     ],
     "require": {
-        "latitude/latitude": "^3.3"
+        "latitude/latitude": "^3.3",
+        "twig/twig":"^2.0"
     },
     "suggest": {
         "intervention/image": "To handle Image processing in this micro framework",
