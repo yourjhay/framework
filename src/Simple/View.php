@@ -71,6 +71,7 @@ class View extends BladeOne
         }
         $twig->addGlobal('flushable',Session::getFlushable());
         $twig->addGlobal('baseurl',$url);
+        $twig->addGlobal('user',json_decode(Session::getSession('user'),true));
         echo $twig->render($temp, $args);
     }
 

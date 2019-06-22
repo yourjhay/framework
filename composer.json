@@ -18,8 +18,7 @@
     "suggest": {
         "intervention/image": "To handle Image processing in this micro framework",
         "phpmailer/phpmailer": "For handling emails and provide extensible features",
-        "filp/whoops": "Install this to have a pretty page for error like laravel",
-        "wixel/gump": "For validations, You can try gump. https://github.com/Wixel/GUMP"
+        "filp/whoops": "Install this to have a pretty page for error like laravel"
     },
     "autoload": {
         "files": [
@@ -27,7 +26,6 @@
         ],
         "psr-4": {  
             "Simple\\": "src/Simple"
-           
         }
     },
     "autoload-dev": {
