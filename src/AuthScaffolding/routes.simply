@@ -1,0 +1,9 @@
+Router::set('auth/{action:\bindex|\bauthenticate|\blogout}',[
+  'controller' => 'AuthController',
+  'namespace' => 'Auth'
+]);
+
+Router::set('auth/{action:\bSignup|\bsignup-new}',[
+  'controller' => 'SignupController',
+  'namespace' => 'Auth'
+]);
