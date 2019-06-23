@@ -7,6 +7,8 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 
+Use View;
+
 class Error
 {
     /**
@@ -107,9 +109,13 @@ class Error
             $m .= 'Thrown in ['.$exception->getFile().'] on line:'. $exception->getLine();
             error_log($m);
             if($code == 404) {
-                header("HTTP/1.0 404 Not Found");
+                View::render('error.404',[
+                    'name' => APP_NAME
+                ]);
             } else {
-                echo '<h3>Error Occured</h3>';
+                View::render('error.500',[
+                    'name' => APP_NAME
+                ]);
             }
         }
 
