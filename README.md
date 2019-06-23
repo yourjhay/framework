@@ -1,6 +1,6 @@
-# The Simple PHP Framewrok
+# The Simply PHP Framework
 
-## About Simple
+## About Simply
 The Simple PHP is lightweight web application framework.
 - Uses Model, View, Controller Pattern.
 - Simple Routing engine.
