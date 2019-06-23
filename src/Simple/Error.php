@@ -7,7 +7,7 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 
-Use View;
+Use Simple\View;
 
 class Error
 {
