@@ -7,6 +7,7 @@ Use Simple\Request as r;
 Use App\Models\User;
 Use Simple\Session;
 Use App\Helper\Validation\Validator as validate;
+Use App\Helper\Auth\AuthHelper as auth;
 
 class SignupController extends Controller
 {
@@ -36,7 +37,11 @@ class SignupController extends Controller
         if($validated) {
             $user = new User();
             $user->save(r::input());
-            r::redirect('/auth/index');
+            if(auth::attempt(r::input())) {
+                r::redirect('/');
+            } else {
+                r::redirect('/auth/index');
+            }
         } else {
             Session::flush($v->get_errors_array());            
             return view('auth.signup');
