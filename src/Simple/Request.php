@@ -39,9 +39,20 @@ class Request
      * Return data from GET, POST $_COOKIES
      * @return array 
      */
-    public static function input()
+    public static function input($data = null)
     {
-        return $_REQUEST;
+        if($data == null) {
+            return $_REQUEST;
+        } else {
+            $file = file_get_contents("php://input");
+            $file = explode("&", $file);
+            for ($i = 0; $i < count($file); $i++) {
+            $sub = explode('=', $file[$i]);
+            if ($sub[0] == $data) {
+                return utf8_decode(urldecode($sub[1]));
+            }
+            }
+        }
     } 
 
     public static function redirect($url)

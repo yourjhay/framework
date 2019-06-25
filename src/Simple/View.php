@@ -7,10 +7,9 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 
-Use Simple\Engine\BladeOne;
 Use Simple\Session;
 
-class View extends BladeOne
+class View
 {
     
 
@@ -20,11 +19,11 @@ class View extends BladeOne
      * @param array $args - Data to be pass in the view
      * @return void
      */
-    public static function renderNormal($view, $args = [], $html = false)
+    public static function renderNormal($view, $args = [], $html = true)
     {
         extract($args, EXTR_SKIP);
         $view = self::create($view, $html);
-        $file = "../App/Views/$view";
+        $file = "../App/Views$view";
         if(is_readable($file)){
             require $file;
         } else {
@@ -33,6 +32,10 @@ class View extends BladeOne
         
     }
 
+    /**
+     * Create a path and replace periods with /
+     * @return file
+     */
     private static function create($view, $html=false)
     {
         $name = str_replace('.','/',$view);
@@ -52,7 +55,7 @@ class View extends BladeOne
      * Render A view using a template Engine
      * @param string $template - View name
      * @param array $args - Data to be pass in the view
-     * @return void
+     * @return object
      */
     public static function render($template, $args = [])
     {
@@ -73,7 +76,7 @@ class View extends BladeOne
         $twig->addGlobal('baseurl', $url);
         $twig->addGlobal('old', $_POST);
         $twig->addGlobal('user', json_decode(Session::getSession('user'), true));
-        echo $twig->render($temp, $args);
+        return $twig->render($temp, $args);
     }
 
 }

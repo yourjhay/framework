@@ -59,7 +59,7 @@ class Router
      */
     public static function match($url)
     {       
-       foreach(self::$routes as $route => $params){
+        foreach(self::$routes as $route => $params){
             if(preg_match($route, $url, $matches)){
                 foreach($matches as $key => $match){
                     if(is_string($key)){
@@ -69,8 +69,8 @@ class Router
             self::$params = $params;
             return true;
             }
-       }
-       return false;
+        }
+        return false;
     }
 
     /**
@@ -95,22 +95,22 @@ class Router
             $controller = self::convertToStudlyCaps($controller);
             $controller = self::getNamespace() . $controller;
 
-           if(class_exists($controller)){
+            if(class_exists($controller)){
 
-               $controller_object = new $controller(self::$params);
-               $action = self::$params['action'];
-               $action = self::convertToCamelCase($action);
-              
+                $controller_object = new $controller(self::$params);
+                $action = self::$params['action'];
+                $action = self::convertToCamelCase($action);
+
                 if (preg_match('/action$/i', $action) == 0) {
 
-                   $controller_object->$action();
+                    echo $controller_object->$action();
 
                 } else {
                     throw new \Exception("Method [$action] (in Controller [$controller] ) can't be called explicitly. Remove Action suffix instead");              
                 }
-           } else {
+            } else {
                 throw new \Exception("Controller class [$controller] not found");
-           }
+            }
         } else {
             throw new \Exception("INVALID ROUTE [$url]", 404);
         }
@@ -136,7 +136,7 @@ class Router
         return lcfirst(self::convertToStudlyCaps($string));
     }
 
-     /**
+    /**
       * Remove query string from url like:
       * ?page=1&id=1...... etc.
       * @param string $url
@@ -154,7 +154,7 @@ class Router
         return is_array($url)?$url[0]:$url;
     }
 
-     /**
+    /**
       * Getnamespace in route params to specify where it has to be called 
       * @return string $namespace
       */

@@ -2,7 +2,7 @@
 namespace App\Controllers\Auth;
 
 Use App\Controllers\Controller;
-Use Simple\View as view;
+Use function Simple\view;
 Use Simple\Request as r;
 Use Simple\Session;
 use App\Helper\Auth\AuthHelper as auth;
@@ -16,7 +16,7 @@ class AuthController extends Controller
         if(Auth::user()) {
             r::redirect(self::$destination);
         } else {
-            view::render('auth.index');
+            return view('auth.index');
         }
     }
 
@@ -26,7 +26,7 @@ class AuthController extends Controller
             r::redirect(self::$destination);
         } else {
             Session::flush('Invalid Username or Password');
-            view::render('auth.index');
+            return view('auth.index');
         }
     }
 
