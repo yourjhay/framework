@@ -59,7 +59,7 @@ class View
      */
     public static function render($template, $args = [])
     {
-        $views =  '../App/views';
+        $views =  '../App/Views';
         $cache =  '../Simply/Cache/Views';
         $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
         $url = $protocol . $_SERVER['HTTP_HOST'];
