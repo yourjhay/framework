@@ -59,12 +59,6 @@ class View
      */
     public static function render($template, $args = [])
     {
-        $dir    = './';
-
-$files2 = scandir($dir, 1);
-
-print_r($files2);
-        exit;
         $views =  '../App/Views';
         $cache =  '../Simply/Cache/Views';
         $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
