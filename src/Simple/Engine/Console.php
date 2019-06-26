@@ -215,7 +215,7 @@ class '.$model.' extends Model
         {
             $dest = "App/Views/Auth/".basename($filename);
             if (!file_exists('App/Views/Auth')) {
-                mkdir('App/Views/Auth', 0777, true);
+                mkdir('App/Views/auth', 0777, true);
             }
             $file = fopen($dest, "w");
             copy($filename, $dest);
