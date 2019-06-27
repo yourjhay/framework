@@ -7,7 +7,7 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 
-Use Simple\View;
+Use function Simple\view;
 
 class Error
 {
@@ -40,8 +40,8 @@ class Error
             'My system is rusty -_-',
             'Did I tell you this already?',
             'My system is broken :{',
-            'Oops! You need to fixed this... :]',
-            'My Author told me that. if you see this dont give up!',
+            'Oops! You need to fixe this... :]',
+            'My Author told me that. if you see this, dont give up!',
             'A fatal error is here...',
             'I hate errors! :[',
             'Errors are like rain, so many...',
@@ -50,7 +50,9 @@ class Error
             'Sometimes a semi-colon is enough.',
             'I don\'t understand your command.',
             'Coding is fun!.... without errors.',
-            'Don\'t talk to me.'
+            'Don\'t talk to me.',
+            'Sometimes you just need a sleep..',
+            'Want to take a break ?'
         );
         $random_title = array_rand($errorTitle);
 
@@ -94,14 +96,14 @@ class Error
             <p><h3>Thrown in:</h3> "'.$exception->getFile().'" on line: '.$exception->getLine().'</p>
             <br>
             <p>© The Simple PHP Framework </p>
-            <small>Creator: @reyjhonbaquirin - University of Caloocan City</small>
+            <small class="exp">Creator: <a target="_blank" href="https://www.facebook.com/jhay7even">Rey Jhon A. Baquirin</a> - Simply PHP</small>
             </div>
             ');
         } else {
-            if (!file_exists('../Simply/Logs')) {
-                mkdir('../Simply/Logs/', 0777, true);
+            if (!file_exists('../simply/Logs')) {
+                mkdir('../simply/Logs/', 0777, true);
             }
-            $log = '../Simply/Logs/' . date('Y-m-d') . '.txt';
+            $log = '../simply/Logs/' . date('Y-m-d') . '.txt';
             ini_set('error_log', $log);
             $m = 'Uncaught exception: [' .get_class($exception).']';
             $m .= ' with message ['.$exception->getMessage().']'.PHP_EOL;
@@ -109,11 +111,11 @@ class Error
             $m .= 'Thrown in ['.$exception->getFile().'] on line:'. $exception->getLine();
             error_log($m);
             if($code == 404) {
-                View::render('error.404',[
+                print view('error.404',[
                     'name' => APP_NAME
                 ]);
             } else {
-                View::render('error.500',[
+                print view('error.500',[
                     'name' => APP_NAME
                 ]);
             }
@@ -122,4 +124,3 @@ class Error
     }
 
 }
-
