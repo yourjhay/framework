@@ -41,4 +41,15 @@ abstract class Model
         return new QueryFactory(new MySqlEngine());
     } 
     
+    /**
+     * Unique value checker 
+     * @return boolean
+     */
+    public static function unique_checker($table, $column, $data)
+    {
+        $sql = "SELECT $column FROM $table WHERE $column = ?";
+        $stmt = self::DB()->prepare($sql);
+        $stmt->execute(array($data));
+        return $stmt->fetch() !== false;
+    }
 }

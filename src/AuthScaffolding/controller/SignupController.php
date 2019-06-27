@@ -23,16 +23,9 @@ class SignupController extends Controller
         $v = new validate;
         $v->validation_rules(array(
             'name' => 'required|valid_name|min_len,6',
-            'email' => 'required|valid_email',
+            'email' => 'required|valid_email|unique,users',
             'password' => 'required|min_len,6|alpha_numeric'
         ));
-        $user = User::findByEmail(r::input('email'));
-        if($user) {
-            Session::flush(array(
-                'email' => 'Email is already taken. Please try another.'
-            ));
-            return view('auth.signup');
-        }
         $validated = $v->run(r::input());
         if($validated) {
             $user = new User();
