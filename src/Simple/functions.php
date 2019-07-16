@@ -49,3 +49,21 @@ namespace Simple;
             }
         }
     }
+
+    if (!function_exists(__NAMESPACE__ . '\url_init'))
+    {
+        function url_init()
+        {
+            $addr = array(
+                '::1',
+                '127.0.0.1'
+            );
+            $localhost = false;
+            if(in_array($_SERVER['REMOTE_ADDR'],$addr))
+            {
+                $localhost =true;
+            }
+            $url = $localhost == true ? substr($_SERVER['REQUEST_URI'],1) : $_SERVER['QUERY_STRING'];
+            return $url;
+        }
+    }
