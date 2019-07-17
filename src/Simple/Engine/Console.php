@@ -37,12 +37,15 @@ class Console
             case "make:auth":
             $this->makeAuth();
             break;
-            case "seed":
+            case "user:seed":
             $this->seed();
             break;
             case "session:destroy":
             Session::destroy();
             $this->status = 'success: All sessions is destroyed.'.PHP_EOL;
+            break;
+            case "serve":
+            $this->serve($this->argv[2] ?? null, $this->argv[3] ?? null);
             break;
             default:
             $this->status = 'error: ===== Command not found. =====';
@@ -282,5 +285,19 @@ class '.$model.' extends Model
         } else {
             return false;
         }
+    }
+
+    /**
+     * Emulate PHP development server using CLI
+     */
+    public function serve($host, $port)
+    {
+            $host = $host == null ? 'localhost':$host;
+            $port = $port == null ? '8000':explode('=',$port);
+            $port = is_array($port) ? $port[1] : $port;  
+        $command = "php -S $host:$port -t public/";
+        echo $this->output->print_o("Simply Development Server started at: $host:$port".PHP_EOL, 'green', 'white');
+        echo $this->output->print_o("Press CTRL+C to cancel".PHP_EOL, 'green', 'black');
+        exec($command,$worked,$output);
     }
 }
