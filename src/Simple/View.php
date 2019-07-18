@@ -23,7 +23,7 @@ class View
     {
         extract($args, EXTR_SKIP);
         $view = self::create($view, $html);
-        $file = "../App/Views$view";
+        $file = "../app/Views$view";
         if(is_readable($file)){
             require $file;
         } else {
@@ -59,7 +59,7 @@ class View
      */
     public static function render($template, $args = [])
     {
-        $views =  '../App/Views';
+        $views =  '../app/Views';
         $cache =  '../Simply/Cache/Views';
         $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
         $url = $protocol . $_SERVER['HTTP_HOST'];

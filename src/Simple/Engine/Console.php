@@ -9,8 +9,8 @@ class Console
 {
     private $argv;
     private $status;
-    private $controllerPath = './App/Controllers/';
-    private $modelPath  = 'App/Models/';
+    private $controllerPath = './app/Controllers/';
+    private $modelPath  = 'app/Models/';
     private $output;
     public function __construct($argc, $argv)
     {
@@ -157,7 +157,7 @@ class '.$model.' extends Model
             $this->status = 'error: Please specify the filename '.PHP_EOL;
             return false;
         }
-    require './App/Config/global.php';
+    require './app/Config/global.php';
     $mysqlDatabaseName = DBNAME;
     $mysqlUserName =DBUSER;
     $mysqlPassword =DBPASS;
@@ -188,9 +188,9 @@ class '.$model.' extends Model
         $success = true;
         foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\controller\*.php') as $filename)
         {
-            $dest = "App/Controllers/Auth/".basename($filename);
-            if (!file_exists('App/Controllers/Auth')) {
-                mkdir('App/Controllers/Auth', 0777, true);
+            $dest = "app/Controllers/Auth/".basename($filename);
+            if (!file_exists('app/Controllers/Auth')) {
+                mkdir('app/Controllers/Auth', 0777, true);
             }
             $file = fopen($dest, "w");
             copy($filename, $dest);
@@ -199,9 +199,9 @@ class '.$model.' extends Model
 
         foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\helper\*.php') as $filename)
         {
-            $dest = "App/Helper/Auth/".basename($filename);
-            if (!file_exists('App/Helper/Auth')) {
-                mkdir('App/Helper/Auth', 0777, true);
+            $dest = "app/Helper/Auth/".basename($filename);
+            if (!file_exists('app/Helper/Auth')) {
+                mkdir('app/Helper/Auth', 0777, true);
             }
             $file = fopen($dest, "w");
             copy($filename, $dest);
@@ -209,16 +209,16 @@ class '.$model.' extends Model
         }
         foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\model\*.php') as $filename)
         {
-            $dest = "App/Models/".basename($filename);
+            $dest = "app/Models/".basename($filename);
             $file = fopen($dest, "w");
             copy($filename, $dest);
             fclose($file);
         } 
         foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\Views\Auth\*.html') as $filename)
         {
-            $dest = "App/Views/Auth/".basename($filename);
-            if (!file_exists('App/Views/Auth')) {
-                mkdir('App/Views/auth', 0777, true);
+            $dest = "app/Views/Auth/".basename($filename);
+            if (!file_exists('app/Views/Auth')) {
+                mkdir('app/Views/auth', 0777, true);
             }
             $file = fopen($dest, "w");
             copy($filename, $dest);
@@ -226,7 +226,7 @@ class '.$model.' extends Model
         }
         foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\Views\layouts\*.html') as $filename)
         {
-            $dest = "App/Views/layouts/".basename($filename);
+            $dest = "app/Views/layouts/".basename($filename);
             $file = fopen($dest, "w");
             copy($filename, $dest);
             fclose($file);
@@ -234,7 +234,7 @@ class '.$model.' extends Model
         
         $routeFile = '.\vendor\simplyphp\framework\src\AuthScaffolding\routes.simply';
         $file = file_get_contents($routeFile, FILE_USE_INCLUDE_PATH);
-        $mainRoute = "./App/Routes.php";
+        $mainRoute = "./app/Routes.php";
         file_put_contents($mainRoute, PHP_EOL.$file, FILE_APPEND | LOCK_EX);
 
         if($success!=false){
@@ -244,7 +244,7 @@ class '.$model.' extends Model
 
     private function seed() 
     {
-    require './App/Config/global.php';
+    require './app/Config/global.php';
     $dbname = DBNAME;
     $dbuser = DBUSER;
     $dbpass = DBPASS;
