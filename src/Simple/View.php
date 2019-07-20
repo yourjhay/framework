@@ -7,7 +7,6 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 
-Use Simple\Session;
 
 class View
 {
@@ -17,7 +16,8 @@ class View
      * Render A view 
      * @param string $view - The file my dear
      * @param array $args - Data to be pass in the view
-     * @return void
+     * @param  bool $html - if html only
+     * @throws \Exception - if view file not found
      */
     public static function renderNormal($view, $args = [], $html = true)
     {
@@ -34,7 +34,9 @@ class View
 
     /**
      * Create a path and replace periods with /
-     * @return file
+     * @param $view - the file name pass
+     * @param $html - if plain html
+     * @return string - file name
      */
     private static function create($view, $html=false)
     {
@@ -60,7 +62,7 @@ class View
     public static function render($template, $args = [])
     {
         $views =  '../app/Views';
-        $cache =  '../Simply/Cache/Views';
+        $cache =  '../simply/Cache/Views';
         $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
         $url = $protocol . $_SERVER['HTTP_HOST'];
         $temp = self::create($template, true);

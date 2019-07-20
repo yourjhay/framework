@@ -17,7 +17,7 @@ class Error
      * @param string $message - Error Message
      * @param string $file - File where's the error raised
      * @param int $line - The line number of error in the $file
-     * 
+     * @throws \ErrorException throws the catch error
      * @return void
      */
     public static function errorHandler($level, $message, $file, $line) 

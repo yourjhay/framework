@@ -39,11 +39,13 @@ abstract class Model
     public static function factory() 
     {
         return new QueryFactory(new MySqlEngine());
-    } 
-    
+    }
+
     /**
-     * Unique value checker 
-     * @return boolean
+     * @param $table - Table to be check
+     * @param $column - lookup Column to check
+     * @param $data - value to be compaire
+     * @return bool
      */
     public static function unique_checker($table, $column, $data)
     {

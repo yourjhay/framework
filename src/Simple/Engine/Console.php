@@ -51,7 +51,7 @@ class Console
             $this->keyGenerate();
             break;
             default:
-            $this->status = 'error: ===== Command not found. =====';
+            $this->status = 'error: ===== Command not found. ====='.PHP_EOL;
         }
     }
 
@@ -189,7 +189,7 @@ class '.$model.' extends Model
     private function makeAuth()
     {
         $success = true;
-        foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\controller\*.php') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/controller/*.php') as $filename)
         {
             $dest = "app/Controllers/Auth/".basename($filename);
             if (!file_exists('app/Controllers/Auth')) {
@@ -200,7 +200,7 @@ class '.$model.' extends Model
             fclose($file);
         }
 
-        foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\helper\*.php') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/helper/*.php') as $filename)
         {
             $dest = "app/Helper/Auth/".basename($filename);
             if (!file_exists('app/Helper/Auth')) {
@@ -210,24 +210,24 @@ class '.$model.' extends Model
             copy($filename, $dest);
             fclose($file);
         }
-        foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\model\*.php') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/model/*.php') as $filename)
         {
             $dest = "app/Models/".basename($filename);
             $file = fopen($dest, "w");
             copy($filename, $dest);
             fclose($file);
         } 
-        foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\Views\Auth\*.html') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/Views/Auth/*.html') as $filename)
         {
-            $dest = "app/Views/Auth/".basename($filename);
-            if (!file_exists('app/Views/Auth')) {
+            $dest = "app/Views/auth/".basename($filename);
+            if (!file_exists('app/Views/auth')) {
                 mkdir('app/Views/auth', 0777, true);
             }
             $file = fopen($dest, "w");
             copy($filename, $dest);
             fclose($file);
         }
-        foreach (glob('.\vendor\simplyphp\framework\src\AuthScaffolding\Views\layouts\*.html') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/Views/layouts/*.html') as $filename)
         {
             $dest = "app/Views/layouts/".basename($filename);
             $file = fopen($dest, "w");
@@ -235,7 +235,7 @@ class '.$model.' extends Model
             fclose($file);
         }
         
-        $routeFile = '.\vendor\simplyphp\framework\src\AuthScaffolding\routes.simply';
+        $routeFile = './vendor/simplyphp/framework/src/AuthScaffolding/routes.simply';
         $file = file_get_contents($routeFile, FILE_USE_INCLUDE_PATH);
         $mainRoute = "./app/Routes.php";
         file_put_contents($mainRoute, PHP_EOL.$file, FILE_APPEND | LOCK_EX);
@@ -291,7 +291,8 @@ class '.$model.' extends Model
     }
 
     /**
-     * Emulate PHP development server using CLI
+     * @param $host - address to be serve
+     * @param $port - port
      */
     public function serve($host, $port)
     {
@@ -299,7 +300,7 @@ class '.$model.' extends Model
             $port = $port == null ? '8000':explode('=',$port);
             $port = is_array($port) ? $port[1] : $port;  
         $command = "php -S $host:$port -t public/";
-        echo $this->output->print_o("Simply Development Server started at: $host:$port".PHP_EOL, 'green', 'white');
+        echo $this->output->print_o("Simply Development Server started at: http://$host:$port".PHP_EOL, 'green', 'white');
         echo $this->output->print_o("Press CTRL+C to cancel".PHP_EOL, 'green', 'black');
         exec($command,$worked,$output);
     }

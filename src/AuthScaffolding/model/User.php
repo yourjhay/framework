@@ -13,6 +13,10 @@ use PDO;
 class User extends Model 
 {
 
+    /**
+     * @param array $data - array of users data name, email, password
+     * @return bool
+     */
     public function save($data)
     {
         $query = parent::factory()
@@ -26,8 +30,12 @@ class User extends Model
         if($stmt->execute($query->params()))
             return true;
         return false;
-    }    
+    }
 
+    /**
+     * @param string $email - Email of the user
+     * @return mixed
+     */
     public static function findByEmail($email)
     {
         $query = parent::factory()

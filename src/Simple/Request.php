@@ -1,12 +1,13 @@
 <?php
 namespace Simple;
 
-class Request 
+class Request
 {
     /**
      * Filters a request wether a POST, GET etc..
-     * @param string Request Method: POST, GET, DELETE, PUT
-     * @return bool 
+     * @param $user_request Request Method: POST, GET, DELETE, PUT
+     * @return bool
+     * @throws \Exception - if Method is not allowed
      */
     public static function filterRequest($user_request) 
     {
@@ -21,6 +22,7 @@ class Request
 
     /**
      * Get the dat from $_POST array
+     * @param $data - name of the html element input
      * @return string
      */
     public static function inputdata($data) 
@@ -37,6 +39,7 @@ class Request
 
     /**
      * Return data from GET, POST $_COOKIES
+     * @param $data - name of the html element input
      * @return array 
      */
     public static function input($data = null)
@@ -53,8 +56,11 @@ class Request
             }
             }
         }
-    } 
+    }
 
+    /**
+     * @param $url - Redirect to given URL
+     */
     public static function redirect($url)
     {
         header('location: http://'.$_SERVER['HTTP_HOST'].$url,true,303);

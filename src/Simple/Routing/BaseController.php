@@ -7,7 +7,7 @@
 ------------------------------------------------------------------*/
 namespace Simple\Routing;
 
-abstract class Controller 
+abstract class BaseController
 {
 
     /**
@@ -31,7 +31,7 @@ abstract class Controller
      *
      * @param string $name  Method name
      * @param array $args Arguments passed to the method
-     *
+     * @throws \Exception if method is not found
      * @return void
      */
     public function __call($name, $args)

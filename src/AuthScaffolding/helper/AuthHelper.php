@@ -7,6 +7,10 @@ use function Simple\bcrypt_verify;
 
 class AuthHelper
 {
+    /**
+     * @param array $data - array containing email and password
+     * @return bool
+     */
     public static function attempt($data)
     {
         $user =  User::findByEmail($data['email']);
@@ -21,11 +25,17 @@ class AuthHelper
         return false;
     }
 
+    /**
+     * @return mixed|null
+     */
     public static function user()
     {
         return Session::getSession('user');
     }
 
+    /**
+     * Destroys a Session
+     */
     public static function destroy()
     {
         Session::destroy();
