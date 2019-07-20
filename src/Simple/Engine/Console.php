@@ -47,6 +47,9 @@ class Console
             case "serve":
             $this->serve($this->argv[2] ?? null, $this->argv[3] ?? null);
             break;
+            case "key:generate":
+            $this->keyGenerate();
+            break;
             default:
             $this->status = 'error: ===== Command not found. =====';
         }
@@ -299,5 +302,33 @@ class '.$model.' extends Model
         echo $this->output->print_o("Simply Development Server started at: $host:$port".PHP_EOL, 'green', 'white');
         echo $this->output->print_o("Press CTRL+C to cancel".PHP_EOL, 'green', 'black');
         exec($command,$worked,$output);
+    }
+
+    /**
+     * Generate Application Key
+     */
+    public function keyGenerate()
+    {
+            $key = exec("vendor/bin/generate-defuse-key",$output,$return);
+            $id = "define('APP_KEY'";
+            $new_line = "define('APP_KEY', '$key');"; 
+            $dir = './app/Config/global.php';
+            $contents = file_get_contents($dir);
+            $new_contents= "";
+            if( strpos($contents, $id) !== false) { 
+                $contents_array = preg_split("/\\r\\n|\\r|\\n/", $contents);
+                foreach ($contents_array as &$record) { 
+                    if (strpos($record, $id) !== false) { 
+                        $new_contents .= $new_line.PHP_EOL; 
+                    }else{
+                        $new_contents .= $record . "\r";
+                    }
+                }
+                file_put_contents($dir, $new_contents); 
+                echo "Application Key Generated Successfully!".PHP_EOL;
+            }
+            else{
+                echo "Failed to generate application key".PHP_EOL;
+            }
     }
 }
