@@ -214,7 +214,7 @@ class '.$model.' extends Model
             copy($filename, $dest);
             fclose($file);
         } 
-        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/Views/auth/*.html') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/Views/Auth/*.html') as $filename)
         {
             $dest = "app/Views/auth/".basename($filename);
             if (!file_exists('app/Views/auth')) {
