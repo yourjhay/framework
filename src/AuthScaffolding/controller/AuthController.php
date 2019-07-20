@@ -11,6 +11,9 @@ class AuthController extends Controller
 {
     protected static $destination = '/';
 
+    /**
+     * @return object|void
+     */
     public function index()
     {
         if(Auth::user()) {
@@ -20,6 +23,9 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @return object|void
+     */
     public function authenticate()
     {
         if(auth::attempt(r::input())) {
@@ -30,6 +36,10 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * logout a currently login user
+     * @return void
+     */
     public function logoutAction()
     {
         Auth::destroy();

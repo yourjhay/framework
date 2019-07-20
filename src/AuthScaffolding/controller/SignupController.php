@@ -12,11 +12,18 @@ Use App\Helper\Auth\AuthHelper as auth;
 class SignupController extends Controller
 {
 
+    /**
+     * @return object|void
+     */
     public function signup()
     {
         return view('auth.signup');
     }
 
+    /**
+     * @return object|void
+     * @throws \Exception
+     */
     public function signupNew()
     {
         r::filterRequest('POST');
@@ -42,6 +49,9 @@ class SignupController extends Controller
         
     }
 
+    /*
+     * @return view
+     */
     public function success()
     {
         return view('signup.index');

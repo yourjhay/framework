@@ -140,6 +140,7 @@ class Router
       * Remove query string from url like:
       * ?page=1&id=1...... etc.
       * @param string $url
+      * @return array or string URL
       */
     protected static function removeQueryString($url) 
     {
