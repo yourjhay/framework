@@ -310,7 +310,7 @@ class '.$model.' extends Model
      */
     public function keyGenerate()
     {
-            $key = exec("vendor/bin/generate-defuse-key",$output,$return);
+            $key = $key = \Simple\Security\Encryption::generateKey();
             $id = "define('APP_KEY'";
             $new_line = "define('APP_KEY', '$key');"; 
             $dir = './app/Config/global.php';
