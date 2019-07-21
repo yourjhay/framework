@@ -79,4 +79,15 @@ class Request
             }
     }
 
+    /**
+     * Get the variables passed to route as parameters eg: id, name, product_id
+     * @param $var Pass variable to route
+     * @return string 
+     */
+    public function route($var)
+    {
+        $params = \Simple\Routing\Router::getParams();
+        return $params[$var];
+    }
+
 }
