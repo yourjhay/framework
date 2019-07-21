@@ -9,7 +9,7 @@ class Request
      * @return bool
      * @throws \Exception - if Method is not allowed
      */
-    public static function filterRequest($user_request) 
+    public function filterRequest($user_request) 
     {
         $request = $_SERVER['REQUEST_METHOD'];
         if($request == $user_request) {
@@ -25,7 +25,7 @@ class Request
      * @param $data - name of the html element input
      * @return string
      */
-    public static function inputdata($data) 
+    public function inputdata($data) 
     { 
         $file = file_get_contents("php://input");
         $file = explode("&", $file);
@@ -42,7 +42,7 @@ class Request
      * @param $data - name of the html element input
      * @return array 
      */
-    public static function input($data = null)
+    public  function input($data = null)
     {
         if($data == null) {
             return $_REQUEST;
@@ -59,13 +59,24 @@ class Request
     }
 
     /**
-     * @param $url Redirect to given URL
-     * @return void
+     * @param $url - Redirect to given URL
      */
     public static function redirect($url)
     {
         header('location: http://'.$_SERVER['HTTP_HOST'].$url,true,303);
         exit();
+    }
+
+    public function __get($name)
+    {
+            $file = file_get_contents("php://input");
+            $file = explode("&", $file);
+            for ($i = 0; $i < count($file); $i++) {
+            $sub = explode('=', $file[$i]);
+            if ($sub[0] == $name) {
+                return utf8_decode(urldecode($sub[1]));
+            }
+            }
     }
 
 }
