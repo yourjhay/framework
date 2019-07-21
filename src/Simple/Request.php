@@ -59,7 +59,8 @@ class Request
     }
 
     /**
-     * @param $url - Redirect to given URL
+     * @param $url Redirect to given URL
+     * @return void
      */
     public static function redirect($url)
     {

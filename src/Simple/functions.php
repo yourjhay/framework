@@ -19,6 +19,11 @@ namespace Simple;
 
     if (!function_exists(__NAMESPACE__ . '\bcrypt'))
     {
+        /**
+         * @param string $string String to be hashed
+         * @param array $option (optional) password_hash option
+         * @return string
+         */
         function bcrypt($string, $option = array())
         {
             if($option) {
@@ -31,6 +36,12 @@ namespace Simple;
 
     if (!function_exists(__NAMESPACE__ . '\bcrypt_verify'))
     {
+        /**
+         * Verify the hashed string
+         * @param string $string String to be verify
+         * @param string $hash - Hashed to be verify
+         * @return bool
+         */
         function bcrypt_verify($string, $hash): bool
         {
             return password_verify($string, $hash);
@@ -39,6 +50,13 @@ namespace Simple;
 
     if (!function_exists(__NAMESPACE__ . '\view'))
     {
+        /**
+         * Display the requested view from views folder
+         * @param string $view the filename of the view
+         * @param array $args array of variable to be pass on the view
+         * @param string $engine Option: twig or normal
+         * @return void
+         */
         function view($view, $args = [], $engine = 'twig')
         {
             if($engine == 'twig') {
