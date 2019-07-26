@@ -12,7 +12,7 @@ class Request
     public function filterRequest($user_request) 
     {
         $request = $_SERVER['REQUEST_METHOD'];
-        if($request == strtoupper($user_request)) {
+        if($request == $user_request) {
             return true;
         } else {
             throw new \Exception("$request Method not allowed");
@@ -89,5 +89,23 @@ class Request
         $params = \Simple\Routing\Router::getParams();
         return $params[$var];
     }
+
+    protected $filename;
+
+    public function __call($name, $args)
+    {
+        if($name=='file') {
+
+            if(empty($args)){
+                return $_FILES;
+            } else {
+                $file = new FileUpload($args[0]);
+                return $file;
+            }
+          
+        }
+    }
+
+    
 
 }
