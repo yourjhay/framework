@@ -10,8 +10,9 @@ class FileUpload
     protected $tempName;
     protected $filesize;
     protected $extension;
-    protected  $fileType;
-    protected  $error;
+    protected $fileType;
+    protected $error;
+    protected $storage;
     public function __construct($name)
     {
         $this->filename = $_FILES[$name]['name'];
@@ -20,6 +21,8 @@ class FileUpload
         $this->extension = pathinfo($_FILES[$name]['name'], PATHINFO_EXTENSION);
         $this->fileType = $_FILES[$name]['type'];
         $this->error = $_FILES[$name]['error'];
+
+        $this->storage = '../storage/';
     }
     
 
@@ -102,7 +105,7 @@ class FileUpload
 
             if (!move_uploaded_file(
                 $this->tempName,
-                sprintf("./$path/%s.%s",
+                sprintf("./$this->storage/$path/%s.%s",
                     sha1_file($this->tempName),
                     $ext
                 )
