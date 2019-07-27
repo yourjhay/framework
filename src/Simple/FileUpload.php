@@ -61,10 +61,10 @@ class FileUpload
                 case UPLOAD_ERR_OK:
                     break;
                 case UPLOAD_ERR_NO_FILE:
-                    throw new \Exception('No file sent.');
+                    throw new \Exception('You are uploading an empty file.');
                 case UPLOAD_ERR_INI_SIZE:
                 case UPLOAD_ERR_FORM_SIZE:
-                    throw new \Exception('Exceeded filesize limit.');
+                    throw new \Exception('Uploaded file exceeded filesize limit.');
                 default:
                     throw new \Exception('Unknown errors.');
             }
@@ -108,14 +108,17 @@ class FileUpload
             if ( ! is_dir($this->storage)) {
                 mkdir($this->storage,666,true);
             }
+            $filename = sprintf("./$this->storage/%s.%s",
+                sha1_file($this->tempName),
+                $ext
+            );
             if (!move_uploaded_file(
                 $this->tempName,
-                sprintf("./$this->storage/%s.%s",
-                    sha1_file($this->tempName),
-                    $ext
-                )
+                $filename
             )) {
-                throw new \Exception('Failed to move uploaded file.');
+                if (SHOW_ERRORS==true)
+                    throw new \Exception('Failed to move uploaded file.');
+                return false;
             } else {
                 return true;
             }
