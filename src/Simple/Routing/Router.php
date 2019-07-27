@@ -108,8 +108,11 @@ class Router
         $url = self::removeQueryString($url);
 
         if(self::match($url)) {
-
-            $controller = self::$params['controller'];
+            if (preg_match('/controller$/i', self::$params['controller']) == 0) {
+                $controller = self::$params['controller'].'Controller';
+            } else {
+                $controller = self::$params['controller'];
+            }
             $controller = self::convertToStudlyCaps($controller);
             $controller = self::getNamespace() . $controller;
 
