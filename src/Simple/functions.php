@@ -55,6 +55,7 @@ namespace Simple;
          * @param string $view the filename of the view
          * @param array $args array of variable to be pass on the view
          * @param string $engine Option: twig or normal
+         * @throws
          * @return void
          */
         function view($view, $args = [], $engine = 'twig')
