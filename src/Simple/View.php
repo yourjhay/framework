@@ -74,6 +74,11 @@ class View
         } else {
             $twig = new \Twig\Environment($loader);
         }
+        foreach (glob('../app/Helper/Twig/*.php',GLOB_BRACE) as $filename)
+        {
+            $class = "\App\Helper\Twig\\" . explode('.',basename($filename))[0];
+            $twig->addExtension(new $class);
+        }
         $twig->addGlobal('flushable', Session::getFlushable());
         $twig->addGlobal('baseurl', $url);
         $twig->addGlobal('old', $_POST);

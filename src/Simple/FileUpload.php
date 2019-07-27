@@ -4,7 +4,7 @@ namespace Simple;
 
 use finfo;
 
-class FileUpload 
+class FileUpload
 {
     protected $filename;
     protected $tempName;
@@ -22,9 +22,9 @@ class FileUpload
         $this->fileType = $_FILES[$name]['type'];
         $this->error = $_FILES[$name]['error'];
 
-        $this->storage = '../storage/';
+        $this->storage = '../public/storage/';
     }
-    
+
 
     public function getFileName()
     {
@@ -46,7 +46,7 @@ class FileUpload
         return $this->fileType;
     }
 
-    public function upload($path)
+    public function upload($path = 'null')
     {
         try
         {
@@ -71,7 +71,7 @@ class FileUpload
 
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             if (false === $ext = array_search(
-                    $finfo->file($_FILES['upfile']['tmp_name']),
+                    $finfo->file($this->tempName),
                     array(
                         'jpg' => 'image/jpeg',
                         'png' => 'image/png',
@@ -102,15 +102,22 @@ class FileUpload
                 )) {
                 throw new RuntimeException('Invalid file format.');
             }
-
+            if($path!=null){
+                $this->storage = $this->storage.$path;
+            }
+            if ( ! is_dir($this->storage)) {
+                mkdir($this->storage,666,true);
+            }
             if (!move_uploaded_file(
                 $this->tempName,
-                sprintf("./$this->storage/$path/%s.%s",
+                sprintf("./$this->storage/%s.%s",
                     sha1_file($this->tempName),
                     $ext
                 )
             )) {
                 throw new \Exception('Failed to move uploaded file.');
+            } else {
+                return true;
             }
         }
         catch (\RuntimeException $e)

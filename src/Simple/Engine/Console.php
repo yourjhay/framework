@@ -80,7 +80,7 @@ class Console
 namespace App\Controllers;
 
 Use function Simple\view;
-Use Simple\Request as r;
+Use Simple\Request;
 
 class '.$name.' extends Controller {
 
