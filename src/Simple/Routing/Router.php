@@ -35,11 +35,28 @@ class Router
         //convert var like {controller}
         $route = preg_replace('/\{([a-z]+)\}/','(?P<\1>[a-z-]+)', $route);
 
+        //convert optional variable
+        $route = preg_replace('/\{([a-z]+)([?]+)\}/', '(?P<\1>\w+)\2', $route);
+
         //convert variables with custom regex eg: {id: \d+}
         $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
         //add start and end delimeters, case insensitive flag
         $route = '/^' . $route . '$/i';
         self::$routes[$route] = $params;
+    }
+
+    /**
+     * @param string $route  route URL
+     * @param string $controller  Controller name
+     */
+    public static function resource($route, $controller)
+    {
+        self::set($route, ['controller' => $controller, 'action' => 'index']);
+        self::set("$route/store", ['controller' => $controller, 'action' => 'store']);
+        self::set("$route/create", ['controller' => $controller, 'action' => 'create']);
+        self::set("$route/edit/{id:\w+}", ['controller' => $controller, 'action' => 'edit']);
+        self::set("$route/update/{id:\w+}", ['controller' => $controller, 'action' => 'update']);
+        self::set("$route/show/{id:\w+}", ['controller' => $controller, 'action' => 'show']);
     }
 
     /**
