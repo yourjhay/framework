@@ -59,6 +59,7 @@ class Request
     }
 
     /**
+     * Redirects to given URL
      * @param $url - Redirect to given URL
      */
     public static function redirect($url)
@@ -87,7 +88,25 @@ class Request
     public function route($var)
     {
         $params = \Simple\Routing\Router::getParams();
-        return $params[$var];
+        return isset($params[$var]) ? $params[$var] : null ;
     }
 
+    /**
+     * @param $name
+     * @param $args
+     * @return FileUpload
+     */
+    public function __call($name, $args)
+    {
+        if($name=='file') {
+
+            if(empty($args)){
+                return $_FILES;
+            } else {
+                $file = new FileUpload($args[0]);
+                return $file;
+            }
+
+        }
+    }
 }
