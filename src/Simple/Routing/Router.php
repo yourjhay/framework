@@ -57,6 +57,7 @@ class Router
         self::set("$route/edit/{id:\w+}", ['controller' => $controller, 'action' => 'edit']);
         self::set("$route/update/{id:\w+}", ['controller' => $controller, 'action' => 'update']);
         self::set("$route/show/{id:\w+}", ['controller' => $controller, 'action' => 'show']);
+        self::set("$route/destroy/{id:\w+}", ['controller' => $controller, 'action' => 'destroy']);
     }
 
     /**
