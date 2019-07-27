@@ -89,7 +89,7 @@ class Error
             <div class="error-container">
             <h1>'.$errorTitle[$random_title].'</h1>
             <div class="ex-title">
-            <p>Uncaught exception: "<span class="exp"><a target="_blank" title="click here to search" href="https://www.google.com/search?q=Uncaught exception: '.get_class($exception).'">'.get_class($exception).'</a></span>"</p>
+            <p>Uncaught exception: "<span class="exp"><a target="_blank" title="click here to search" href="https://www.google.com/search?q=Uncaught exception: '.get_class($exception).' '.$exception->getMessage().'">'.get_class($exception).'</a></span>"</p>
             <p class="message">Message: <br>"'.$exception->getMessage().'."</p>
             </div>
             <p><h3>Stack trace: </h3><pre>'.$exception->getTraceAsString().'</pre></p>
