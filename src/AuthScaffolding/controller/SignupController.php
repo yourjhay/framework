@@ -3,7 +3,7 @@ namespace App\Controllers\Auth;
 
 Use App\Controllers\Controller;
 Use function Simple\view;
-Use Simple\Request as r;
+Use Simple\Request;
 Use App\Models\User;
 Use Simple\Session;
 Use App\Helper\Validation\Validator as validate;
@@ -21,26 +21,27 @@ class SignupController extends Controller
     }
 
     /**
+     * @param Request $request
      * @return object|void
      * @throws \Exception
      */
-    public function signupNew()
+    public function signupNew(Request $request)
     {
-        r::filterRequest('POST');
+        $request->filterRequest('POST');
         $v = new validate;
         $v->validation_rules(array(
             'name' => 'required|valid_name|min_len,6',
             'email' => 'required|valid_email|unique,users',
             'password' => 'required|min_len,6|alpha_numeric'
         ));
-        $validated = $v->run(r::input());
+        $validated = $v->run($request->input());
         if($validated) {
             $user = new User();
-            $user->save(r::input());
-            if(auth::attempt(r::input())) {
-                r::redirect('/');
+            $user->save($request->input());
+            if(auth::attempt($request->input())) {
+                $request->redirect('/');
             } else {
-                r::redirect('/auth/index');
+                $request->redirect('/auth/index');
             }
         } else {
             Session::flush($v->get_errors_array());            
