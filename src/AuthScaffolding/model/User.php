@@ -6,7 +6,7 @@
  */
 namespace App\Models;
 Use Simple\Model;
-Use function Latitude\QueryBuilder\field;
+Use function Simple\QueryBuilder\field;
 Use function Simple\bcrypt;
 use PDO;
 

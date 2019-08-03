@@ -7,8 +7,8 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 Use PDO;
-Use Latitude\QueryBuilder\Engine\MySqlEngine;
-Use Latitude\QueryBuilder\QueryFactory;
+Use Simple\QueryBuilder\Engine\MySqlEngine;
+Use Simple\QueryBuilder\QueryFactory;
 
 abstract class Model 
 {

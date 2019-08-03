@@ -1,28 +1,30 @@
 {
     "name": "simplyphp/framework",
-    "description": "The Simple PHP is lightweight web application framework.",
-    "keywords": ["framework", "simplephp"],
+    "description": "The Simply PHP is lightweight web application framework.",
+    "keywords": ["php framework", "simplyphp", "micro framework"],
     "homepage": "https://gitlab.com/jhayann/simple",
     "license": "MIT",
     "authors": [
         {
             "name": "Rey Jhon A. Baquirin",
             "email": "reyjhonbaquirin@yahoo.com",
-            "role": "Creator"
+            "role": "Magic Programmer"
         }
     ],
     "require": {
-        "latitude/latitude": "^3.3",
-        "twig/twig":"^2.0"
+        "twig/twig":"^2.0",
+        "symfony/var-dumper": "^4.3",
+        "php": ">=7.1"
     },
     "suggest": {
         "intervention/image": "To handle Image processing in this micro framework",
         "phpmailer/phpmailer": "For handling emails and provide extensible features",
-        "filp/whoops": "Install this to have a pretty page for error like laravel"
+        "filp/whoops": "Install this to have a pretty page for errors."
     },
     "autoload": {
         "files": [
-            "src/Simple/functions.php"
+            "src/Simple/functions.php",
+            "src/Simple/QueryBuilder/functions.php"
         ],
         "psr-4": {  
             "Simple\\": "src/Simple"
