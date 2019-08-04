@@ -24,7 +24,8 @@
     "autoload": {
         "files": [
             "src/Simple/functions.php",
-            "src/Simple/QueryBuilder/functions.php"
+            "src/Simple/QueryBuilder/functions.php",
+            "src/Simple/ViewRenderer.php"
         ],
         "psr-4": {  
             "Simple\\": "src/Simple"
