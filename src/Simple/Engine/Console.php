@@ -79,7 +79,6 @@ class Console
             $contentController = '<?php
 namespace App\Controllers;
 
-Use function Simple\view;
 Use Simple\Request;
 
 class '.$name.' extends Controller {

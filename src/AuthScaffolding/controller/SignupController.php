@@ -2,7 +2,6 @@
 namespace App\Controllers\Auth;
 
 Use App\Controllers\Controller;
-Use function Simple\view;
 Use Simple\Request;
 Use App\Models\User;
 Use Simple\Session;

@@ -7,8 +7,6 @@
 ------------------------------------------------------------------*/
 namespace Simple;
 
-Use function Simple\view;
-
 class Error
 {
     /**
@@ -40,7 +38,7 @@ class Error
             'My system is rusty -_-',
             'Did I tell you this already?',
             'My system is broken :{',
-            'Oops! You need to fixe this... :]',
+            'Oops! You need to fix this... :]',
             'My Author told me that. if you see this, dont give up!',
             'A fatal error is here...',
             'I hate errors! :[',
