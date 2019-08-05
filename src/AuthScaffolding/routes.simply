@@ -1,9 +1,12 @@
-Router::set('auth/{action:\bindex|\bauthenticate|\blogout}',[
-  'controller' => 'AuthController',
-  'namespace' => 'Auth'
-]);
-
-Router::set('auth/{action:\bSignup|\bsignup-new}',[
-  'controller' => 'SignupController',
-  'namespace' => 'Auth'
-]);
+/**
+* This is the routes for authentication and generate the following
+* /auth/index - login form
+* /auth/authenticate - where credential to submitted and process
+* /auth/logout - logout current session
+* /auth/signup - registration form
+* /auth/signup-new - where data to submitted and process
+* /password/reset - email form
+* /password/email - where email form to submitted and sends email
+* /password/reset/{token} - password reset form
+*/
+Router::auth();
