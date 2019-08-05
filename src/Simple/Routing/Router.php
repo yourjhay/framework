@@ -72,7 +72,7 @@ class Router
             'namespace' => 'Auth'
         ]);
 
-        self::set('{controller:password}/{action}/{token?}');
+        self::set('{controller:password}/{action:\breset|\bemail}/{token?}');
     }
 
     /**
