@@ -13,6 +13,7 @@ class FileUpload
     protected $fileType;
     protected $error;
     protected $storage;
+
     public function __construct($name)
     {
         $this->filename = $_FILES[$name]['name'];
@@ -26,6 +27,10 @@ class FileUpload
     }
 
 
+    /**
+     *  Return the filename of the uploaded file
+     * @return string
+     */
     public function getFileName()
     {
         return $this->filename;
@@ -46,6 +51,21 @@ class FileUpload
         return $this->fileType;
     }
 
+    public function getUploadedFileName()
+    {
+        $filename = sprintf("%s.%s",
+            sha1_file($this->tempName),
+            $this->extension
+        );
+        return $filename;
+    }
+
+
+    /**
+     * @param string $path: The folder where the file is going to be uploaded.
+     * @return bool
+     * @throws \Exception
+     */
     public function upload($path = 'null')
     {
         try

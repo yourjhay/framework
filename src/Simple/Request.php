@@ -42,7 +42,7 @@ class Request
      * @param $data - name of the html element input
      * @return array 
      */
-    public  function input($data = null)
+    public function input($data = null)
     {
         if($data == null) {
             return $_REQUEST;
@@ -91,22 +91,29 @@ class Request
         return isset($params[$var]) ? $params[$var] : null ;
     }
 
+
     /**
      * @param $name
      * @param $args
-     * @return FileUpload
+     * @throws \Exception
      */
     public function __call($name, $args)
     {
-        if($name=='file') {
+        throw new \Exception('Method '.$name.' not found');
+    }
 
-            if(empty($args)){
-                return $_FILES;
-            } else {
-                $file = new FileUpload($args[0]);
-                return $file;
-            }
 
+    /**
+     * @param $fieldname: The name of the file upload field
+     * @return FileUpload: FileUpload object
+     * @throws \Exception
+     */
+    public function file($fieldname)
+    {
+        if($fieldname != null) {
+            $file = new FileUpload($fieldname);
+            return $file;
         }
+        throw new \Exception("Please provide the name of the file upload field");
     }
 }
