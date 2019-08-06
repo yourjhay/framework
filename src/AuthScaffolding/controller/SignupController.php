@@ -33,11 +33,11 @@ class SignupController extends Controller
             'email' => 'required|valid_email|unique,users',
             'password' => 'required|min_len,6|alpha_numeric'
         ));
-        $validated = $v->run($request->input());
+        $validated = $v->run($request->post());
         if($validated) {
             $user = new User();
-            $user->save($request->input());
-            if(auth::attempt($request->input())) {
+            $user->save($request->post());
+            if(auth::attempt($request->post())) {
                 $request->redirect('/');
             } else {
                 $request->redirect('/auth/index');

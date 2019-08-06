@@ -31,7 +31,7 @@ class AuthController extends Controller
      */
     public function authenticate(Request $request)
     {
-        if(auth::attempt($request->input())) {
+        if(auth::attempt($request->post())) {
             $request->redirect(self::$destination);
         } else {
             Session::flush('Invalid Username or Password');
