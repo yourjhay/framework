@@ -9,52 +9,53 @@ class Request
      * @return bool
      * @throws \Exception - if Method is not allowed
      */
-    public function filterRequest($user_request) 
+    public function filterRequest($user_request)
     {
         $request = $_SERVER['REQUEST_METHOD'];
         if($request == strtoupper($user_request)) {
             return true;
         } else {
             throw new \Exception("$request Method not allowed");
-            return false;
-        }
-    }
-
-    /**
-     * Get the dat from $_POST array
-     * @param $data - name of the html element input
-     * @return string
-     */
-    public function inputdata($data) 
-    { 
-        $file = file_get_contents("php://input");
-        $file = explode("&", $file);
-        for ($i = 0; $i < count($file); $i++) {
-          $sub = explode('=', $file[$i]);
-          if ($sub[0] == $data) {
-            return utf8_decode(urldecode($sub[1]));
-          }
         }
     }
 
     /**
      * Return data from GET, POST $_COOKIES
      * @param $data - name of the html element input
-     * @return array 
+     * @return array
      */
-    public function input($data = null)
+    public function request($key = null)
     {
-        if($data == null) {
+        if($key == null) {
             return $_REQUEST;
         } else {
-            $file = file_get_contents("php://input");
-            $file = explode("&", $file);
-            for ($i = 0; $i < count($file); $i++) {
-            $sub = explode('=', $file[$i]);
-            if ($sub[0] == $data) {
-                return utf8_decode(urldecode($sub[1]));
-            }
-            }
+            return $_REQUEST[$key];
+        }
+    }
+
+    /**
+     * @param null $key
+     * @return mixed
+     */
+    public function get($key=null)
+    {
+        if($key == null) {
+            return $_GET;
+        } else {
+            return $_GET[$key];
+        }
+    }
+
+    /**
+     * @param null $key
+     * @return mixed
+     */
+    public function post($key=null)
+    {
+        if($key == null) {
+            return $_POST;
+        } else {
+            return $_POST[$key];
         }
     }
 
@@ -70,20 +71,20 @@ class Request
 
     public function __get($name)
     {
-            $file = file_get_contents("php://input");
-            $file = explode("&", $file);
-            for ($i = 0; $i < count($file); $i++) {
+        $file = file_get_contents("php://input");
+        $file = explode("&", $file);
+        for ($i = 0; $i < count($file); $i++) {
             $sub = explode('=', $file[$i]);
             if ($sub[0] == $name) {
                 return utf8_decode(urldecode($sub[1]));
             }
-            }
+        }
     }
 
     /**
      * Get the variables passed to route as parameters eg: id, name, product_id
      * @param $var Pass variable to route
-     * @return string 
+     * @return string
      */
     public function route($var)
     {
