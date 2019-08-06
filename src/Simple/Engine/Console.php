@@ -114,8 +114,7 @@ $content = '<?php
 namespace App\Models;
 
 Use Simple\Model;
-Use function Latitude\QueryBuilder\field;
-Use PDO;
+Use function Simple\QueryBuilder\field;
 
 class '.$model.' extends Model
 {

@@ -29,16 +29,41 @@ abstract class Model
     }
 
     /**
-     * Instantiate Latitude query Builder. for more info
+     * Instantiate Simply query Builder. for more info
      * https://latitude.shadowhand.me/
-     * 
-     * For the meantime we're using a third-party library 
-     * while developing simple-php's own query builder
+     *
      * @return object
      */
     public static function factory() 
     {
         return new QueryFactory(new MySqlEngine());
+    }
+
+    /**
+     * @param $query: Pass the Query object here to run
+     * @param bool $first: if true it will only return the first object
+     * @return bool: Return false if query fails
+     * @throws \Exception
+     */
+    public static function run($query, $first=false)
+    {
+        $method = explode(' ',$query->sql())[0];
+        $stmt = self::DB()->prepare($query->sql());
+        $stmt->setFetchMode(PDO::FETCH_CLASS,get_called_class());
+        $res = $stmt->execute($query->params());
+        switch ($method)
+        {
+            case 'SELECT':
+                return $first==true?$stmt->fetch():$stmt->fetchAll();
+                break;
+            case 'INSERT':
+            case 'UPDATE':
+            case 'DELETE':
+                return $res !== false;
+                break;
+            default:
+                throw new \Exception("Query format is not define", 500);
+        }
     }
 
     /**
