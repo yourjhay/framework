@@ -1,5 +1,5 @@
-/**
-* This is the routes for authentication and generate the following
+/** --------------------------------------------------------------------------------
+* Router::auth() is the routes for authentication and generate the following routes:
 * /auth/index - login form
 * /auth/authenticate - where credential to submitted and process
 * /auth/logout - logout current session
