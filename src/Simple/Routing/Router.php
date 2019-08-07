@@ -202,7 +202,13 @@ class Router
             if(strpos($parts[0], '=') === false){
                 $url = $parts[0];
             } else {
-                $url = explode('?',$parts[0]);
+                
+                if(strpos($parts[0], '?') === false){
+                    $url = '';
+                } else {
+                    $url = explode('?',$parts[0]);
+                }
+                
             }
         }
         return is_array($url)?$url[0]:$url;
