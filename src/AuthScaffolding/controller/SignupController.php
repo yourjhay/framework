@@ -36,7 +36,10 @@ class SignupController extends Controller
         $validated = $v->run($request->post());
         if($validated) {
             $user = new User();
-            $user->save($request->post());
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password_hash = bcrypt($request->password);
+            $user->save();
             if(auth::attempt($request->post())) {
                 $request->redirect('/');
             } else {

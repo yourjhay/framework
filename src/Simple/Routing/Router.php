@@ -41,10 +41,10 @@ class Router
         //convert variables with custom regex eg: {id: \d+}
         $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
 
-        //this convert {?any?} to accept any url pass through 
+        //this convert {:all?} to accept any url pass through
         $route = preg_replace('/\{([:]+)([all]+)([?]+)\}/', '(?P<\2>([a-z0-9\/-]+))\3', $route);
 
-        //add start and end delimeters, case insensitive flag
+        //add start and end delimiters, case insensitive flag
         $route = '/^' . $route . '$/i';
         self::$routes[$route] = $params;
     }

@@ -119,7 +119,22 @@ Use function Simple\QueryBuilder\field;
 class '.$model.' extends Model
 {
     /**
-     *  This generated '.$model.' model.
+     * $table - table name using by this model
+     *
+     * @var string
+     */
+    protected $table = \''.\strtolower($model) .'s\';
+
+    /**
+     * Fillables - the columns in you $table 
+     *
+     * @var array
+     */
+    protected $fillable = [];
+
+    /**
+     *  This is generated '.$model.' model.
+     *  It is recommended that you put all queries here. 
      *  Create Something great!
      */
 }
