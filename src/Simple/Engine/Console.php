@@ -26,7 +26,7 @@ class Console
     {
         switch($this->argv[1]) {
             case "make:controller":
-            $this->createController($this->argv[2] ?? null);
+            $this->createController($this->argv[2] ?? null, $this->argv[3] ?? null);
             break;
             case "make:model":
             $this->createModel($this->argv[2] ?? null);
@@ -67,29 +67,129 @@ class Console
         }
     }
 
-    private function createController($name)
+    private function createController($name, $option)
     {
 
+        $model = $name;
         if($name) {
             if(!preg_match("/controller$/i", $name))
             {
                 $name = $name.'Controller';
             }
             $name = self::convertToStudlyCaps($name);       
-            $contentController = '<?php
+if($option== trim("-r") || $option== trim("-rm")){
+    $contentController = '<?php
 namespace App\Controllers;
-
+    
 Use Simple\Request;
-
-class '.$name.' extends Controller {
-
+    
+class '.$name.' extends Controller 
+{
+    
+    /**
+     * the index action can be use to show all the records
+     *
+     * @return void
+     */
     public function index() 
     {
 
     }
 
+    /**
+     * Shows the from for creating '.$name.'
+     * 
+     * @return void
+     */
+    public function create()
+    {
+        
+    }
+
+    /**
+     * Store the data from '.$name.' POST form
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function store(Request $request)
+    {
+        
+    }
+
+    /**
+     * Show the edit form for '.$name.'
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function edit(Request $request)
+    {
+        $id = $request->route(\'id\');
+    
+    }
+
+    /**
+     * Update the existing record
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function update(Request $request)
+    {
+        $id = $request->route(\'id\');
+    
+    }
+
+    /**
+    * Delete the record 
+    *
+    * @param Request $request
+    * @return void
+    */
+    public function destroy(Request $request)
+    {
+        $id = $request->route(\'id\');
+    
+    }
+
+}';
+    if($option == trim("-rm")){
+        self::createModel($model);
+    }
+} else if($option==null) {
+    $contentController = '<?php
+namespace App\Controllers;
+    
+Use Simple\Request;
+    
+class '.$name.' extends Controller 
+{
+    
+    public function index() 
+    {
+    
+    }
+    
+}';
+
+} else if($option == trim("-m")) {
+    $contentController = '<?php
+namespace App\Controllers;
+    
+Use Simple\Request;
+    
+class '.$name.' extends Controller 
+{
+    
+    public function index() 
+    {
+    
+    }
+    
+}';
+    self::createModel($model);
 }
-';
             if(file_exists("$this->controllerPath$name.php")) {
                 $this->status = 'error: '.$name.' Controller is already exist!'.PHP_EOL;
             } else {

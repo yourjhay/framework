@@ -157,7 +157,7 @@ abstract class Model
         $q = self::factory()
         ->insert($table,$data)
         ->compile();
-        self::run($q);
+        return self::run($q);
     }
 
 }
