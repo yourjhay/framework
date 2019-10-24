@@ -1,10 +1,4 @@
 <?php
-/*----------------------------------------------------------------
-|
-| The Simple PHP Framework
-| @reyjhonbaquirin
-| *** ERROR Handling Class ***
-------------------------------------------------------------------*/
 namespace Simple;
 
 class Error
@@ -94,7 +88,7 @@ class Error
             <p><h3>Thrown in:</h3> "'.$exception->getFile().'" on line: '.$exception->getLine().'</p>
             <br>
             <p>© The Simple PHP Framework </p>
-            <small class="exp">Creator: <a target="_blank" href="https://www.facebook.com/jhay7even">Rey Jhon A. Baquirin</a> - Simply PHP</small>
+            <small class="exp">Creator: <a target="_blank" href="https://www.facebook.com/profile.php">Jhay Jhay </a> - Simply PHP</small>
             </div>
             ');
         } else {

@@ -1,10 +1,4 @@
 <?php
-/*----------------------------------------------------------------
-|
-| The Simple PHP Framework
-| @reyjhonbaquirin
-| *** BASE ROUTER Class ***
-------------------------------------------------------------------*/
 namespace Simple\Routing;
 
 class Router

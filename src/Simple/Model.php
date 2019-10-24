@@ -1,10 +1,4 @@
 <?php
-/*----------------------------------------------------------------
-|
-| The Simple PHP Framework
-| @reyjhonbaquirin
-| *** BASE MODEL Class ***
-------------------------------------------------------------------*/
 namespace Simple;
 
 Use PDO;

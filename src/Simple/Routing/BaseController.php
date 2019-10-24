@@ -1,10 +1,4 @@
 <?php
-/*----------------------------------------------------------------
-|
-| The Simple PHP Framework
-| @reyjhonbaquirin
-| *** BASE CONTROLLER Class ***
-------------------------------------------------------------------*/
 namespace Simple\Routing;
 
 abstract class BaseController
