@@ -51,6 +51,9 @@ abstract class Model
             case 'basic':
                 return new QueryFactory(new QueryBuilder\Engine\BasicEngine());
             break;
+            case 'sqlite':
+                return new QueryFactory(new QueryBuilder\Engine\SqliteEngine());
+            break;
             default:
                 return new QueryFactory(new QueryBuilder\Engine\MySqlEngine());
        }
@@ -68,10 +71,20 @@ abstract class Model
         $method = explode(' ',$query->sql())[0];
         $stmt = self::DB()->prepare($query->sql());
         if(isset($params['fetch_mode'])) {
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            if($params['fetch_mode'] == 'FETCH_ASSOC') {
+                $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            } elseif ($params['fetch_mode'] == 'FETCH_CLASS') {
+                $stmt->setFetchMode(PDO::FETCH_CLASS,get_called_class());
+            } elseif ($params['fetch_mode'] == 'FETCH_NUM') {
+                $stmt->setFetchMode(PDO::FETCH_NUM);
+            } elseif ($params['fetch_mode'] == 'FETCH_OBJ') {
+                $stmt->setFetchMode(PDO::FETCH_OBJ);
+            } elseif ($params['fetch_mode'] == 'FETCH_BOTH') {
+                $stmt->setFetchMode(PDO::FETCH_BOTH);
+            }         
         } else {
-            $stmt->setFetchMode(PDO::FETCH_CLASS,get_called_class());
-        }
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        }        
         $res = $stmt->execute($query->params());
         switch ($method)
         {
