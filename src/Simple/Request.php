@@ -69,8 +69,13 @@ class Request
      * Redirects to given URL
      * @param $url - Redirect to given URL
      */
-    public static function redirect($url)
+    public static function redirect($url,  $param = [])
     {
+        $params="?";
+        foreach ($param as $key => $value) {
+           $params.=$key.'='.$value.'&';
+        }
+        $url.= substr($params, 0 , -1);
         header('location: http://'.$_SERVER['HTTP_HOST'].$url,true,303);
         exit();
     }
@@ -92,7 +97,7 @@ class Request
      * @param $var Pass variable to route
      * @return string
      */
-    public function route($var)
+    public static function route($var)
     {
         $params = \Simple\Routing\Router::getParams();
         return isset($params[$var]) ? $params[$var] : null ;

@@ -75,6 +75,7 @@ class View
         $twig->addGlobal('flushable', Session::getFlushable());
         $twig->addGlobal('baseurl', $url);
         $twig->addGlobal('old', $_POST);
+        $twig->addGlobal('_get', $_GET);
         $twig->addGlobal('user', json_decode(Session::getSession('user'), true));
         return $twig->render($temp, $args);
     }

@@ -116,7 +116,6 @@ class FileUpload
                         'mpeg' => 'video/mpeg',
                         'mp4' => 'video/mp4',
                         'mp3' => 'audio/mpeg'
-
                     ),
                     true
                 )) {

@@ -49,7 +49,7 @@ class Session
         if(isset($_SESSION['flush'])) {
             $flash = $_SESSION['flush'];
             unset($_SESSION['flush']);
-            return $flash;
+            return $flash[0];
         }
     }
 
@@ -76,10 +76,8 @@ class Session
                     $params["secure"], $params["httponly"]
                 );
             }
-
             // Finally, destroy the session.
             session_destroy();  
         }       
     }
-    
 }

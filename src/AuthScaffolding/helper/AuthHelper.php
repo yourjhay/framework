@@ -3,7 +3,6 @@ namespace App\Helper\Auth;
 
 use App\Models\User;
 use Simple\Session;
-use function Simple\bcrypt_verify;
 
 class AuthHelper
 {
@@ -15,11 +14,13 @@ class AuthHelper
     {
         $user =  User::findByEmail($data['email']);
         if($user) {
-            if(bcrypt_verify($data['password'], $user->password_hash))
+            if(password_verify($data['password'], $user->password_hash))
             {
-                Session::setSession('user',json_encode($user));
+                $user_data = json_encode($user);
+                Session::setSession('user',$user_data);
                 return true;
             }
+            return false;
         }
 
         return false;
