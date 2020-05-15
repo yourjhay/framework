@@ -32,7 +32,10 @@ class User extends Model
         ->from('users')
         ->where(field('email')->eq($email))
         ->compile();
-        return self::run($query,['first'=>true]);
+        return self::run($query,[
+            'first'      => true,
+            'fetch_mode' => 'FETCH_OBJ'
+        ]);
     }
 
 }
