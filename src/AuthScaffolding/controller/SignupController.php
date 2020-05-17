@@ -7,6 +7,7 @@ Use App\Models\User;
 Use Simple\Session;
 Use App\Helper\Validation\Validator as validate;
 Use App\Helper\Auth\AuthHelper as auth;
+Use function Simple\bcrypt;
 
 class SignupController extends Controller
 {
@@ -26,7 +27,6 @@ class SignupController extends Controller
      */
     public function signupNew(Request $request)
     {
-        $request->filterRequest('POST');
         $v = new validate;
         $v->validation_rules(array(
             'name' => 'required|valid_name|min_len,6',
@@ -43,7 +43,7 @@ class SignupController extends Controller
             if(auth::attempt($request->post())) {
                 $request->redirect('/');
             } else {
-                $request->redirect('/auth/index');
+                $request->redirect('/auth');
             }
         } else {
             Session::flush($v->get_errors_array());            

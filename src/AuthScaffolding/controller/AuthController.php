@@ -46,6 +46,6 @@ class AuthController extends Controller
     public function logoutAction()
     {
         Auth::destroy();
-        Request::redirect('/auth/index');
+        Request::redirect('/auth');
     }
 }
