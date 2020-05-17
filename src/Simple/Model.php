@@ -20,7 +20,20 @@ abstract class Model
     {
         self::$db = null;
         if(self::$db===null) {
-            self::$db = new PDO("mysql:host=".DBSERVER.";dbname=".DBNAME.";charset=utf8",DBUSER, DBPASS);
+            
+           switch(DBENGINE) {
+               
+                case 'mysql':
+                case 'mysqli':
+                    self::$db = new PDO("mysql:host=".DBSERVER.";dbname=".DBNAME.";charset=utf8",DBUSER, DBPASS);
+                break;
+                case 'sqlite':
+                case 'sqslite3':
+                    self::$db = new PDO("sqlite:"."../database/database.db");
+                break;
+                default:
+                    self::$db = new PDO("mysql:host=".DBSERVER.";dbname=".DBNAME.";charset=utf8",DBUSER, DBPASS);
+           }
             self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return self::$db;
         }
