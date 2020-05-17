@@ -4,6 +4,8 @@ namespace Simple\Engine;
 use Simple\Engine\ConsoleOutput as co; 
 use mysqli;
 use Simple\Session;
+use PDO;
+
 
 class Console 
 {
@@ -32,7 +34,7 @@ class Console
             $this->createModel($this->argv[2] ?? null);
             break;
             case "migrate":
-            $this->migrate($this->argv[2] ?? null);
+            $this->migrate($this->argv[2] ?? null, $this->argv[3] ?? null);
             break;
             case "make:auth":
             $this->makeAuth();
@@ -49,6 +51,13 @@ class Console
             break;
             case "key:generate":
             $this->keyGenerate();
+            break;
+            case "route:list":
+            $this->routeList();
+            break;
+            case "-help":
+            case "help":
+            $this->cliHelp();
             break;
             default:
             $this->status = 'error: ===== Command not found. ====='.PHP_EOL;
@@ -266,36 +275,63 @@ class '.$model.' extends Model
         return str_replace(' ','',ucwords(str_replace('-',' ', $string)));
     }
 
-    private function migrate($file)
+    private function migrate($file, $com)
     {
-        if($file == null)
-        {
-            $this->status = 'error: Please specify the filename '.PHP_EOL;
-            return false;
-        }
-    require './app/Config/global.php';
-    $mysqlDatabaseName = DBNAME;
-    $mysqlUserName =DBUSER;
-    $mysqlPassword =DBPASS;
-    $mysqlHostName =DBSERVER;
-    $mysqlImportFilename ="./database/$file.sql";
+        require './app/Config/global.php';
+        if(DBENGINE == 'mysql' || DBENGINE == 'mysqli') {
+            if($file == null)
+            {
+                $this->status = 'error: Please specify the filename '.PHP_EOL;
+                return false;
+            }
+            
+            $mysqlDatabaseName = DBNAME;
+            $mysqlUserName =DBUSER;
+            $mysqlPassword =DBPASS;
+            $mysqlHostName =DBSERVER;
+            $mysqlImportFilename ="./database/$file.sql";
 
-    $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
+            $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
 
-    //var_dump( file_exists('postcode_withLatlang.sql') );
+            //var_dump( file_exists('postcode_withLatlang.sql') );
 
-    $output = array();
+            $output = array();
 
-    exec($command, $output, $worked);
+            exec($command, $output, $worked);
 
-    // test whether they are imported successfully or not
-    switch ($worked) {
-        case 0:
-            $this->status = 'success: Import file ' .$mysqlImportFilename .' successfully imported to database ' .$mysqlDatabaseName.PHP_EOL;
-            break;
-        case 1:
-            $this->status = 'error: There was an error during the import '.PHP_EOL;
-            break;
+            // test whether they are imported successfully or not
+            switch ($worked) {
+                case 0:
+                    $this->status = 'success: Import file ' .$mysqlImportFilename .' successfully imported to database ' .$mysqlDatabaseName.PHP_EOL;
+                    break;
+                case 1:
+                    $this->status = 'error: There was an error during the import '.PHP_EOL;
+                    break;
+                }
+        } elseif (DBENGINE == 'sqlite') { 
+            try {
+            $table = 'users';
+            $db = new PDO("sqlite:"."./database/database.db");
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
+                if($file=='-c'){
+                    $sql = $com;
+                } elseif ($file =='users') {
+                    $sql ="CREATE TABLE IF NOT EXISTS $table(
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL,
+                        email TEXT NOT NULL,
+                        password_hash TEXT NOT NULL,
+                        reset_token TEXT NULL)";
+                }           
+                    echo($sql);
+                    echo PHP_EOL;
+                    $db->exec($sql);
+                print("Command successfull\n");          
+            } catch (Exception $e) {
+                echo "Unable to connect".PHP_EOL;
+                echo $e->getMessage();
+                exit;
+            } 
         }
     }
 
@@ -359,48 +395,79 @@ class '.$model.' extends Model
     }
 
     private function seed() 
-    {
-    require './app/Config/global.php';
-    $dbname = DBNAME;
-    $dbuser = DBUSER;
-    $dbpass = DBPASS;
-    $dbserver = DBSERVER;
-        start:
-        echo "seeding...".PHP_EOL;
-        echo $this->output->print_o(" Enter name: ","white","cyan");
-        $handle = fopen ("php://stdin","r");
-        $line = fgets($handle);
-        $name = trim($line);
-        fclose($handle);
-        echo $this->output->print_o(" Enter Email: ", "white", "magenta");
-        $handle = fopen ("php://stdin","r");
-        $line = fgets($handle);
-        $email = trim($line);
-        fclose($handle);
-        echo $this->output->print_o(" Enter password: ", "black","light_gray");
-        $handle = fopen ("php://stdin","r");
-        $line = fgets($handle);
-        $password = trim($line);
-        fclose($handle);
-        $db = new mysqli ($dbserver,$dbuser,$dbpass,$dbname);
-        $stmt = $db->prepare("INSERT INTO users(name,email,password_hash) VALUES(?,?,?)") or die($db->error);
-        $password = password_hash($password, PASSWORD_BCRYPT);
-        $stmt->bind_param("sss",$name,$email,$password);
-        if($stmt->execute()){
-            echo $this->output->print_o(PHP_EOL." Seeding successfull " , "black", "green");
-        } else {
-            echo $this->output->print_o(" Seeding failed: $stmt->error", "white", "red");
-        }
-        echo PHP_EOL."Do you want to seed another entry? (yes|no): ";
-        $handle = fopen ("php://stdin","r");
-        $line = fgets($handle);
-        $ans = trim($line);
-        fclose($handle);
-        if($ans == 'yes') {
-            goto start;
-        } else {
-            return false;
-        }
+    {   
+        require './app/Config/global.php';
+        
+            
+            $dbname = DBNAME;
+            $dbuser = DBUSER;
+            $dbpass = DBPASS;
+            $dbserver = DBSERVER;
+            start:
+            echo "seeding...".PHP_EOL;
+            echo $this->output->print_o(" Enter name: ","white","cyan");
+            $handle = fopen ("php://stdin","r");
+            $line = fgets($handle);
+            $name = trim($line);
+            fclose($handle);
+            echo $this->output->print_o(" Enter Email: ", "white", "magenta");
+            $handle = fopen ("php://stdin","r");
+            $line = fgets($handle);
+            $email = trim($line);
+            fclose($handle);
+            echo $this->output->print_o(" Enter password: ", "black","light_gray");
+            $handle = fopen ("php://stdin","r");
+            $line = fgets($handle);
+            $password = trim($line);
+            fclose($handle);
+            $password = password_hash($password, PASSWORD_BCRYPT);
+            if(DBENGINE=='mysqli' || DBENGINE == 'mysql') {
+                $db = new mysqli ($dbserver,$dbuser,$dbpass,$dbname);
+                $stmt = $db->prepare("INSERT INTO users(name,email,password_hash) VALUES(?,?,?)") or die($db->error);
+               
+                $stmt->bind_param("sss",$name,$email,$password);
+                if($stmt->execute()){
+                    echo $this->output->print_o(PHP_EOL." Seeding successfull " , "black", "green");
+                } else {
+                    echo $this->output->print_o(" Seeding failed: $stmt->error", "white", "red");
+                }
+            } elseif (DBENGINE == 'sqlite') {
+                try {
+                    $table = 'users';
+                    $db = new PDO("sqlite:"."./database/database.db");
+                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
+                        
+                            $sql ="INSERT INTO users(name, email, password_hash) VALUES (?,?,?)";
+                            $stmt=$db->prepare($sql);
+                            $data = array(
+                                $name,
+                                $email,
+                                $password
+                            );
+                            echo($sql);
+                            echo PHP_EOL;
+                            
+                            $stmt->execute($data);
+                            echo $this->output->print_o(PHP_EOL." Seeding successfull " , "black", "green");
+                            unset($stmt);
+                            $db = null;         
+                    } catch (Exception $e) {
+                        echo "Unable to connect".PHP_EOL;
+                        echo $e->getMessage();
+                        exit;
+                    } 
+            }
+            echo PHP_EOL."Do you want to seed another entry? (yes|no): ";
+            $handle = fopen ("php://stdin","r");
+            $line = fgets($handle);
+            $ans = trim($line);
+            fclose($handle);
+            if($ans == 'yes') {
+                goto start;
+            } else {
+                return false;
+            }
+        
     }
 
     /**
@@ -444,5 +511,40 @@ class '.$model.' extends Model
             else{
                 echo "Failed to generate application key".PHP_EOL;
             }
+    }
+
+    public function routeList()
+    {
+        require './app/Routes.php';
+        $n=0;
+        $compile_routes = \Simple\Routing\Router::compiledRoutes();
+            echo '-----------------------------------------------------------------'.PHP_EOL;
+         foreach($compile_routes as $key => $val){            
+            echo $this->output->print_o($val['request_method']."  '$key'",'green', 'black') .' => ' . $val['url'].PHP_EOL;
+            echo '-----------------------------------------------------------------'.PHP_EOL;
+         $n++;
+        }
+         echo $this->output->print_o(" You have $n route aliases in your Routes.php",'black','light_gray').PHP_EOL;
+    }
+
+    public function cliHelp()
+    {   
+        echo PHP_EOL;
+        echo ">> php cli + command".PHP_EOL;
+        echo PHP_EOL;
+        echo "AVAILABLE COMMANDS:".PHP_EOL;
+        echo $this->output->print_o(" serve",'green','black') . " This creates a webserver and host you application".PHP_EOL;
+        echo $this->output->print_o("       options: host port=8080",'blue','black') . " You can set the host and port(optional)".PHP_EOL;
+        echo $this->output->print_o(" route:list",'green','black') . " Display your route aliases".PHP_EOL;
+        echo $this->output->print_o(" key:generate",'green','black') . " This creates key for Encryption and Decryption feature".PHP_EOL;
+        echo $this->output->print_o(" make:controller ControllerName",'green','black') . " This creates a controller in app/Controllers".PHP_EOL;
+        echo $this->output->print_o("       options: -r or -rm",'blue','black') . " Make the controller a resource(for CRUD), also creates the model automatically".PHP_EOL;
+        echo $this->output->print_o(" make:model",'green','black') . " This creates a model in app/Models".PHP_EOL;
+        echo $this->output->print_o(" make:auth",'green','black') . " This creates a authentication scaffoldings for your application".PHP_EOL;
+        echo $this->output->print_o(" user:seed",'green','black') . " Insert data to users table".PHP_EOL;
+        echo $this->output->print_o(" migrate sqlfilename",'green','black') . " Migrate the sqlfiles in database folder(for mysql only)".PHP_EOL;
+        echo $this->output->print_o(" migrate users",'green','black') . " This creates users table in you database(for sqlite and mysql)".PHP_EOL;
+        echo $this->output->print_o(" migrate -c \"your_query\"",'green','black') . " Communicate with sqlite database".PHP_EOL;
+        echo PHP_EOL;
     }
 }
