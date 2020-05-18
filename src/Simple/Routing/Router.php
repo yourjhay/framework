@@ -71,6 +71,7 @@ class Router Extends BaseRouter
         $prevGroupPrefix = parent::$currentGroupPrefix;
         parent::$currentGroupPrefix = $prefix . $prevGroupPrefix;
         call_user_func($routes);
+        parent::$currentGroupPrefix='';
     }
 
     /**
@@ -79,32 +80,40 @@ class Router Extends BaseRouter
      */
     public static function resource($route, $controller)
     {
-        self::get($route, ['controller' => $controller, 'action' => 'index']);
-        self::post("$route/store", ['controller' => $controller, 'action' => 'store']);
-        self::get("$route/create", ['controller' => $controller, 'action' => 'create']);
-        self::get("$route/edit/{id:\w+}", ['controller' => $controller, 'action' => 'edit']);
-        self::put("$route/update/{id:\w+}", ['controller' => $controller, 'action' => 'update']);
-        self::get("$route/show/{id:\w+}", ['controller' => $controller, 'action' => 'show']);
-        self::delete("$route/destroy/{id:\w+}", ['controller' => $controller, 'action' => 'destroy']);
+        self::get($route, ['controller' => $controller, 'action' => 'index'])
+            ->alias("$controller.index");
+        self::post("$route/store", ['controller' => $controller, 'action' => 'store'])
+            ->alias("$controller.store");
+        self::get("$route/create", ['controller' => $controller, 'action' => 'create'])
+            ->alias("$controller.create");
+        self::get("$route/edit/{id:\w+}", ['controller' => $controller, 'action' => 'edit'])
+            ->alias("$controller.edit");
+        self::patch("$route/update/{id:\w+}", ['controller' => $controller, 'action' => 'update'])
+            ->alias("$controller.update");
+        self::get("$route/show/{id:\w+}", ['controller' => $controller, 'action' => 'show'])
+            ->alias("$controller.show");
+        self::delete("$route/destroy/{id:\w+}", ['controller' => $controller, 'action' => 'destroy'])
+            ->alias("$controller.delete");
     }
 
     public static function auth()
     {
-        self::get('auth/','Auth\Auth@index')
+        self::group('auth', function(){
+            self::get('/','Auth\Auth@index')
             ->alias('auth.index');
 
-        self::get('auth/logout','Auth\Auth@logout')
-            ->alias('auth.logout');
+            self::get('/logout','Auth\Auth@logout')
+                ->alias('auth.logout');
 
-        self::post('auth/authenticate','Auth\Auth@authenticate')
-            ->alias('auth.authenticate');
+            self::post('/authenticate','Auth\Auth@authenticate')
+                ->alias('auth.authenticate');
 
-        self::get('auth/signup','Auth\Signup@signup')
-            ->alias('auth.signup');
+            self::get('/signup','Auth\Signup@signup')
+                ->alias('auth.signup');
 
-        self::post('auth/signup-new','Auth\Signup@signup-new')
-            ->alias('auth.signup-new');
-
+            self::post('/signup-new','Auth\Signup@signup-new')
+                ->alias('auth.signup-new');
+        });
         //self::set('{controller:password}/{action:\breset|\bemail}/{token?}');
     }
 }
