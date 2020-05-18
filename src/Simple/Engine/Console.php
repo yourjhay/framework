@@ -312,6 +312,7 @@ class '.$model.' extends Model
             try {
             $table = 'users';
             $db = new PDO("sqlite:"."./database/database.db");
+            $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
                 if($file=='-c'){
                     $sql = $com;
@@ -323,10 +324,37 @@ class '.$model.' extends Model
                         password_hash TEXT NOT NULL,
                         reset_token TEXT NULL)";
                 }           
-                    echo($sql);
+                   
                     echo PHP_EOL;
-                    $db->exec($sql);
-                print("Command successfull\n");          
+                    $command_ = explode(' ',$sql);
+                    if(strtoupper($command_[0]) === "SELECT"){
+                        $res = $db->query($sql);   
+                        $i=0;          
+                        $col=[]; 
+                        $rows=[]; 
+                        $v=[];
+                        $table = new \LucidFrame\Console\ConsoleTable(); 
+                        foreach($res as $row)
+                        {
+                            $i++;
+                            foreach($row as $key => $val){
+                               if($i==1){
+                                    $col[] .= $key;
+                                   
+                                } $v[]=$val;
+                            }
+                            $rows[$i] = $v;
+                            unset($v);
+                        }                       
+                        $table->setHeaders($col);                      
+                        foreach($rows as $r){
+                            $table->addRow($r);
+                        }
+                        $table->display();
+                    }else{
+                        $c = $db->exec($sql);
+                        print("Command successfull. $c affected rows.\n");  
+                    }                  
             } catch (Exception $e) {
                 echo "Unable to connect".PHP_EOL;
                 echo $e->getMessage();
