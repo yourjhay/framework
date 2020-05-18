@@ -65,3 +65,24 @@ namespace Simple;
             return $url;
         }
     }
+
+    if (!function_exists(__NAMESPACE__ . '\alias'))
+    {        
+        function alias($alias, $param=null)
+        {
+           $compile_routes = Routing\Router::compiledRoutes();          
+            $url='';
+           foreach ($compile_routes as $key => $val)
+           {               
+               if($alias == $key){
+                  $url=$val['url'];
+                if($param!==null) {
+                    $url = preg_replace('/\{([a-z]+):([^\}]+)\}/', $param, $val['url']);
+                }   
+                return $url;
+                   exit;
+               }
+           }
+           throw new \Exception("Route with alias [$alias] not found", 500);
+        }
+    }
