@@ -67,7 +67,8 @@ class Request
 
     /**
      * Redirects to given URL
-     * @param $url - Redirect to given URL
+     * @param string $url - Redirect to given URL
+     * @param array $param - GET parameters to be pass
      */
     public static function redirect($url,  $param = [])
     {
