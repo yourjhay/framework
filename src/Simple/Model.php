@@ -11,6 +11,7 @@ abstract class Model
 
     protected $fillable;
     protected $table;
+    private $id;
     public static $db;
     /**
      * GET the PDO connection
@@ -128,6 +129,7 @@ abstract class Model
         return $stmt->fetch() !== false;
     }
 
+
     /**
      * set properties
      *
@@ -144,6 +146,9 @@ abstract class Model
                     $this->$name = $value;
                 }
             }
+        }
+        if($name=='id'){
+            $this->id = $value;
         }
     }
 
@@ -180,4 +185,26 @@ abstract class Model
         return self::run($q);
     }
 
+    /**
+     * Update a data to fillable properties of the model
+     *
+     * @return void
+     */
+    public final function update()
+    {
+        $data=[];
+        foreach($this->fillable as $fill) {
+           if(isset($this->$fill)) {
+            $data[$fill] = $this->$fill;
+           } else {
+            $data[$fill] = null;
+           }
+        }
+        $table = $this->table;
+        $q = self::factory()
+        ->update($table,$data)
+        ->where(field('id')->eq($this->id))
+        ->compile();
+        return self::run($q);
+    }
 }
