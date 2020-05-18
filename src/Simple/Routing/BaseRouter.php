@@ -120,6 +120,7 @@ class BaseRouter
     {
         foreach(self::$routes as $route => $params){
             if(preg_match($route, $url, $matches)){
+                
                 foreach($matches as $key => $match){
                     if(is_string($key)){
                         $params[$key] = $match;
@@ -172,6 +173,9 @@ class BaseRouter
 
                 if (preg_match('/action$/i', $action) == 0) {
                     $request = $_SERVER['REQUEST_METHOD'];
+                    if(isset($_POST['_method'])){
+                        $request = $_POST['_method'];
+                    }           
                     $user_request_method = strtoupper(self::$params['request_method']);
                     if($request === $user_request_method
                         || $user_request_method === 'ANY'
