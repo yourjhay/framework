@@ -14,6 +14,7 @@
     "require": {
         "twig/twig":"^2.0",
         "symfony/var-dumper": "^4.3",
+        "phplucidframe/console-table": "^1.2",
         "php": ">=7.1"
     },
     "suggest": {
