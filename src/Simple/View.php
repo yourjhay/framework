@@ -11,17 +11,19 @@ class View
      * @param  bool $html - if html only
      * @throws \Exception - if view file not found
      */
-    public static function renderNormal($view, $args = [], $html = true)
-    {
+    public static function renderNormal(
+        $view,
+        $args = [],
+        $html = true
+    ) {
         extract($args, EXTR_SKIP);
         $view = self::create($view, $html);
         $file = "../app/Views$view";
-        if(is_readable($file)){
+        if (is_readable($file)){
             require $file;
         } else {
             throw new \Exception("View [$file] not found!");
         }
-        
     }
 
     /**
@@ -35,10 +37,10 @@ class View
         $name = str_replace('.','/',$view);
         $paths = explode('/',$name);
         $file=null;
-        foreach($paths as $path){
+        foreach ($paths as $path){
             $file .= '/'.$path;
         }
-        if($html==true){
+        if ($html==true){
             return $file.'.view.html';
         } else {
             return $file.'.view.php';
@@ -53,14 +55,14 @@ class View
      */
     public static function render($template, $args = [])
     {
-        $views =  '../app/Views';
-        $cache =  '../simply/Cache/Views';
+        $views    =  '../app/Views';
+        $cache    =  '../simply/Cache/Views';
         $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'];
-        $temp = self::create($template, true);
-        $loader = new \Twig\Loader\FilesystemLoader($views);
+        $url      = $protocol . $_SERVER['HTTP_HOST'];
+        $temp     = self::create($template, true);
+        $loader   = new \Twig\Loader\FilesystemLoader($views);
 
-        if(CACHE_VIEWS == true) {
+        if (CACHE_VIEWS == true) {
             $twig = new \Twig\Environment($loader, [
                 'cache' => $cache,
             ]);

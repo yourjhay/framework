@@ -13,7 +13,7 @@ class Request
     public function filterRequest($user_request)
     {
         $request = $_SERVER['REQUEST_METHOD'];
-        if($request == strtoupper($user_request)) {
+        if ($request == strtoupper($user_request)) {
             return true;
         } else {
             throw new \Exception("$request Method not allowed");
@@ -22,12 +22,11 @@ class Request
 
     /**
      * Return data from GET, POST $_COOKIES
-     * @param $data - name of the html element input
      * @return array
      */
     public function request($key = null)
     {
-        if($key == null) {
+        if ($key == null) {
             return $_REQUEST;
         } else {
             return $_REQUEST[$key];
@@ -40,10 +39,10 @@ class Request
      */
     public function get($key=null)
     {
-        if($key == null) {
+        if ($key == null) {
             return $_GET;
         } else {
-            if(isset($_GET[$key])) {
+            if (isset($_GET[$key])) {
                 return $_GET[$key];
             }
             return null; 
@@ -56,7 +55,7 @@ class Request
      */
     public function post($key=null)
     {
-        if($key == null) {
+        if ($key == null) {
             return $_POST;
         } else {
             if(isset($_POST[$key])) {
@@ -77,7 +76,7 @@ class Request
         foreach ($param as $key => $value) {
            $params.=$key.'='.$value.'&';
         }
-        $url.= substr($params, 0 , -1);
+        $url .= substr($params, 0 , -1);
         header('location: http://'.$_SERVER['HTTP_HOST'].$url,true,303);
         exit();
     }
@@ -122,7 +121,7 @@ class Request
      */
     public function file($fieldname)
     {
-        if($fieldname != null) {
+        if ($fieldname != null) {
             $file = new FileUpload($fieldname);
             return $file;
         }

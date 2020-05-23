@@ -14,11 +14,10 @@ if (!function_exists('\view'))
      */
     function view($view, $args = [], $engine = 'twig')
     {
-        if($engine == 'twig') {
+        if ($engine == 'twig') {
             return View::render($view, $args);
         } else {
             return View::renderNormal($view, $args);
         }
-        return false;
     }
 }

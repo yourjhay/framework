@@ -2,11 +2,14 @@
 
 namespace App\Controllers\Auth;
 
+use App\Helper\{
+    Auth\AuthHelper as auth,
+    Validation\Validator as validate
+};
 use App\Controllers\Controller;
-use Simple\{Request, Session};
 use App\Models\User;
-use App\Helper\Validation\Validator as validate;
-use App\Helper\Auth\AuthHelper as auth;
+use Simple\{Request, Session};
+
 use function Simple\bcrypt;
 
 class SignupController extends Controller
@@ -34,14 +37,14 @@ class SignupController extends Controller
         ));
         $validated = $v->run($request->post());
 
-        if($validated) {
+        if ($validated) {
             $user = new User();
             $user->name = $request->name;
             $user->email = $request->email;
             $user->password_hash = bcrypt($request->password);
             $user->save();
 
-            if(auth::attempt($request->post())) {
+            if (auth::attempt($request->post())) {
                 $request->redirect('/');
             } else {
                 $request->redirect('/auth');

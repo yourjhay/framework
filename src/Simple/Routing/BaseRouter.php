@@ -154,7 +154,7 @@ class BaseRouter
 
         tryagain:
 
-        if(self::match($url)) {
+        if (self::match($url)) {
             if (preg_match('/controller$/i', self::$params['controller']) == 0) {
                 $controller = self::$params['controller'].'Controller';
             } else {
@@ -164,7 +164,7 @@ class BaseRouter
             $controller = self::convertToStudlyCaps($controller);
             $controller = self::getNamespace() . $controller;
             
-            if(class_exists($controller)){
+            if (class_exists($controller)){
                 $controller_object = new $controller(self::$params);
                 $action = self::$params['action'];
                 $action = self::convertToCamelCase($action);
@@ -175,7 +175,7 @@ class BaseRouter
                         $request = $_POST['_method'];
                     }           
                     $user_request_method = strtoupper(self::$params['request_method']);
-                    if($request === $user_request_method
+                    if ($request === $user_request_method
                         || $user_request_method === 'ANY'
                     ) {
                         echo $controller_object->$action(new \Simple\Request);
@@ -189,11 +189,13 @@ class BaseRouter
                 throw new \Exception("Controller class [$controller] not found");
             }
         } else {
-            if($retry > 0){
+            if ($retry > 0){
                 throw new \Exception("INVALID ROUTE [$url]", 404);
             } else {
 
-                if(substr($url,-1) == '/' && $retry==0) {
+                if (substr($url,-1) == '/'
+                    && $retry==0
+                ) {
                     $url = substr($url,0,-1);
                     $retry+=1;
                 } else {
@@ -233,12 +235,12 @@ class BaseRouter
      */
     protected static function removeQueryString($url)
     {
-        if($url != ''){
+        if ($url != ''){
             $parts = explode('&', $url, 2);
-            if(strpos($parts[0], '=') === false){
+            if (strpos($parts[0], '=') === false){
                 $url = $parts[0];
             } else {
-                if(strpos($parts[0], '?') === false){
+                if (strpos($parts[0], '?') === false){
                     $url = '';
                 } else {
                     $url = explode('?',$parts[0]);
@@ -255,7 +257,7 @@ class BaseRouter
     protected static function getNamespace()
     {
         $namespace = 'App\Controllers\\';
-        if(array_key_exists('namespace', self::$params)) {
+        if (array_key_exists('namespace', self::$params)) {
             $namespace .= self::$params['namespace'] . '\\';
         }        
         return $namespace;
