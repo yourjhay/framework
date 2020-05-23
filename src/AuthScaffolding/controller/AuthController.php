@@ -1,9 +1,9 @@
 <?php
+
 namespace App\Controllers\Auth;
 
-Use App\Controllers\Controller;
-Use Simple\Request;
-Use Simple\Session;
+use App\Controllers\Controller;
+use Simple\{Request, Session};
 use App\Helper\Auth\AuthHelper as auth;
 
 class AuthController extends Controller

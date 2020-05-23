@@ -1,4 +1,5 @@
 <?php
+
 namespace Simple\Routing;
 
 class BaseRouter
@@ -19,13 +20,13 @@ class BaseRouter
     private static $current_param;
     protected static $raw_current_route;
     protected static $compiled_routes =[];
-
     protected static $currentGroupPrefix = '';
 
     /**
      * register routes
      * @param string $route - Route URL
      * @param array $params Parameters (controller, action, etc.)
+     * @param string $http_method - Request method
      */
     protected static function set($route, $params = [], $http_method)
     {
@@ -120,7 +121,6 @@ class BaseRouter
     {
         foreach(self::$routes as $route => $params){
             if(preg_match($route, $url, $matches)){
-                
                 foreach($matches as $key => $match){
                     if(is_string($key)){
                         $params[$key] = $match;
@@ -162,11 +162,9 @@ class BaseRouter
             }
             
             $controller = self::convertToStudlyCaps($controller);
-            
             $controller = self::getNamespace() . $controller;
             
             if(class_exists($controller)){
-
                 $controller_object = new $controller(self::$params);
                 $action = self::$params['action'];
                 $action = self::convertToCamelCase($action);
@@ -240,13 +238,11 @@ class BaseRouter
             if(strpos($parts[0], '=') === false){
                 $url = $parts[0];
             } else {
-                
                 if(strpos($parts[0], '?') === false){
                     $url = '';
                 } else {
                     $url = explode('?',$parts[0]);
                 }
-                
             }
         }
         return is_array($url)?$url[0]:$url;
@@ -264,5 +260,4 @@ class BaseRouter
         }        
         return $namespace;
     }
-
 }

@@ -36,21 +36,37 @@ class FileUpload
         return $this->filename;
     }
 
+    /**
+     * Return the uploaded file size
+     * @return mixed
+     */
     public function getFileSize()
     {
         return $this->filesize;
     }
 
+    /**
+     * Return the file extension
+     * @return mixed
+     */
     public function getFileExtension()
     {
         return $this->extension;
     }
 
+    /**
+     * return the filetype
+     * @return mixed
+     */
     public function getFileType()
     {
         return $this->fileType;
     }
 
+    /**
+     * Return the  uploaded filename
+     * @return string
+     */
     public function getUploadedFileName()
     {
         $filename = sprintf("%s.%s",
@@ -59,7 +75,6 @@ class FileUpload
         );
         return $filename;
     }
-
 
     /**
      * @param string $path: The folder where the file is going to be uploaded.

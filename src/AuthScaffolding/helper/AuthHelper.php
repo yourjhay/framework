@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Helper\Auth;
 
 use App\Models\User;
@@ -22,7 +23,6 @@ class AuthHelper
             }
             return false;
         }
-
         return false;
     }
 
@@ -41,5 +41,4 @@ class AuthHelper
     {
         Session::destroy();
     }
-
 }

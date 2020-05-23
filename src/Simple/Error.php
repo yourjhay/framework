@@ -19,6 +19,9 @@ class Error
         }
     }
 
+    /**
+     * @param $exception Application Exeption
+     */
     public static function exceptionHandler($exception) 
     {
         $code = $exception->getCode();
@@ -112,7 +115,5 @@ class Error
                 ]);
             }
         }
-
     }
-
 }

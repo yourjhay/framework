@@ -1,10 +1,14 @@
 <?php
+
 namespace Simple\Routing;
 
 class Router Extends BaseRouter
 {
     /**
      * SET Route to accept only POST method
+     * @param $route string URL of your route
+     * @param mixed $params Paramaters like controller and action
+     * @return Router
      */
     public static function post($route, $params = [])
     {
@@ -14,6 +18,9 @@ class Router Extends BaseRouter
 
     /**
      * SET Route to accept only GET method
+     * @param $route string URL of your route
+     * @param mixed $params Paramaters like controller and action
+     * @return Router
      */
     public static function get($route, $params = [])
     {     
@@ -23,6 +30,9 @@ class Router Extends BaseRouter
 
     /**
      * SET Route to accept only PUT method
+     * @param $route string URL of your route
+     * @param mixed $params Paramaters like controller and action
+     * @return Router
      */
     public static function put($route, $params = [])
     {
@@ -32,6 +42,9 @@ class Router Extends BaseRouter
 
     /**
      * SET Route to accept only DELETE method
+     * @param $route string URL of your route
+     * @param mixed $params Paramaters like controller and action
+     * @return Router
      */
     public static function delete($route, $params = [])
     {
@@ -41,6 +54,9 @@ class Router Extends BaseRouter
 
     /**
      * SET Route to accept only PATCH method
+     * @param $route string URL of your route
+     * @param mixed $params Paramaters like controller and action
+     * @return Router
      */
     public static function patch($route, $params = [])
     {
@@ -49,7 +65,10 @@ class Router Extends BaseRouter
     }
 
     /**
-     * SET Route to accept only PATCH method
+     * SET Route to accept only ANY method
+     * @param $route string URL of your route
+     * @param mixed $params Paramaters like controller and action
+     * @return Router
      */
     public static function any($route, $params = [])
     {
@@ -58,7 +77,10 @@ class Router Extends BaseRouter
     }
 
     /**
-     * SET Route to accept only PUT method
+     * SET Route to accept only HEAD method
+     * @param $route string URL of your route
+     * @param mixed $params Paramaters like controller and action
+     * @return Router
      */
     public static function head($route, $params = [])
     {
@@ -66,6 +88,10 @@ class Router Extends BaseRouter
         return new static;
     }
 
+    /**
+     * @param string $prefix Route prefix
+     * @param callable $routes routes callable
+     */
     public static function group(string $prefix, callable $routes)
     {
         $prevGroupPrefix = parent::$currentGroupPrefix;
@@ -75,6 +101,7 @@ class Router Extends BaseRouter
     }
 
     /**
+     *  Declare a resource route
      * @param string $route  route URL
      * @param string $controller  Controller name
      */
@@ -96,6 +123,9 @@ class Router Extends BaseRouter
             ->alias("$controller.delete");
     }
 
+    /**
+     * Declare the authentication routes
+     */
     public static function auth()
     {
         self::group('auth', function(){

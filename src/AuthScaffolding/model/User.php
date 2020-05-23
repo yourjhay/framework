@@ -1,25 +1,24 @@
 <?php
+
 namespace App\Models;
 
-Use Simple\Model;
-Use function Simple\QueryBuilder\field;
-Use function Simple\bcrypt;
+use Simple\Model;
+use function Simple\QueryBuilder\field;
+use function Simple\bcrypt;
 
 class User extends Model 
 {
     /**
      * $table - table name using by this model
-     *
      * @var string
      */
     protected $table = 'users';
 
     /**
-     * Fillables - the columns in you $table 
-     *
+     * Fillables - the columns in you $table
      * @var array
      */ 
-    protected $fillable = ['name','email','password_hash'];
+    protected $fillable = ['name', 'email', 'password_hash'];
 
     /**
      * @param string $email - Email of the user
@@ -37,5 +36,4 @@ class User extends Model
             'fetch_mode' => 'FETCH_OBJ'
         ]);
     }
-
 }
