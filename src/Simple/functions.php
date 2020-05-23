@@ -5,7 +5,6 @@ declare(strict_types=1);
  */
 namespace Simple;
 
-
     if (!function_exists(__NAMESPACE__ . '\example'))
     {
         function example()

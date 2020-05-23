@@ -1,4 +1,5 @@
 <?php
+
 namespace Simple;
 
 class Request
@@ -104,7 +105,6 @@ class Request
         return isset($params[$var]) ? $params[$var] : null ;
     }
 
-
     /**
      * @param $name
      * @param $args
@@ -114,7 +114,6 @@ class Request
     {
         throw new \Exception('Method '.$name.' not found');
     }
-
 
     /**
      * @param $fieldname: The name of the file upload field

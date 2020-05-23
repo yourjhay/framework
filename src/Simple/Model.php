@@ -1,14 +1,14 @@
 <?php
+
 namespace Simple;
 
-Use PDO;
-Use Simple\QueryBuilder\Engine\MySqlEngine;
-Use Simple\QueryBuilder\QueryFactory;
-Use function Simple\QueryBuilder\field;
+use PDO;
+use Simple\QueryBuilder\Engine\MySqlEngine;
+use Simple\QueryBuilder\QueryFactory;
+use function Simple\QueryBuilder\field;
 
 abstract class Model 
 {
-
     protected $fillable;
     protected $table;
     private $id;
@@ -164,9 +164,9 @@ abstract class Model
     }
 
     /**
-     * Save a data to fillable properties of the model
-     *
-     * @return void
+     *  Save a data to fillable properties of the model
+     * @return bool
+     * @throws \Exception
      */
     public final function save()
     {
@@ -187,8 +187,8 @@ abstract class Model
 
     /**
      * Update a data to fillable properties of the model
-     *
-     * @return void
+     * @return bool
+     * @throws \Exception
      */
     public final function update()
     {

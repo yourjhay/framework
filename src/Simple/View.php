@@ -1,10 +1,9 @@
 <?php
 
 namespace Simple;
+
 class View
 {
-    
-
     /**
      * Render A view 
      * @param string $view - The file my dear
@@ -60,6 +59,7 @@ class View
         $url = $protocol . $_SERVER['HTTP_HOST'];
         $temp = self::create($template, true);
         $loader = new \Twig\Loader\FilesystemLoader($views);
+
         if(CACHE_VIEWS == true) {
             $twig = new \Twig\Environment($loader, [
                 'cache' => $cache,
@@ -72,12 +72,13 @@ class View
             $class = "\App\Helper\Twig\\" . explode('.',basename($filename))[0];
             $twig->addExtension(new $class);
         }
+
         $twig->addGlobal('flushable', Session::getFlushable());
         $twig->addGlobal('baseurl', $url);
         $twig->addGlobal('old', $_POST);
         $twig->addGlobal('_get', $_GET);
         $twig->addGlobal('user', json_decode(Session::getSession('user'), true));
+
         return $twig->render($temp, $args);
     }
-
 }

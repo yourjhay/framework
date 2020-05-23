@@ -1,4 +1,5 @@
 <?php
+
 namespace Simple;
 
 class Session 
@@ -16,16 +17,30 @@ class Session
         }
     }
 
+    /**
+     * return session ID
+     * @return string
+     */
     public static function getSessionId()
     {
         return session_id();
     }
 
+    /**
+     *  Set a new session
+     * @param $key Session Key
+     * @param array $data Session data associated with the key
+     */
     public static function setSession($key , $data=[]) 
     {
         $_SESSION[$key] = $data;
     }
-    
+
+    /**
+     * Return the session data
+     * @param null $key Session to be return
+     * @return mixed|null
+     */
     public static function getSession($key=null)
     {
         if($key!=null) {
@@ -35,6 +50,10 @@ class Session
         }
     }
 
+    /**
+     * Set a flush message on the session
+     * @param $message
+     */
     public static function flush($message)
     {
         if(!isset($_SESSION['flush'])) {
@@ -42,7 +61,11 @@ class Session
         }
         $_SESSION['flush'][] = $message;
     }
-    
+
+    /**
+     *  Return the flushable message from session
+     * @return mixed
+     */
     public static function getFlushable()
     {
         self::init();
@@ -51,8 +74,13 @@ class Session
             unset($_SESSION['flush']);
             return $flash[0];
         }
+        return null;
     }
 
+    /**
+     *  Unset the current session
+     * @param $key Session key
+     */
     public static function unsetSession($key)
     {
         if(isset($_SESSION[$key])) {
@@ -60,6 +88,9 @@ class Session
         } 
     }
 
+    /**
+     *  Destroy all the save session
+     */
     public static function destroy()
     {
         // Unset all of the session variables.

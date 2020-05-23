@@ -17,21 +17,18 @@ class Encryption {
 
     public static function generateKey()
     {
-        
         $key = Key::createNewRandomKey();
         return $key->saveToAsciiSafeString();
     }
 
     public static function baseDecrypt($ciphertext) 
     {
-       
         $key = self::loadEncryptionKeyFromConfig();
         return Crypto::decrypt($ciphertext,$key);
     }
 
     public static function baseEncrypt($data) 
     {
-        
         $key = self::loadEncryptionKeyFromConfig();
         return Crypto::encrypt($data,$key);
     }

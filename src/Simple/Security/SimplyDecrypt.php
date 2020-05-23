@@ -3,7 +3,6 @@
 namespace Simple\Security;
 
 class SimplyDecrypt extends Encryption {
-    
     /**
      * @param string $ciphertext CipherText to be decrypted
      * @return string
@@ -11,12 +10,9 @@ class SimplyDecrypt extends Encryption {
      */
     public static function decrypt($ciphertext) 
     {
-    
         try {
-
             $secret_data = self::baseDecrypt($ciphertext);
             return $secret_data;
-
         } catch (\Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
             // An attack! Either the wrong key was loaded, or the ciphertext has
             // changed since it was created -- either corrupted in the database or
@@ -25,8 +21,5 @@ class SimplyDecrypt extends Encryption {
             // ... handle this case in a way that's suitable to your application ...
             throw new \Exception('Error: Wrong Key Or Modified Ciphertext');
         }
-        
     }
-
-    
 }
