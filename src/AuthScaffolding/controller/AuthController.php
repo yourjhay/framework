@@ -18,7 +18,7 @@ class AuthController extends Controller
      */
     public function index(Request $request)
     {
-        if(Auth::user()) {
+        if (Auth::user()) {
             $request->redirect(self::$destination);
         } else {
             return view('auth.index');
@@ -28,10 +28,11 @@ class AuthController extends Controller
     /**
      * @param Request $request
      * @return object|void
+     * @throws \Exception
      */
     public function authenticate(Request $request)
     {
-        if(auth::attempt($request->post())) {
+        if (auth::attempt($request->post())) {
             $request->redirect(self::$destination);
         } else {
             Session::flush('Invalid Username or Password');

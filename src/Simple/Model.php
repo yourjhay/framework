@@ -3,8 +3,8 @@
 namespace Simple;
 
 use PDO;
-use Simple\QueryBuilder\Engine\MySqlEngine;
 use Simple\QueryBuilder\QueryFactory;
+
 use function Simple\QueryBuilder\field;
 
 abstract class Model 
@@ -20,7 +20,7 @@ abstract class Model
     protected static function DB() 
     {
         self::$db = null;
-        if(self::$db===null) {
+        if (self::$db===null) {
             
            switch(DBENGINE) {
                
@@ -84,8 +84,8 @@ abstract class Model
         
         $method = explode(' ',$query->sql())[0];
         $stmt = self::DB()->prepare($query->sql());
-        if(isset($params['fetch_mode'])) {
-            if($params['fetch_mode'] == 'FETCH_ASSOC') {
+        if (isset($params['fetch_mode'])) {
+            if ($params['fetch_mode'] == 'FETCH_ASSOC') {
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
             } elseif ($params['fetch_mode'] == 'FETCH_CLASS') {
                 $stmt->setFetchMode(PDO::FETCH_CLASS,get_called_class());
@@ -138,11 +138,11 @@ abstract class Model
      */
     public function __set($name, $value)
     {
-        if(in_array($name, $this->fillable))
+        if (in_array($name, $this->fillable))
         {
-            foreach($this->fillable as $fill)
+            foreach ($this->fillable as $fill)
             {
-                if($name == $fill) {
+                if ($name == $fill) {
                     $this->$name = $value;
                 }
             }
@@ -171,8 +171,8 @@ abstract class Model
     public final function save()
     {
         $data=[];
-        foreach($this->fillable as $fill) {
-           if(isset($this->$fill)) {
+        foreach ($this->fillable as $fill) {
+           if (isset($this->$fill)) {
             $data[$fill] = $this->$fill;
            } else {
             $data[$fill] = null;
@@ -193,8 +193,8 @@ abstract class Model
     public final function update()
     {
         $data=[];
-        foreach($this->fillable as $fill) {
-           if(isset($this->$fill)) {
+        foreach ($this->fillable as $fill) {
+           if (isset($this->$fill)) {
             $data[$fill] = $this->$fill;
            } else {
             $data[$fill] = null;
@@ -202,9 +202,9 @@ abstract class Model
         }
         $table = $this->table;
         $q = self::factory()
-        ->update($table,$data)
-        ->where(field('id')->eq($this->id))
-        ->compile();
+            ->update($table,$data)
+            ->where(field('id')->eq($this->id))
+            ->compile();
         return self::run($q);
     }
 }

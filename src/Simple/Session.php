@@ -12,7 +12,7 @@ class Session
 
     protected static function init()
     {
-        if(session_status() == PHP_SESSION_NONE){
+        if (session_status() == PHP_SESSION_NONE){
             session_start();
         }
     }
@@ -43,8 +43,8 @@ class Session
      */
     public static function getSession($key=null)
     {
-        if($key!=null) {
-            return isset($_SESSION[$key])?$_SESSION[$key]:null;
+        if ($key!=null) {
+            return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
         } else {
             return $_SESSION;
         }
@@ -56,7 +56,7 @@ class Session
      */
     public static function flush($message)
     {
-        if(!isset($_SESSION['flush'])) {
+        if (!isset($_SESSION['flush'])) {
             $_SESSION['flush'] = [];
         }
         $_SESSION['flush'][] = $message;
@@ -69,7 +69,7 @@ class Session
     public static function getFlushable()
     {
         self::init();
-        if(isset($_SESSION['flush'])) {
+        if (isset($_SESSION['flush'])) {
             $flash = $_SESSION['flush'];
             unset($_SESSION['flush']);
             return $flash[0];
@@ -83,7 +83,7 @@ class Session
      */
     public static function unsetSession($key)
     {
-        if(isset($_SESSION[$key])) {
+        if (isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
         } 
     }
@@ -94,10 +94,8 @@ class Session
     public static function destroy()
     {
         // Unset all of the session variables.
-        if(isset($_SESSION)) {
-        
+        if (isset($_SESSION)) {
             $_SESSION = array();
-
             // If it's desired to kill the session, also delete the session cookie.
             // Note: This will destroy the session, and not just the session data!
             if (ini_get("session.use_cookies")) {

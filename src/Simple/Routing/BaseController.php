@@ -1,9 +1,9 @@
 <?php
+
 namespace Simple\Routing;
 
 abstract class BaseController
 {
-
     /**
      * Parameters from the matched routes
      */

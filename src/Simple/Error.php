@@ -14,7 +14,7 @@ class Error
      */
     public static function errorHandler($level, $message, $file, $line) 
     {
-        if(error_reporting() !== 0) {
+        if (error_reporting() !== 0) {
             throw new \ErrorException($message, 0, $level, $file, $line);
         }
     }
@@ -25,7 +25,7 @@ class Error
     public static function exceptionHandler($exception) 
     {
         $code = $exception->getCode();
-        if($code != 404) {
+        if ($code != 404) {
             $code = 500;
         }
         http_response_code($code);
@@ -51,7 +51,7 @@ class Error
         );
         $random_title = array_rand($errorTitle);
 
-        if(SHOW_ERRORS == true) {
+        if (SHOW_ERRORS == true) {
             die( '
             <style>
                 pre{
@@ -105,7 +105,7 @@ class Error
             $m .= 'Stack trace: ['.$exception->getTraceAsString().']'.PHP_EOL;
             $m .= 'Thrown in ['.$exception->getFile().'] on line:'. $exception->getLine();
             error_log($m);
-            if($code == 404) {
+            if ($code == 404) {
                 print view('error.404',[
                     'name' => APP_NAME
                 ]);

@@ -56,7 +56,7 @@ namespace Simple;
                 '127.0.0.1'
             );
             $localhost = false;
-            if(in_array($_SERVER['REMOTE_ADDR'],$addr))
+            if (in_array($_SERVER['REMOTE_ADDR'],$addr))
             {
                 $localhost =true;
             }
@@ -73,13 +73,12 @@ namespace Simple;
             $url='';
            foreach ($compile_routes as $key => $val)
            {               
-               if($alias == $key){
-                  $url=$val['url'];
-                if($param!==null) {
+                if ($alias == $key){
+                    $url=$val['url'];
+                if ($param!==null) {
                     $url = preg_replace('/\{([a-z]+):([^\}]+)\}/', $param, $val['url']);
                 }   
                 return $url;
-                   exit;
                }
            }
            throw new \Exception("Route with alias [$alias] not found", 500);

@@ -136,7 +136,7 @@ class FileUpload
                 )) {
                 throw new RuntimeException('Invalid file format.');
             }
-            if($path!=null){
+            if ($path!=null){
                 $this->storage = $this->storage.$path;
             }
             if ( ! is_dir($this->storage)) {
