@@ -116,14 +116,24 @@ abstract class Model
     }
 
     /**
-     * @param $table - Table to be check
+     * @param $param - Table to be check
      * @param $column - lookup Column to check
      * @param $data - value to be compaire
      * @return bool
      */
-    public static function unique_checker($table, $column, $data)
+    public static function unique_checker($param, $column, $data)
     {
-        $sql = "SELECT $column FROM $table WHERE $column = ?";
+        $ignoreQuery='';
+
+        if(count($param) == 1){
+            $table = $param[0];
+        } else {
+            $table = $param[0];
+            $ignoreThis = $param[1];
+            $ignoreQuery = "OR id != $ignoreThis";
+        }
+
+        $sql = "SELECT $column FROM $table WHERE $column = ? $ignoreQuery";
         $stmt = self::DB()->prepare($sql);
         $stmt->execute(array($data));
         return $stmt->fetch() !== false;
