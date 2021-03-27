@@ -1,5 +1,8 @@
 # The Simply PHP Framework
 
+#installation 
+composer create-project reyjhon/simple-php awesome
+
 ## About Simply
 The Simple PHP is lightweight web application framework.
 - Uses Model, View, Controller Pattern.
