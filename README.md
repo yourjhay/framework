@@ -1,6 +1,6 @@
 # The Simply PHP Framework
 
-#installation 
+## installation 
 composer create-project reyjhon/simple-php awesome
 
 ## About Simply
