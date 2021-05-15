@@ -59,6 +59,7 @@ class Session
         if (!isset($_SESSION['flush'])) {
             $_SESSION['flush'] = [];
         }
+        $_SESSION['_old'] = $_POST;
         $_SESSION['flush'][] = $message;
     }
 
