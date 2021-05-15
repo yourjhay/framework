@@ -37,8 +37,13 @@ class View
         $name = str_replace('.','/',$view);
         $paths = explode('/',$name);
         $file=null;
-        foreach ($paths as $path){
-            $file .= '/'.$path;
+        foreach ($paths as $key => $path){
+            if($key >0){
+                $p='/';
+            } else {
+                $p=null;
+            }
+            $file .= $p.$path;
         }
         if ($html==true){
             return $file.'.view.html';
