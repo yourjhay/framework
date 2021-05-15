@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Simple\QueryBuilder\Query\SqlServer;
@@ -6,6 +7,7 @@ namespace Simple\QueryBuilder\Query\SqlServer;
 use Simple\QueryBuilder\ExpressionInterface;
 use Simple\QueryBuilder\Query;
 
+use function is_int;
 use function Simple\QueryBuilder\literal;
 
 class SelectQuery extends Query\SelectQuery

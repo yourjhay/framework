@@ -1,17 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Simple\QueryBuilder\Query;
 
 use Simple\QueryBuilder\EngineInterface;
 use Simple\QueryBuilder\ExpressionInterface;
-use Simple\QueryBuilder\QueryInterface;
 use Simple\QueryBuilder\Query;
+use Simple\QueryBuilder\QueryInterface;
 
 abstract class AbstractQuery implements QueryInterface
 {
-    /** @var EngineInterface */
-    protected $engine;
+    protected EngineInterface $engine;
 
     public function __construct(
         EngineInterface $engine
@@ -26,6 +26,7 @@ abstract class AbstractQuery implements QueryInterface
     public function compile(): Query
     {
         $query = $this->asExpression();
+
         return new Query(
             $query->sql($this->engine),
             $query->params($this->engine)
