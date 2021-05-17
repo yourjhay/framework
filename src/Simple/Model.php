@@ -204,11 +204,9 @@ abstract class Model
     {
         $data=[];
         foreach ($this->fillable as $fill) {
-           if (isset($this->$fill)) {
-            $data[$fill] = $this->$fill;
-           } else {
-            $data[$fill] = null;
-           }
+            if (isset($this->$fill)) {
+                $data[$fill] = $this->$fill;
+            }
         }
         $table = $this->table;
         $q = self::factory()
