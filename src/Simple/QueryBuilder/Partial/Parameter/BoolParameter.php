@@ -2,29 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Simple\QueryBuilder\Partial;
+namespace Simple\QueryBuilder\Partial\Parameter;
 
 use Simple\QueryBuilder\EngineInterface;
 use Simple\QueryBuilder\StatementInterface;
 
-final class LikeEnds implements StatementInterface
+final class BoolParameter implements StatementInterface
 {
-    private string $value;
+    private bool $value;
 
-    public function __construct(string $value)
+    public function __construct(bool $value)
     {
         $this->value = $value;
     }
 
     public function sql(EngineInterface $engine): string
     {
-        return '?';
+        return $engine->exportParameter($this->value);
     }
 
     public function params(EngineInterface $engine): array
     {
-        $value = $engine->escapeLike($this->value);
-
-        return ['%' . $value];
+        return [];
     }
 }

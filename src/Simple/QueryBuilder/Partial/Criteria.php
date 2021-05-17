@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Simple\QueryBuilder\Partial;
@@ -7,12 +8,9 @@ use Simple\QueryBuilder\CriteriaInterface;
 use Simple\QueryBuilder\EngineInterface;
 use Simple\QueryBuilder\ExpressionInterface;
 
-use function Simple\QueryBuilder\express;
-
 final class Criteria implements CriteriaInterface
 {
-    /** @var ExpressionInterface */
-    private $expression;
+    private ExpressionInterface $expression;
 
     public function __construct(
         ExpressionInterface $expression
