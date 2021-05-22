@@ -7,7 +7,7 @@ use Simple\QueryBuilder\QueryFactory;
 
 use function Simple\QueryBuilder\field;
 
-abstract class Model 
+class Model extends BaseModel
 {
     protected $fillable;
     protected $table;
@@ -188,11 +188,8 @@ abstract class Model
             $data[$fill] = null;
            }
         }
-        $table = $this->table;
-        $q = self::factory()
-        ->insert($table,$data)
-        ->compile();
-        return self::run($q);
+        
+        return $this->insert($data);
     }
 
     /**
