@@ -12,15 +12,18 @@
         }
     ],
     "require": {
-        "twig/twig":"^2.0",
+        "php": "^7.4|^8.0",
+		"ext-pdo": "*",
+        "twig/twig":"^3.0",
         "symfony/var-dumper": "^4.3",
         "phplucidframe/console-table": "^1.2",
-        "php": ">=7.1"
+        "nesbot/carbon": "^2.31",
+        "catfan/medoo": "^2.0",
+        "phpmailer/phpmailer": "^6.2",
+        "filp/whoops": "^2.12"
     },
     "suggest": {
-        "intervention/image": "To handle Image processing in this micro framework",
-        "phpmailer/phpmailer": "For handling emails and provide extensible features",
-        "filp/whoops": "Install this to have a pretty page for errors."
+        "intervention/image": "To handle Image processing in this micro framework"
     },
     "autoload": {
         "files": [
@@ -41,7 +44,9 @@
         "phpunit/phpunit": "^7.5|^8.0"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "preferred-install": "dist"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
