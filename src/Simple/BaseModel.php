@@ -20,7 +20,7 @@ class BaseModel
     /**
      * @var mixed|string
      */
-    protected $table;
+    protected string $table;
 
     /**
      *  Medoo Connection instance
@@ -40,7 +40,7 @@ class BaseModel
             'error' => SHOW_ERRORS ? PDO::ERRMODE_EXCEPTION : PDO::ERRMODE_SILENT,
             'testMode' => false
         ]);
-        
+
     }
 
     /**
@@ -55,21 +55,17 @@ class BaseModel
 
     /**
      * Return only 1 record
-     *
-     * @param string $col
+     * @param string|null $col
      * @param mixed $val
-     * @return void
+     * @return bool|object
      */
-    public static function only($col = null, $val)
+    public static function only($val, string $col = null)
     {
         $cl = get_called_class();
         $t = (new $cl);
-        
-        $c = func_num_args();
-        
         $t->compileWhere();
         $columns = self::$columns;
-        $where[$col ?? ''] = $c===2 ? $val : $col;
+        $where[$col ?? 'id'] = $val;
         $table = $t->table ?? $t->getClass();
         $data = ($t->con->get($table, $columns, $where));
         if($data) {
@@ -92,7 +88,7 @@ class BaseModel
         return strtolower($class) . 's';
     }
 
-    public static function where($column, $operator = null, $value = null, $boolean = 'and'): BaseModel
+    public static function where($column, $operator = null, $value = null): BaseModel
     {
         $default = func_num_args();
         [$value, $operator] = self::prepareValueAndOperator(
@@ -180,8 +176,8 @@ class BaseModel
      * @param [type] $column
      * @param string $sort
      * @return $this
-     */ 
-    public static function orderBy($column, $sort = 'DESC'): BaseModel
+     */
+    public static function orderBy($column, string $sort = 'DESC'): BaseModel
     {
         self::$orderBy[$column] = $sort;
         return new static;
@@ -210,16 +206,18 @@ class BaseModel
 
     /**
      * @param $limit
+     * @param bool $debug
      * @return array
+     * @throws \Exception
      */
-    public function paginate($limit, $debug = false): array
+    public function paginate($limit, bool $debug = false): array
     {
         $data['total'] = (int)$this->count('id');
         $page = (int)isset($_GET['page']) ? $_GET['page'] : 1;
         $_page =(int) $page;
         if ($page < 0) $page = 1;
         $page -= 1;
-        
+
         $offset = $page * $limit;
         $data['current_page'] = (int)$page + 1;
         $data['perpage'] = (int)$limit;
@@ -233,10 +231,9 @@ class BaseModel
     }
 
     /**
-     * @param $column
      * @return int|null
      */
-    public function count($column): ?int
+    public function count(): ?int
     {
         $table = $this->table ?? $this->getClass();
         self::compileWhere();
@@ -281,7 +278,7 @@ class BaseModel
     /**
      * Left Join function
      * OUTPUT: LEFT JOIN "account" ON "post"."author_id" = "account"."user_id"
-     * 
+     *
      * @param string $table Table to be join
      * @param string $column column from the join table
      * @param string $column2 column of the current table you want to compare
@@ -311,9 +308,10 @@ class BaseModel
 
     /**
      * Compile query and return record
+     * @param bool $debug
      * @return array|null
      */
-    public function get($debug = false): ?array
+    public function get(bool $debug = false): ?array
     {
         self::compileWhere();
         $columns = self::$columns;
