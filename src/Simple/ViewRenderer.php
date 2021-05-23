@@ -9,10 +9,10 @@ if (!function_exists('\view'))
      * @param string $view the filename of the view
      * @param array $args array of variable to be pass on the view
      * @param string $engine Option: twig or normal
-     * @throws
-     * @return void
+     * @return string
+     *@throws
      */
-    function view($view, $args = [], $engine = 'twig')
+    function view(string $view, array $args = [], string $engine = 'twig'): ?string
     {
         if ($engine == 'twig') {
             return View::render($view, $args);
