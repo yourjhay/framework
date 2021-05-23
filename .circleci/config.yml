@@ -42,7 +42,7 @@ jobs:
        # run tests with phpunit
       - run:
           name: "Run Unit Tests"
-          command: ./vendor/bin/phpunit --testdox test
+          command: ./vendor/bin/phpunit --testdox test/ModelTest.php
 
 
       
