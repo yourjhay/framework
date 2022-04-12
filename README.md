@@ -1,4 +1,5 @@
 # The Simply PHP Framework
+will update soon.
 
 ## installation 
 composer create-project reyjhon/simple-php awesome
