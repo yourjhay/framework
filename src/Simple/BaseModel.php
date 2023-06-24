@@ -41,7 +41,7 @@ class BaseModel
             'username' => DBUSER,
             'password' => DBPASS,
             'error' => SHOW_ERRORS ? PDO::ERRMODE_EXCEPTION : PDO::ERRMODE_SILENT,
-            'testMode' => TESTMODE
+            'testMode' => DBTESTMODE
         ]);
     }
 

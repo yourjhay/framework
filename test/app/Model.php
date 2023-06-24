@@ -30,7 +30,7 @@ define('DBSERVER', 'localhost');
 define('DBUSER', 'jhay');
 define('DBPASS', 'password');
 define('DBNAME', 'portfolio');
-define('TESTMODE', true);
+define('DBTESTMODE', false);
 
 
 
