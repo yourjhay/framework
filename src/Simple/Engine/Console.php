@@ -66,13 +66,15 @@ class Console
 
     public function print_status()
     {
-        $status = explode(':',$this->status);
-        if ($status[0] == 'error') {
-        $status = $this->output->print_o($status[1], "white", "red");
-            echo $status;
-        } else if($status[0] == 'success') {
-            $status = $this->output->print_o($status[1], "black", "green");
-            echo $status;
+        if($this->status) {
+            $status = explode(':',$this->status);
+            if ($status[0] == 'error') {
+            $status = $this->output->print_o($status[1], "white", "red");
+                echo $status;
+            } else if($status[0] == 'success') {
+                $status = $this->output->print_o($status[1], "black", "green");
+                echo $status;
+            }
         }
     }
 
@@ -232,14 +234,14 @@ class '.$model.' extends Model
      *
      * @var string
      */
-    protected $table = \''.\strtolower($model) .'s\';
+    protected string $table = \''.\strtolower($model) .'s\';
 
     /**
      * Fillables - the columns in you $table 
      *
      * @var array
      */
-    protected $fillable = [];
+    protected array $fillable = [];
 
     /**
      *  This is generated '.$model.' model.

@@ -12,13 +12,13 @@ class User extends Model
      * $table - table name using by this model
      * @var string
      */
-    protected $table = 'users';
+    protected string $table = 'users';
 
     /**
      * Fillables - the columns in your $table
      * @var array
      */ 
-    protected $fillable = [
+    protected array $fillable = [
         'name',
         'email',
         'password_hash'
@@ -31,14 +31,7 @@ class User extends Model
      */
     public static function findByEmail($email)
     {
-        $query = parent::factory()
-            ->select()
-            ->from('users')
-            ->where(field('email')->eq($email))
-            ->compile();
-        return self::run($query,[
-            'first'      => true,
-            'fetch_mode' => 'FETCH_OBJ'
-        ]);
+        return parent::select()
+            ->only($email,'email');
     }
 }

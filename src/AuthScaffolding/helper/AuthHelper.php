@@ -18,7 +18,7 @@ class AuthHelper
         if ($user) {
             if (password_verify($data['password'], $user->password_hash)) {
                 $user_data = json_encode($user);
-                Session::setSession('user', $user_data);
+                Session::set('user', $user_data);
                 return true;
             }
             return false;
@@ -31,7 +31,7 @@ class AuthHelper
      */
     public static function user()
     {
-        return Session::getSession('user');
+        return Session::get('user');
     }
 
     /**
