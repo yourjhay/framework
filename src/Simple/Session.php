@@ -45,7 +45,7 @@ class Session
      * @param string|null $key Session to be return
      * @return array|null
      */
-    public static function get(string $key = null): ?array
+    public static function get(string $key = null): array|string|null
     {
         if ($key!=null) {
             return $_SESSION[$key] ?? null;
@@ -71,7 +71,7 @@ class Session
      *  Return the flushable message from session
      * @return array|null
      */
-    public static function getFlushable(): ?array
+    public static function getFlushable(): array|string|null
     {
         self::init();
         if (isset($_SESSION['flush'])) {
