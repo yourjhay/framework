@@ -2,11 +2,6 @@
 
 namespace Simple;
 
-use PDO;
-use Simple\QueryBuilder\QueryFactory;
-
-use function Simple\QueryBuilder\field;
-
 class Model extends BaseModel
 {
     protected array $fillable;
