@@ -47,7 +47,11 @@ class Error
             'Coding is fun!.... without errors.',
             'Don\'t talk to me.',
             'Sometimes you just need a sleep..',
-            'Want to take a break ?'
+            'Want to take a break ?',
+            'Restarting the computer may solve this problem.',
+            'OMG!! What did you do this time?',
+            'You might have mis-spelled a variable? It happens all the time.',
+            'Semicolon is missing!! Kidding! it is ?'
         );
         $random_title = array_rand($errorTitle);
 

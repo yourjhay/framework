@@ -16,6 +16,9 @@ class BaseModel
     public static $columns = '*';
     public static array $orderBy = [];
     public static array $join = [];
+    public static ?string $set_table = null;
+
+
 
     /**
      * @var mixed|string
@@ -38,8 +41,18 @@ class BaseModel
             'username' => DBUSER,
             'password' => DBPASS,
             'error' => SHOW_ERRORS ? PDO::ERRMODE_EXCEPTION : PDO::ERRMODE_SILENT,
-            'testMode' => TESTMODE
+            'testMode' => DBTESTMODE
         ]);
+    }
+
+    /**
+     * @param null $values
+     * @return BaseModel
+     */
+    public static function table(string $table): BaseModel
+    {
+        self::$set_table = $table;
+        return new static;
     }
 
     /**
@@ -84,7 +97,7 @@ class BaseModel
     public function getClass(): string
     {
         $class = get_called_class();
-        return strtolower($class) . 's';
+        return self::$set_table ?? strtolower($class) . 's';
     }
 
     public static function where($column, $operator = null, $value = null): BaseModel
@@ -324,7 +337,7 @@ class BaseModel
      * @param bool|callable $debug
      * @return array|null
      */
-    public function get(bool|callable $debug = false): ?array
+    public function get($debug = false)
     {
         self::compileWhere();
         $columns = self::$columns;
