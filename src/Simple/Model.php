@@ -7,23 +7,23 @@ use Simple\QueryBuilder\QueryFactory;
 
 use function Simple\QueryBuilder\field;
 
-abstract class Model 
+class Model extends BaseModel
 {
-    protected $fillable;
-    protected $table;
-    private $id;
+    protected array $fillable;
+    protected string $table;
+    private int $id;
     public static $db;
     /**
      * GET the PDO connection
      * @return mixed
      */
-    protected static function DB() 
+    protected static function DB()
     {
         self::$db = null;
         if (self::$db===null) {
-            
+
            switch(DBENGINE) {
-               
+
                 case 'mysql':
                 case 'mysqli':
                     self::$db = new PDO("mysql:host=".DBSERVER.";dbname=".DBNAME.";charset=utf8",DBUSER, DBPASS);
@@ -46,7 +46,7 @@ abstract class Model
      *
      * @return object
      */
-    public static function factory() 
+    public static function factory()
     {
         switch(DBENGINE) {
             case 'mysqli':
@@ -81,7 +81,7 @@ abstract class Model
      */
     public static function run($query, $params =[])
     {
-        
+
         $method = explode(' ',$query->sql())[0];
         $stmt = self::DB()->prepare($query->sql());
         if (isset($params['fetch_mode'])) {
@@ -95,10 +95,10 @@ abstract class Model
                 $stmt->setFetchMode(PDO::FETCH_OBJ);
             } elseif ($params['fetch_mode'] == 'FETCH_BOTH') {
                 $stmt->setFetchMode(PDO::FETCH_BOTH);
-            }         
+            }
         } else {
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        }        
+        }
         $res = $stmt->execute($query->params());
         switch ($method)
         {
@@ -153,7 +153,7 @@ abstract class Model
             foreach ($this->fillable as $fill)
             {
                 if ($name == $fill) {
-                    $this->$name = $value;
+                    $this->$name = trim($value);
                 }
             }
         }
@@ -166,16 +166,16 @@ abstract class Model
      * get properties
      *
      * @param [type] $name
-     * @return void
+     * @return string
      */
-    public function __get($name) 
+    public function __get($name)
     {
         return $this->$name;
     }
 
     /**
      *  Save a data to fillable properties of the model
-     * @return bool
+     * @return \PDOStatement
      * @throws \Exception
      */
     public final function save()
@@ -188,11 +188,7 @@ abstract class Model
             $data[$fill] = null;
            }
         }
-        $table = $this->table;
-        $q = self::factory()
-        ->insert($table,$data)
-        ->compile();
-        return self::run($q);
+        return $this->insert($data);
     }
 
     /**

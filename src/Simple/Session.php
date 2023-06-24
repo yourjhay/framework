@@ -2,7 +2,7 @@
 
 namespace Simple;
 
-class Session 
+class Session
 {
 
     public function __construct()
@@ -10,6 +10,10 @@ class Session
         self::init();
     }
 
+    /**
+     * Start new session if none
+     * @return void
+     */
     protected static function init()
     {
         if (session_status() == PHP_SESSION_NONE){
@@ -21,30 +25,30 @@ class Session
      * return session ID
      * @return string
      */
-    public static function getSessionId()
+    public static function id(): string
     {
         return session_id();
     }
 
     /**
      *  Set a new session
-     * @param $key Session Key
-     * @param array $data Session data associated with the key
+     * @param string $key Session Key
+     * @param array|string $data Session data associated with the key
      */
-    public static function setSession($key , $data=[]) 
+    public static function set(string $key , $data=[])
     {
         $_SESSION[$key] = $data;
     }
 
     /**
      * Return the session data
-     * @param null $key Session to be return
-     * @return mixed|null
+     * @param string|null $key Session to be return
+     * @return array|null
      */
-    public static function getSession($key=null)
+    public static function get(string $key = null): ?array
     {
         if ($key!=null) {
-            return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+            return $_SESSION[$key] ?? null;
         } else {
             return $_SESSION;
         }
@@ -65,9 +69,9 @@ class Session
 
     /**
      *  Return the flushable message from session
-     * @return mixed
+     * @return array|null
      */
-    public static function getFlushable()
+    public static function getFlushable(): ?array
     {
         self::init();
         if (isset($_SESSION['flush'])) {
@@ -80,13 +84,13 @@ class Session
 
     /**
      *  Unset the current session
-     * @param $key Session key
+     * @param string $key Session key
      */
-    public static function unsetSession($key)
+    public static function unset(string $key)
     {
         if (isset($_SESSION[$key])) {
             unset($_SESSION[$key]);
-        } 
+        }
     }
 
     /**
@@ -107,7 +111,7 @@ class Session
                 );
             }
             // Finally, destroy the session.
-            session_destroy();  
-        }       
+            session_destroy();
+        }
     }
 }
