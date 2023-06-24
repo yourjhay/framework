@@ -47,9 +47,10 @@ class View
         }
         if ($html==true){
             return $file.'.view.html';
-        } else {
-            return $file.'.view.php';
-        }
+        } 
+            
+        return $file.'.view.php';
+        
     }
 
     /**
