@@ -28,7 +28,7 @@ class BaseRouter
      * @param array $params Parameters (controller, action, etc.)
      * @param string $http_method - Request method
      */
-    protected static function set($route, $params = [], $http_method)
+    protected static function set($route, $params = [], $http_method="GET")
     {
         //Assign group to route
         $route = self::$currentGroupPrefix . $route;
