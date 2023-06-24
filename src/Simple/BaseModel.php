@@ -324,7 +324,7 @@ class BaseModel
      * @param bool|callable $debug
      * @return array|null
      */
-    public function get(bool|callable $debug = false): ?array
+    public function get($debug = false)
     {
         self::compileWhere();
         $columns = self::$columns;
