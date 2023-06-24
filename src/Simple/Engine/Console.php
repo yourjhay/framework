@@ -225,7 +225,6 @@ $content = '<?php
 namespace App\Models;
 
 Use Simple\Model;
-Use function Simple\QueryBuilder\field;
 
 class '.$model.' extends Model
 {

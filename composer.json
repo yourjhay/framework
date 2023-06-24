@@ -17,7 +17,6 @@
         "twig/twig":"^3.0",
         "symfony/var-dumper": "^4.3",
         "phplucidframe/console-table": "^1.2",
-        "nesbot/carbon": "^2.31",
         "catfan/medoo": "^2.0",
         "phpmailer/phpmailer": "^6.2",
         "filp/whoops": "^2.12"
@@ -28,7 +27,6 @@
     "autoload": {
         "files": [
             "src/Simple/functions.php",
-            "src/Simple/QueryBuilder/functions.php",
             "src/Simple/ViewRenderer.php"
         ],
         "psr-4": {  

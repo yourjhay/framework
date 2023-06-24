@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Simple\Model;
 
-use function Simple\QueryBuilder\field;
-
 class User extends Model 
 {
     /**
