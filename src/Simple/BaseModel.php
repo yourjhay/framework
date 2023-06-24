@@ -16,6 +16,9 @@ class BaseModel
     public static $columns = '*';
     public static array $orderBy = [];
     public static array $join = [];
+    public static ?string $set_table = null;
+
+
 
     /**
      * @var mixed|string
@@ -40,6 +43,16 @@ class BaseModel
             'error' => SHOW_ERRORS ? PDO::ERRMODE_EXCEPTION : PDO::ERRMODE_SILENT,
             'testMode' => TESTMODE
         ]);
+    }
+
+    /**
+     * @param null $values
+     * @return BaseModel
+     */
+    public static function table(string $table): BaseModel
+    {
+        self::$set_table = $table;
+        return new static;
     }
 
     /**
@@ -84,7 +97,7 @@ class BaseModel
     public function getClass(): string
     {
         $class = get_called_class();
-        return strtolower($class) . 's';
+        return self::$set_table ?? strtolower($class) . 's';
     }
 
     public static function where($column, $operator = null, $value = null): BaseModel
