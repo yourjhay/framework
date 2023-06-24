@@ -19,22 +19,29 @@ class Model extends BaseModel
      * @param $data - value to be compaire
      * @return bool
      */
-    public static function unique_checker($param, $column, $data)
+    public static function unique_checker(array $param, string $column, string $data)
     {
-        $ignoreQuery='';
+        $ignore=null;
+        $ignore_col = null;
+        $count = count($param);
 
-        if(count($param) == 1){
+        $table = $param[0];
+        $ignore = isset($param[1]) ? $param[1] : null;
+        $ignore_col = isset($param[2]) ? $param[2] : 'id';
+
+        if ($count === 1) {
             $table = $param[0];
-        } else {
-            $table = $param[0];
-            $ignoreThis = $param[1];
-            $ignoreQuery = "OR id != $ignoreThis";
+        } elseif ($count !== 3) {
+            $ignore = $param[1];
         }
 
-        $sql = "SELECT $column FROM $table WHERE $column = ? $ignoreQuery";
-        $stmt = self::DB()->prepare($sql);
-        $stmt->execute(array($data));
-        return $stmt->fetch() !== false;
+        $res = parent::table($table)->where($column,$data);
+        if($ignore) {
+            $res = $res->where($ignore_col,'!',$ignore);
+        }
+        $res = $res->count();
+
+        return $res;
     }
 
 
