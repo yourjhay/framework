@@ -40,7 +40,6 @@ class BaseModel
             'error' => SHOW_ERRORS ? PDO::ERRMODE_EXCEPTION : PDO::ERRMODE_SILENT,
             'testMode' => TESTMODE
         ]);
-
     }
 
     /**
@@ -160,15 +159,29 @@ class BaseModel
      * Insert function
      * https://medoo.in/api/insert
      *
-     * @param [type] $table
-     * @param [type] $values
+     * @param array $values
      * @return PDOStatement
      */
-    public function insert( $values ): PDOStatement
+    public function insert(array $values): PDOStatement
     {
         $table = $this->table ?? $this->getClass();
         return $this->con->insert($table,  $values);
     }
+
+    /**
+     * Update function
+     * https://medoo.in/api/update
+     *
+     * @param array $values
+     * @param array $where
+     * @return PDOStatement
+     */
+    public function update(array $values , array $where): PDOStatement
+    {
+        $table = $this->table ?? $this->getClass();
+        return $this->con->update($table,  $values, $where);
+    }
+
 
     /**
      * Undocumented function
@@ -223,7 +236,7 @@ class BaseModel
         $data['perpage'] = (int)$limit;
         $data['data'] = $this->limit($offset, $limit)->get($debug);
         $data['last_page'] = (int)ceil($data['total'] / $limit);
-        if($_page > $data['last_page']) {
+        if($_page > $data['last_page'] && $data['last_page'] > 0) {
             throw new \Exception("PAGE NOT FOUND", 404);
         }
         return $data;
@@ -308,21 +321,26 @@ class BaseModel
 
     /**
      * Compile query and return record
-     * @param bool $debug
+     * @param bool|callable $debug
      * @return array|null
      */
-    public function get(bool $debug = false): ?array
+    public function get(bool|callable $debug = false): ?array
     {
         self::compileWhere();
         $columns = self::$columns;
         $where = self::$where;
         $table = $this->table ?? $this->getClass();
-        $con = $debug ? $this->con->debug() : $this->con;
+        $con = $debug === true ? $this->con->debug() : $this->con;
         if(!empty(self::$join)) {
             $join = self::$join;
         return $con->select($table, $join,
             $columns,
             $where);
+        }
+        if(is_callable($debug)) {
+            return $con->select($table,
+                $columns,
+                $where, $debug);
         }
         return $con->select($table,
             $columns,
