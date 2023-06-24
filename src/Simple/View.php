@@ -87,7 +87,9 @@ class View
         $twig->addGlobal('baseurl', $url);
         $twig->addGlobal('old', Session::get('_old'));
         $twig->addGlobal('_get', $_GET);
-        $twig->addGlobal('user', json_decode(Session::get('user'), true));
+        if(Session::get('user')) {
+            $twig->addGlobal('user', json_decode(Session::get('user'), true));
+        }
         Session::unset('_old');
         return $twig->render($temp, $args);
     }
