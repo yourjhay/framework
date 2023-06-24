@@ -18,8 +18,7 @@
         "symfony/var-dumper": "^4.3",
         "phplucidframe/console-table": "^1.2",
         "catfan/medoo": "^2.0",
-        "phpmailer/phpmailer": "^6.2",
-        "filp/whoops": "2.12"
+        "phpmailer/phpmailer": "^6.2"
     },
     "suggest": {
         "intervention/image": "To handle Image processing in this micro framework"
