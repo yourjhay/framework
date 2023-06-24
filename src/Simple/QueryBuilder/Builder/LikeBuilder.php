@@ -1,22 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Simple\QueryBuilder\Builder;
 
 use Simple\QueryBuilder\CriteriaInterface;
+use Simple\QueryBuilder\Partial\LikeBegins;
+use Simple\QueryBuilder\Partial\LikeContains;
+use Simple\QueryBuilder\Partial\LikeEnds;
 use Simple\QueryBuilder\StatementInterface;
-use Simple\QueryBuilder\Partial\{
-    LikeBegins,
-    LikeContains,
-    LikeEnds
-};
 
 use function Simple\QueryBuilder\criteria;
 
 class LikeBuilder
 {
-    /** @var StatementInterface */
-    private $statement;
+    private StatementInterface $statement;
 
     public function __construct(StatementInterface $statement)
     {

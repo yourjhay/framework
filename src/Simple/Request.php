@@ -74,10 +74,10 @@ class Request
     {
         $params="?";
         foreach ($param as $key => $value) {
-           $params.=$key.'='.$value.'&';
+            $params.=$key.'='.$value.'&';
         }
         $url .= substr($params, 0 , -1);
-        header('location: http://'.$_SERVER['HTTP_HOST'].$url,true,303);
+        header('location:'.BASEURL.$url,true,303);
         exit();
     }
 

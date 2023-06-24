@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Simple\QueryBuilder\Partial;
@@ -6,12 +7,10 @@ namespace Simple\QueryBuilder\Partial;
 use Simple\QueryBuilder\EngineInterface;
 use Simple\QueryBuilder\StatementInterface;
 
-use function Simple\QueryBuilder\alias;
-
 final class IdentifierQualified implements StatementInterface
 {
     /** @var StatementInterface[] */
-    private $identifiers;
+    private array $identifiers;
 
     public function __construct(
         StatementInterface ...$identifiers

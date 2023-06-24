@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Simple\QueryBuilder\Query\MySql;
@@ -8,12 +9,12 @@ use Simple\QueryBuilder\Query;
 
 class InsertQuery extends Query\InsertQuery
 {
-    /** @var bool */
-    protected $ignore = false;
+    protected bool $ignore = false;
 
     public function ignore(bool $status): self
     {
         $this->ignore = $status;
+
         return $this;
     }
 
@@ -23,6 +24,7 @@ class InsertQuery extends Query\InsertQuery
         if ($this->ignore) {
             $query = $query->append('IGNORE');
         }
+
         return $query;
     }
 }

@@ -5,16 +5,16 @@ namespace Simple;
 class View
 {
     /**
-     * Render A view 
+     * Render A view
      * @param string $view - The file my dear
      * @param array $args - Data to be pass in the view
-     * @param  bool $html - if html only
+     * @param bool $html - if html only
      * @throws \Exception - if view file not found
      */
     public static function renderNormal(
-        $view,
-        $args = [],
-        $html = true
+        string $view,
+        array $args = [],
+        bool $html = true
     ) {
         extract($args, EXTR_SKIP);
         $view = self::create($view, $html);
@@ -37,8 +37,13 @@ class View
         $name = str_replace('.','/',$view);
         $paths = explode('/',$name);
         $file=null;
-        foreach ($paths as $path){
-            $file .= '/'.$path;
+        foreach ($paths as $key => $path){
+            if($key >0){
+                $p='/';
+            } else {
+                $p=null;
+            }
+            $file .= $p.$path;
         }
         if ($html==true){
             return $file.'.view.html';
@@ -48,12 +53,15 @@ class View
     }
 
     /**
-     * Render A view using a template Engine
+     * Render A view using twig template Engine
      * @param string $template - View name
      * @param array $args - Data to be pass in the view
-     * @return object
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
-    public static function render($template, $args = [])
+    public static function render(string $template, array $args = []): string
     {
         $views    =  '../app/Views';
         $cache    =  '../simply/Cache/Views';
@@ -77,10 +85,10 @@ class View
 
         $twig->addGlobal('flushable', Session::getFlushable());
         $twig->addGlobal('baseurl', $url);
-        $twig->addGlobal('old', $_POST);
+        $twig->addGlobal('old', Session::get('_old'));
         $twig->addGlobal('_get', $_GET);
-        $twig->addGlobal('user', json_decode(Session::getSession('user'), true));
-
+        $twig->addGlobal('user', json_decode(Session::get('user'), true));
+        Session::unset('_old');
         return $twig->render($temp, $args);
     }
 }
