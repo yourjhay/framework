@@ -13,6 +13,7 @@ class Console
     private $status;
     private $controllerPath = './app/Controllers/';
     private $modelPath  = 'app/Models/';
+    private $observerPath  = 'app/Observers/';
     private $output;
     public function __construct($argc, $argv)
     {
@@ -32,6 +33,9 @@ class Console
             break;
             case "make:model":
             $this->createModel($this->argv[2] ?? null);
+            break;
+            case "make:observer":
+            $this->createObserver($this->argv[2] ?? null);
             break;
             case "migrate":
             $this->migrate($this->argv[2] ?? null, $this->argv[3] ?? null);
@@ -214,6 +218,43 @@ class '.$name.' extends Controller
             }
         } else {
             $this->status = 'error: Controller name must be defined '.PHP_EOL;
+        }
+    }
+
+    private function createObserver($model)
+    {
+        if($model) {
+            $model = self::convertToStudlyCaps($model);
+            $content = '<?php
+
+namespace App\Observers;
+            
+use Simple\Model;
+            
+class UserObserver
+{
+    /**
+     * Define your observers here with the following methods:
+     * created, updated, deleted, restored, forceDeleted
+     * 
+     * @param Model $model
+     * @return void
+     */
+                
+}'; 
+            if(file_exists("$this->observerPath$model.php")) {
+                $this->status = 'error: '.$model.' Observer is already exist!'.PHP_EOL;
+            } else {
+                $file = fopen("$this->observerPath$model.php", 'w');
+                if(fwrite($file,$content)) {
+                    $this->status = 'success: Observer '.$model.' created successfuly '.PHP_EOL;
+                } else {
+                    $this->status = 'error: failed to create observer '.PHP_EOL;
+                }
+                fclose($file);
+            }
+        } else {
+            $this->status = 'error: Model name must be defined '.PHP_EOL;
         }
     }
 
