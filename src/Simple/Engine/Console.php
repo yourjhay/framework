@@ -13,6 +13,7 @@ class Console
     private $status;
     private $controllerPath = './app/Controllers/';
     private $modelPath  = 'app/Models/';
+    private $observerPath  = 'app/Observers/';
     private $output;
     public function __construct($argc, $argv)
     {
@@ -32,6 +33,9 @@ class Console
             break;
             case "make:model":
             $this->createModel($this->argv[2] ?? null);
+            break;
+            case "make:observer":
+            $this->createObserver($this->argv[2] ?? null);
             break;
             case "migrate":
             $this->migrate($this->argv[2] ?? null, $this->argv[3] ?? null);
@@ -217,6 +221,43 @@ class '.$name.' extends Controller
         }
     }
 
+    private function createObserver($model)
+    {
+        if($model) {
+            $model = self::convertToStudlyCaps($model);
+            $content = '<?php
+
+namespace App\Observers;
+            
+use Simple\Model;
+            
+class UserObserver
+{
+    /**
+     * Define your observers here with the following methods:
+     * created, updated, deleted, restored, forceDeleted
+     * 
+     * @param Model $model
+     * @return void
+     */
+                
+}'; 
+            if(file_exists("$this->observerPath{$model}Observer.php")) {
+                $this->status = 'error: '.$model.' Observer is already exist!'.PHP_EOL;
+            } else {
+                $file = fopen("$this->observerPath{$model}Observer.php", 'w');
+                if(fwrite($file,$content)) {
+                    $this->status = 'success: Observer '.$model.' created successfuly '.PHP_EOL;
+                } else {
+                    $this->status = 'error: failed to create observer '.PHP_EOL;
+                }
+                fclose($file);
+            }
+        } else {
+            $this->status = 'error: Model name must be defined '.PHP_EOL;
+        }
+    }
+
     private function createModel($model)
     {
         if($model) {
@@ -233,14 +274,14 @@ class '.$model.' extends Model
      *
      * @var string
      */
-    protected string $table = \''.\strtolower($model) .'s\';
+    protected $table = \''.\strtolower($model) .'s\';
 
     /**
      * Fillables - the columns in you $table 
      *
      * @var array
      */
-    protected array $fillable = [];
+    protected $fillable = [];
 
     /**
      *  This is generated '.$model.' model.
@@ -279,36 +320,68 @@ class '.$model.' extends Model
     private function migrate($file, $com)
     {
         require './app/Config/global.php';
+        $directory = './database'; 
+        $imports = scandir($directory);
+
         if(DBENGINE == 'mysql' || DBENGINE == 'mysqli') {
-            if($file == null)
-            {
-                $this->status = 'error: Please specify the filename '.PHP_EOL;
-                return false;
-            }
-            
             $mysqlDatabaseName = DBNAME;
             $mysqlUserName =DBUSER;
             $mysqlPassword =DBPASS;
             $mysqlHostName =DBSERVER;
-            $mysqlImportFilename ="./database/$file.sql";
+            $files = [];
+            if($file == null)
+            {
+                
+                foreach ($imports as $file) {
+                    // Exclude the current directory (.)
+                    // and parent directory (..) from the loop
+                    if ($file === '.' || $file === '..') {
+                        continue;
+                    }
+                    
+                    // Create the full path to the file/directory
+                    $filePath = $directory . '/' . $file;
 
-            $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
-
-            //var_dump( file_exists('postcode_withLatlang.sql') );
-
-            $output = array();
-
-            exec($command, $output, $worked);
-
-            // test whether they are imported successfully or not
-            switch ($worked) {
-                case 0:
-                    $this->status = 'success: Import file ' .$mysqlImportFilename .' successfully imported to database ' .$mysqlDatabaseName.PHP_EOL;
-                    break;
-                case 1:
-                    $this->status = 'error: There was an error during the import '.PHP_EOL;
-                    break;
+                    if(!is_dir($filePath)) {
+                        $files[] = $filePath;
+                        echo "Importing => $filePath".PHP_EOL;
+                        $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' --password="' .$mysqlPassword .'" ' .$mysqlDatabaseName .' < ' .$filePath . ' 2>&1 | grep -v "Warning: Using a password"';
+                        $output = [];
+                        exec($command, $output, $worked);
+                        switch ($worked) {
+                            case 0:
+                                echo 'success: file ' .$filePath .' successfully imported '.PHP_EOL;
+                                break;
+                            case 1:
+                                echo 'error: There was an error during the import '.PHP_EOL;
+                                break;
+                        }
+                    }
                 }
+                
+            } else {
+                $mysqlImportFilename ="./database/$file.sql";
+
+                $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
+
+                //var_dump( file_exists('postcode_withLatlang.sql') );
+
+                $output = [];
+
+                exec($command, $output, $worked);
+
+                // test whether they are imported successfully or not
+                switch ($worked) {
+                    case 0:
+                        $this->status = 'success: Import file ' .$mysqlImportFilename .' successfully imported to database ' .$mysqlDatabaseName.PHP_EOL;
+                        break;
+                    case 1:
+                        $this->status = 'error: There was an error during the import '.PHP_EOL;
+                        break;
+                }
+
+            }
+            
         } elseif (DBENGINE == 'sqlite') { 
             try {
             $table = 'users';

@@ -10,13 +10,13 @@ class User extends Model
      * $table - table name using by this model
      * @var string
      */
-    protected string $table = 'users';
+    protected $table = 'users';
 
     /**
      * Fillables - the columns in your $table
      * @var array
      */ 
-    protected array $fillable = [
+    protected $fillable = [
         'name',
         'email',
         'password_hash'
@@ -29,7 +29,6 @@ class User extends Model
      */
     public static function findByEmail($email)
     {
-        return parent::select()
-            ->only($email,'email');
+        return self::where('email', $email)->first();
     }
 }
