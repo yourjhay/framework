@@ -51,7 +51,7 @@ class Error
             'Restarting the computer may solve this problem.',
             'OMG!! What did you do this time?',
             'You might have mis-spelled a variable? It happens all the time.',
-            'Semicolon is missing!! Kidding! it is ?'
+            'Semicolon is missing!! Kidding! is it ?'
         );
         $random_title = array_rand($errorTitle);
 
@@ -94,8 +94,8 @@ class Error
             <p><h3>Stack trace: </h3><pre>'.$exception->getTraceAsString().'</pre></p>
             <p><h3>Thrown in:</h3> "'.$exception->getFile().'" on line: '.$exception->getLine().'</p>
             <br>
-            <p>© The Simple PHP Framework </p>
-            <small class="exp">Creator: <a target="_blank" href="https://www.facebook.com/profile.php">Jhay Jhay </a> - Simply PHP</small>
+            <p>© The Simply PHP Framework </p>
+            <small class="exp">Creator: <a target="_blank" href="https://rjhon.net">RJ</a> - Simply PHP</small>
             </div>
             ');
         } else {
