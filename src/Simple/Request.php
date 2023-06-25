@@ -1,9 +1,17 @@
 <?php
 
 namespace Simple;
+use Simple\Database\Connection;
 
 class Request
 {
+    use Connection;
+
+    public function __construct()
+    {
+      $this->connect();
+    }
+
     /**
      * Filters a request wether a POST, GET etc..
      * @param $user_request Request Method: POST, GET, DELETE, PUT
