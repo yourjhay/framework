@@ -279,36 +279,68 @@ class '.$model.' extends Model
     private function migrate($file, $com)
     {
         require './app/Config/global.php';
+        $directory = './database'; 
+        $imports = scandir($directory);
+
         if(DBENGINE == 'mysql' || DBENGINE == 'mysqli') {
-            if($file == null)
-            {
-                $this->status = 'error: Please specify the filename '.PHP_EOL;
-                return false;
-            }
-            
             $mysqlDatabaseName = DBNAME;
             $mysqlUserName =DBUSER;
             $mysqlPassword =DBPASS;
             $mysqlHostName =DBSERVER;
-            $mysqlImportFilename ="./database/$file.sql";
+            $files = [];
+            if($file == null)
+            {
+                
+                foreach ($imports as $file) {
+                    // Exclude the current directory (.)
+                    // and parent directory (..) from the loop
+                    if ($file === '.' || $file === '..') {
+                        continue;
+                    }
+                    
+                    // Create the full path to the file/directory
+                    $filePath = $directory . '/' . $file;
 
-            $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
-
-            //var_dump( file_exists('postcode_withLatlang.sql') );
-
-            $output = array();
-
-            exec($command, $output, $worked);
-
-            // test whether they are imported successfully or not
-            switch ($worked) {
-                case 0:
-                    $this->status = 'success: Import file ' .$mysqlImportFilename .' successfully imported to database ' .$mysqlDatabaseName.PHP_EOL;
-                    break;
-                case 1:
-                    $this->status = 'error: There was an error during the import '.PHP_EOL;
-                    break;
+                    if(!is_dir($filePath)) {
+                        $files[] = $filePath;
+                        echo "Importing => $filePath".PHP_EOL;
+                        $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' --password="' .$mysqlPassword .'" ' .$mysqlDatabaseName .' < ' .$filePath . ' 2>&1 | grep -v "Warning: Using a password"';
+                        $output = [];
+                        exec($command, $output, $worked);
+                        switch ($worked) {
+                            case 0:
+                                echo 'success: file ' .$filePath .' successfully imported '.PHP_EOL;
+                                break;
+                            case 1:
+                                echo 'error: There was an error during the import '.PHP_EOL;
+                                break;
+                        }
+                    }
                 }
+                
+            } else {
+                $mysqlImportFilename ="./database/$file.sql";
+
+                $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' -p' .$mysqlPassword .' ' .$mysqlDatabaseName .' < ' .$mysqlImportFilename;
+
+                //var_dump( file_exists('postcode_withLatlang.sql') );
+
+                $output = [];
+
+                exec($command, $output, $worked);
+
+                // test whether they are imported successfully or not
+                switch ($worked) {
+                    case 0:
+                        $this->status = 'success: Import file ' .$mysqlImportFilename .' successfully imported to database ' .$mysqlDatabaseName.PHP_EOL;
+                        break;
+                    case 1:
+                        $this->status = 'error: There was an error during the import '.PHP_EOL;
+                        break;
+                }
+
+            }
+            
         } elseif (DBENGINE == 'sqlite') { 
             try {
             $table = 'users';
