@@ -1,13 +1,10 @@
 <?php
 
 namespace Simple;
+use Illuminate\Database\Eloquent\Model as EM;
 
-class Model extends BaseModel
-{
-    protected array $fillable;
-    protected string $table;
-    public int $id;
-    
+class Model extends EM {
+
     /**
      * @param $param - Table to be check
      * @param $column - lookup Column to check
@@ -38,66 +35,4 @@ class Model extends BaseModel
 
         return $res;
     }
-
-
-    /**
-     * set properties
-     *
-     * @param [type] $name
-     * @param [type] $value
-     */
-    public function __set($name, $value)
-    {
-        if (in_array($name, $this->fillable))
-        {
-            foreach ($this->fillable as $fill)
-            {
-                if ($name == $fill) {
-                    $this->$name = trim($value);
-                }
-            }
-        }
-        if($name=='id'){
-            $this->id = $value;
-        }
-    }
-
-    /**
-     * get properties
-     *
-     * @param [type] $name
-     * @return string
-     */
-    public function __get($name)
-    {
-        return $this->$name;
-    }
-
-    /**
-     *  Fill data to fillable properties of the model and save/update database
-     * @return \PDOStatement
-     * @throws \Exception
-     */
-    public final function save()
-    {
-        $data=[];
-        foreach ($this->fillable as $fill) {
-           if (isset($this->$fill)) {
-            $data[$fill] = $this->$fill;
-           } else {
-            $data[$fill] = null;
-           }
-        }
-        
-         if(isset($this->id)) {
-            $this->update($data,['id'=>$this->id]);
-         } else {
-            $this->insert($data);
-            $this->id = $this->con->id();
-         }
-        
-         return $this;
-    }
-
-    
 }

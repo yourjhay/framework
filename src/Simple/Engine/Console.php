@@ -233,14 +233,14 @@ class '.$model.' extends Model
      *
      * @var string
      */
-    protected string $table = \''.\strtolower($model) .'s\';
+    protected $table = \''.\strtolower($model) .'s\';
 
     /**
      * Fillables - the columns in you $table 
      *
      * @var array
      */
-    protected array $fillable = [];
+    protected $fillable = [];
 
     /**
      *  This is generated '.$model.' model.
