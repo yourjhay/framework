@@ -242,10 +242,10 @@ class UserObserver
      */
                 
 }'; 
-            if(file_exists("$this->observerPath$model.php")) {
+            if(file_exists("$this->observerPath{$model}Observer.php")) {
                 $this->status = 'error: '.$model.' Observer is already exist!'.PHP_EOL;
             } else {
-                $file = fopen("$this->observerPath$model.php", 'w');
+                $file = fopen("$this->observerPath{$model}Observer.php", 'w');
                 if(fwrite($file,$content)) {
                     $this->status = 'success: Observer '.$model.' created successfuly '.PHP_EOL;
                 } else {
