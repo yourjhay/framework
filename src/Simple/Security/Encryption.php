@@ -24,12 +24,12 @@ class Encryption {
     public static function baseDecrypt($ciphertext) 
     {
         $key = self::loadEncryptionKeyFromConfig();
-        return Crypto::decrypt($ciphertext,$key);
+        return Crypto::decrypt($ciphertext, $key);
     }
 
     public static function baseEncrypt($data) 
     {
         $key = self::loadEncryptionKeyFromConfig();
-        return Crypto::encrypt($data,$key);
+        return Crypto::encrypt($data, $key);
     }
 }

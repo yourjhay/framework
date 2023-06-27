@@ -1,13 +1,19 @@
 <?php
 
 namespace Simple\Database;
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Container\Container;
 
-trait Connection {
+/**
+ * Trait for Capsule Connetion
+ */
+trait Connection 
+{
 
     private $capsule = null;
+
     /**
      * Initiate Connection using capsule;
      *
@@ -15,9 +21,10 @@ trait Connection {
      */
     public function connect()
     {      
-        if(!$this->capsule) {
+        if (!$this->capsule) {
             $capsule = new Capsule;
-            $capsule->addConnection([
+            $capsule->addConnection
+            ([
                 'driver'    => DBENGINE,
                 'host'      => DBSERVER,
                 'database'  => DBNAME,
