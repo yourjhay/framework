@@ -10,8 +10,10 @@ class Request
     public function __construct()
     {
       $this->connect();
-      $events = new \App\Providers\EventServiceProvider;
-      $events->boot();
+      if(class_exists(\App\Providers\EventServiceProvider::class)) {
+        $events = new \App\Providers\EventServiceProvider;
+        $events->boot();
+      }
     }
 
     /**
