@@ -28,7 +28,7 @@ class BaseRouter
      * @param array $params Parameters (controller, action, etc.)
      * @param string $http_method - Request method
      */
-    protected static function set($route, $params = [], $http_method="GET")
+    protected static function set($route, $params = [], $http_method="ANY")
     {
         //Assign group to route
         $route = self::$currentGroupPrefix . $route;
@@ -38,25 +38,35 @@ class BaseRouter
             $params = [];
             $params['controller'] = $param[0];
             $params['action'] = $param[1];
-            
+
         } 
         $params['request_method'] = $http_method;
         self::$raw_current_route = $route;
+
+        $r = null;
+        /**
+         * Check if there's a optional parameter that is set
+         * store it and create a route without the optional 
+         * so it will not result in 404
+         */
+        if(preg_match('/\{([a-z]+)([?]+)\}/',$route)) {
+            $r = preg_replace('/\/{([a-z]+)([?]+)\}/','',$route);
+        }
         
         //convert the route to a regular exp. escape forward slashes
         $route = preg_replace('/\//','\\/', $route);        
 
         //convert var like {controller}
-        $route = preg_replace('/\{([a-z]+)\}/','(?P<\1>[a-z-]+)', $route);
-
-        //convert optional variable
-        $route = preg_replace('/\{([a-z]+)([?]+)\}/', '(?P<\1>\w+)\2', $route);
-
+        $route = preg_replace('/\{([a-z]+)\}/','(?P<\1>[a-z-]+)', $route);     
+        
         //convert variables with custom regex eg: {id: \d+}
         $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
 
         //this convert {:all?} to accept any url pass through
         $route = preg_replace('/\{([:]+)([all]+)([?]+)\}/', '(?P<\2>([a-z0-9\/-]+))\3', $route);
+        
+        //convert optional variable
+        $route = preg_replace('/\{([a-z]+)([?]+)\}/', '(?P<\1>\w+)\2', $route);
 
         //add start and end delimiters, case insensitive flag
         $route = '/^' . $route . '$/i';
@@ -66,6 +76,9 @@ class BaseRouter
         self::$current_param = $params;
 
         self::$routes[$route] = $params;
+        if($r) {
+            self::set($r, $params, $http_method);
+        }
     }    
 
     /**
@@ -147,12 +160,7 @@ class BaseRouter
      */
     public static function dispatch($url)
     {
-        $url_orig = $url;
-        $retry = 0;
-
         $url = self::removeQueryString($url);
-
-        tryagain:
 
         if (self::match($url)) {
             if (preg_match('/controller$/i', self::$params['controller']) == 0) {
@@ -189,21 +197,7 @@ class BaseRouter
                 throw new \Exception("Controller class [$controller] not found");
             }
         } else {
-            if ($retry > 0){
-                throw new \Exception("INVALID ROUTE [$url]", 404);
-            } else {
-
-                if (substr($url,-1) == '/'
-                    && $retry==0
-                ) {
-                    $url = substr($url,0,-1);
-                    $retry+=1;
-                } else {
-                    $url = $url_orig.'/';
-                    $retry+=1;
-                }
-                goto tryagain;
-            }
+            throw new \Exception("INVALID ROUTE [$url]", 404);
         }
     }
 
@@ -246,6 +240,8 @@ class BaseRouter
                     $url = explode('?',$parts[0]);
                 }
             }
+        } else {
+            $url = "/";
         }
         return is_array($url)?$url[0]:$url;
     }

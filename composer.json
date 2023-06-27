@@ -2,12 +2,12 @@
     "name": "simplyphp/framework",
     "description": "The Simply PHP is lightweight web application framework.",
     "keywords": ["php framework", "simplyphp", "micro framework"],
-    "homepage": "https://gitlab.com/jhayann/simple",
+    "homepage": "https://rjhon.net",
     "license": "MIT",
     "authors": [
         {
-            "name": "Rey Jhon A. Baquirin",
-            "email": "reyjhonbaquirin@yahoo.com",
+            "name": "RJ A. Baquirin",
+            "email": "message@rjhon.net",
             "role": "Magic Programmer"
         }
     ],
