@@ -33,8 +33,8 @@ class BaseRouter
         //Assign group to route
         $route = self::$currentGroupPrefix . $route;
 
-        if(is_string($params)){            
-            $param = explode('@',$params);
+        if (is_string($params)){            
+            $param = explode('@', $params);
             $params = [];
             $params['controller'] = $param[0];
             $params['action'] = $param[1];
@@ -49,8 +49,8 @@ class BaseRouter
          * store it and create a route without the optional 
          * so it will not result in 404
          */
-        if(preg_match('/\{([a-z]+)([?]+)\}/',$route)) {
-            $r = preg_replace('/\/{([a-z]+)([?]+)\}/','',$route);
+        if (preg_match('/\{([a-z]+)([?]+)\}/', $route)) {
+            $r = preg_replace('/\/{([a-z]+)([?]+)\}/','', $route);
         }
         
         //convert the route to a regular exp. escape forward slashes
@@ -76,7 +76,7 @@ class BaseRouter
         self::$current_param = $params;
 
         self::$routes[$route] = $params;
-        if($r) {
+        if ($r) {
             self::set($r, $params, $http_method);
         }
     }    
@@ -133,9 +133,9 @@ class BaseRouter
     public static function match($url)
     {
         foreach(self::$routes as $route => $params){
-            if(preg_match($route, $url, $matches)){
+            if (preg_match($route, $url, $matches)){
                 foreach($matches as $key => $match){
-                    if(is_string($key)){
+                    if (is_string($key)){
                         $params[$key] = $match;
                     }
                 }
@@ -179,7 +179,7 @@ class BaseRouter
 
                 if (preg_match('/action$/i', $action) == 0) {
                     $request = $_SERVER['REQUEST_METHOD'];
-                    if(isset($_POST['_method'])){
+                    if (isset($_POST['_method'])){
                         $request = $_POST['_method'];
                     }           
                     $user_request_method = strtoupper(self::$params['request_method']);
@@ -237,7 +237,7 @@ class BaseRouter
                 if (strpos($parts[0], '?') === false){
                     $url = '';
                 } else {
-                    $url = explode('?',$parts[0]);
+                    $url = explode('?', $parts[0]);
                 }
             }
         } else {

@@ -7,13 +7,17 @@ class Request
 {
     use Connection;
 
+    /**
+     * Connect to Database upon booting request
+     * then run service provider
+     */
     public function __construct()
     {
-      $this->connect();
-      if(class_exists(\App\Providers\EventServiceProvider::class)) {
-        $events = new \App\Providers\EventServiceProvider;
-        $events->boot();
-      }
+        $this->connect();
+        if (class_exists(\App\Providers\EventServiceProvider::class)) {
+            $events = new \App\Providers\EventServiceProvider;
+            $events->boot();
+        }
     }
 
     /**
@@ -70,7 +74,7 @@ class Request
         if ($key == null) {
             return $_POST;
         } else {
-            if(isset($_POST[$key])) {
+            if (isset($_POST[$key])) {
                 return $_POST[$key];
             }
             return null; 

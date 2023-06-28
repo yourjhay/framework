@@ -34,11 +34,11 @@ class View
      */
     private static function create($view, $html=false)
     {
-        $name = str_replace('.','/',$view);
-        $paths = explode('/',$name);
+        $name = str_replace('.','/', $view);
+        $paths = explode('/', $name);
         $file=null;
         foreach ($paths as $key => $path){
-            if($key >0){
+            if ($key >0){
                 $p='/';
             } else {
                 $p=null;
@@ -55,8 +55,10 @@ class View
 
     /**
      * Render A view using twig template Engine
+     * 
      * @param string $template - View name
      * @param array $args - Data to be pass in the view
+     * 
      * @return string
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
@@ -88,7 +90,7 @@ class View
         $twig->addGlobal('baseurl', $url);
         $twig->addGlobal('old', Session::get('_old'));
         $twig->addGlobal('_get', $_GET);
-        if(Session::get('user')) {
+        if (Session::get('user')) {
             $twig->addGlobal('user', json_decode(Session::get('user'), true));
         }
         Session::unset('_old');

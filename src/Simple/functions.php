@@ -25,7 +25,7 @@ namespace Simple;
          */
         function bcrypt($string, $option = array())
         {
-            if($option) {
+            if ($option) {
                 return password_hash($string, PASSWORD_BCRYPT, $option);
             } else {
                 return password_hash($string, PASSWORD_BCRYPT);
@@ -56,7 +56,7 @@ namespace Simple;
                 '127.0.0.1'
             );
             $localhost = false;
-            if (in_array($_SERVER['REMOTE_ADDR'],$addr))
+            if (in_array($_SERVER['REMOTE_ADDR'], $addr))
             {
                 $localhost =true;
             }

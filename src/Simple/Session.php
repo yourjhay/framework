@@ -31,11 +31,11 @@ class Session
     }
 
     /**
-     *  Set a new session
+     * Set a new session
      * @param string $key Session Key
      * @param array|string $data Session data associated with the key
      */
-    public static function set(string $key , $data=[])
+    public static function set(string $key, $data=[])
     {
         $_SESSION[$key] = $data;
     }
@@ -43,15 +43,15 @@ class Session
     /**
      * Return the session data
      * @param string|null $key Session to be return
-     * @return array|null
+     * @return $_SESSION
      */
     public static function get(string $key = null)
     {
         if ($key!=null) {
             return $_SESSION[$key] ?? null;
-        } else {
-            return $_SESSION;
         }
+        
+        return $_SESSION;
     }
 
     /**

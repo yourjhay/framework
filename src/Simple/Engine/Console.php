@@ -19,7 +19,7 @@ class Console
     {
         $this->status = null;
         $this->argv = null;
-        if($argc) {
+        if ($argc) {
             $this->argv = $argv;
         }
         $this->output = new co;
@@ -70,12 +70,12 @@ class Console
 
     public function print_status()
     {
-        if($this->status) {
-            $status = explode(':',$this->status);
+        if ($this->status) {
+            $status = explode(':', $this->status);
             if ($status[0] == 'error') {
             $status = $this->output->print_o($status[1], "white", "red");
                 echo $status;
-            } else if($status[0] == 'success') {
+            } else if ($status[0] == 'success') {
                 $status = $this->output->print_o($status[1], "black", "green");
                 echo $status;
             }
@@ -86,13 +86,13 @@ class Console
     {
 
         $model = $name;
-        if($name) {
-            if(!preg_match("/controller$/i", $name))
+        if ($name) {
+            if (!preg_match("/controller$/i", $name))
             {
                 $name = $name.'Controller';
             }
             $name = self::convertToStudlyCaps($name);       
-if($option== trim("-r") || $option== trim("-rm")){
+if ($option== trim("-r") || $option== trim("-rm")){
     $contentController = '<?php
 namespace App\Controllers;
     
@@ -169,10 +169,10 @@ class '.$name.' extends Controller
     }
 
 }';
-    if($option == trim("-rm")){
+    if ($option == trim("-rm")){
         self::createModel($model);
     }
-} else if($option==null) {
+} else if ($option==null) {
     $contentController = '<?php
 namespace App\Controllers;
     
@@ -188,7 +188,7 @@ class '.$name.' extends Controller
     
 }';
 
-} else if($option == trim("-m")) {
+} else if ($option == trim("-m")) {
     $contentController = '<?php
 namespace App\Controllers;
     
@@ -205,7 +205,7 @@ class '.$name.' extends Controller
 }';
     self::createModel($model);
 }
-            if(file_exists("$this->controllerPath$name.php")) {
+            if (file_exists("$this->controllerPath$name.php")) {
                 $this->status = 'error: '.$name.' Controller is already exist!'.PHP_EOL;
             } else {
                 $file = fopen("$this->controllerPath$name.php", 'w');
@@ -223,7 +223,7 @@ class '.$name.' extends Controller
 
     private function createObserver($model)
     {
-        if($model) {
+        if ($model) {
             $model = self::convertToStudlyCaps($model);
             $content = '<?php
 
@@ -242,11 +242,11 @@ class UserObserver
      */
                 
 }'; 
-            if(file_exists("$this->observerPath{$model}Observer.php")) {
+            if (file_exists("$this->observerPath{$model}Observer.php")) {
                 $this->status = 'error: '.$model.' Observer is already exist!'.PHP_EOL;
             } else {
                 $file = fopen("$this->observerPath{$model}Observer.php", 'w');
-                if(fwrite($file,$content)) {
+                if (fwrite($file, $content)) {
                     $this->status = 'success: Observer '.$model.' created successfuly '.PHP_EOL;
                 } else {
                     $this->status = 'error: failed to create observer '.PHP_EOL;
@@ -260,7 +260,7 @@ class UserObserver
 
     private function createModel($model)
     {
-        if($model) {
+        if ($model) {
             $model = self::convertToStudlyCaps($model);  
 $content = '<?php
 namespace App\Models;
@@ -290,11 +290,11 @@ class '.$model.' extends Model
      */
 }
 ';
-            if(file_exists("$this->modelPath$model.php")) {
+            if (file_exists("$this->modelPath$model.php")) {
                 $this->status = 'error: '.$model.' Model is already exist!'.PHP_EOL;
             } else {
                 $file = fopen("$this->modelPath$model.php", 'w');
-                if(fwrite($file,$content)) {
+                if (fwrite($file, $content)) {
                     $this->status = 'success: Model '.$model.' created successfuly '.PHP_EOL;
                 } else {
                     $this->status = 'error: failed to create model '.PHP_EOL;
@@ -323,13 +323,13 @@ class '.$model.' extends Model
         $directory = './database'; 
         $imports = scandir($directory);
 
-        if(DBENGINE == 'mysql' || DBENGINE == 'mysqli') {
+        if (DBENGINE == 'mysql' || DBENGINE == 'mysqli') {
             $mysqlDatabaseName = DBNAME;
             $mysqlUserName =DBUSER;
             $mysqlPassword =DBPASS;
             $mysqlHostName =DBSERVER;
             $files = [];
-            if($file == null)
+            if ($file == null)
             {
                 
                 foreach ($imports as $file) {
@@ -342,7 +342,7 @@ class '.$model.' extends Model
                     // Create the full path to the file/directory
                     $filePath = $directory . '/' . $file;
 
-                    if(!is_dir($filePath)) {
+                    if (!is_dir($filePath)) {
                         $files[] = $filePath;
                         echo "Importing => $filePath".PHP_EOL;
                         $command='mysql -h' .$mysqlHostName .' -u' .$mysqlUserName .' --password="' .$mysqlPassword .'" ' .$mysqlDatabaseName .' < ' .$filePath . ' 2>&1 | grep -v "Warning: Using a password"';
@@ -388,7 +388,7 @@ class '.$model.' extends Model
             $db = new PDO("sqlite:"."./database/database.db");
             $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
-                if($file=='-c'){
+                if ($file=='-c'){
                     $sql = $com;
                 } elseif ($file =='users') {
                     $sql ="CREATE TABLE IF NOT EXISTS $table(
@@ -400,8 +400,8 @@ class '.$model.' extends Model
                 }           
                    
                     echo PHP_EOL;
-                    $command_ = explode(' ',$sql);
-                    if(strtoupper($command_[0]) === "SELECT"){
+                    $command_ = explode(' ', $sql);
+                    if (strtoupper($command_[0]) === "SELECT"){
                         $res = $db->query($sql);   
                         $i=0;          
                         $col=[]; 
@@ -412,7 +412,7 @@ class '.$model.' extends Model
                         {
                             $i++;
                             foreach($row as $key => $val){
-                               if($i==1){
+                               if ($i==1){
                                     $col[] .= $key;
                                    
                                 } $v[]=$val;
@@ -491,7 +491,7 @@ class '.$model.' extends Model
         $mainRoute = "./app/Routes.php";
         file_put_contents($mainRoute, PHP_EOL.$file, FILE_APPEND | LOCK_EX);
 
-        if($success!=false){
+        if ($success!=false){
             $this->status = 'success: Auth scaffolding created successfully  '.PHP_EOL;
         }
     }
@@ -523,12 +523,12 @@ class '.$model.' extends Model
             $password = trim($line);
             fclose($handle);
             $password = password_hash($password, PASSWORD_BCRYPT);
-            if(DBENGINE=='mysqli' || DBENGINE == 'mysql') {
-                $db = new mysqli ($dbserver,$dbuser,$dbpass,$dbname);
+            if (DBENGINE=='mysqli' || DBENGINE == 'mysql') {
+                $db = new mysqli ($dbserver, $dbuser, $dbpass, $dbname);
                 $stmt = $db->prepare("INSERT INTO users(name,email,password_hash) VALUES(?,?,?)") or die($db->error);
                
-                $stmt->bind_param("sss",$name,$email,$password);
-                if($stmt->execute()){
+                $stmt->bind_param("sss", $name, $email, $password);
+                if ($stmt->execute()){
                     echo $this->output->print_o(PHP_EOL." Seeding successfull " , "black", "green");
                 } else {
                     echo $this->output->print_o(" Seeding failed: $stmt->error", "white", "red");
@@ -564,7 +564,7 @@ class '.$model.' extends Model
             $line = fgets($handle);
             $ans = trim($line);
             fclose($handle);
-            if($ans == 'yes') {
+            if ($ans == 'yes') {
                 goto start;
             } else {
                 return false;
@@ -579,12 +579,12 @@ class '.$model.' extends Model
     public function serve($host, $port)
     {
             $host = $host == null ? 'localhost':$host;
-            $port = $port == null ? '8000':explode('=',$port);
+            $port = $port == null ? '8000':explode('=', $port);
             $port = is_array($port) ? $port[1] : $port;  
         $command = "php -S $host:$port -t public/";
         echo $this->output->print_o("Simply Development Server started at: http://$host:$port".PHP_EOL, 'green', 'white');
         echo $this->output->print_o("Press CTRL+C to cancel".PHP_EOL, 'green', 'black');
-        exec($command,$worked,$output);
+        exec($command, $worked, $output);
     }
 
     /**
@@ -598,7 +598,7 @@ class '.$model.' extends Model
             $dir = './app/Config/global.php';
             $contents = file_get_contents($dir);
             $new_contents= "";
-            if( strpos($contents, $id) !== false) { 
+            if ( strpos($contents, $id) !== false) { 
                 $contents_array = preg_split("/\\r\\n|\\r|\\n/", $contents);
                 foreach ($contents_array as &$record) { 
                     if (strpos($record, $id) !== false) { 

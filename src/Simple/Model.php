@@ -3,7 +3,11 @@
 namespace Simple;
 use Illuminate\Database\Eloquent\Model as EM;
 
-class Model extends EM {
+/**
+ * Main model class to extend Illuminate\Database\Eloquent\Model
+ */
+class Model extends EM 
+{
 
     /**
      * @param $param - Table to be check
@@ -13,26 +17,22 @@ class Model extends EM {
      */
     public static function unique_checker(array $param, string $column, string $data)
     {
-        $ignore=null;
-        $ignore_col = null;
-        $count = count($param);
-
         $table = $param[0];
         $ignore = isset($param[1]) ? $param[1] : null;
         $ignore_col = isset($param[2]) ? $param[2] : 'id';
 
-        if ($count === 1) {
+        if (count($param) === 1) {
             $table = $param[0];
-        } elseif ($count !== 3) {
+        } elseif (count($param) !== 3) {
             $ignore = $param[1];
         }
 
-        $res = parent::table($table)->where($column,$data);
-        if($ignore) {
-            $res = $res->where($ignore_col,'!',$ignore);
-        }
-        $res = $res->count();
+        $res = parent::table($table)->where($column, $data);
 
-        return $res;
+        if ($ignore) {
+            $res = $res->where($ignore_col, '!', $ignore);
+        }
+
+        return $res->count();
     }
 }
