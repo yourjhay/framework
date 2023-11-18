@@ -57,7 +57,7 @@ class BaseRouter
         $route = preg_replace('/\//','\\/', $route);        
 
         //convert var like {controller}
-        $route = preg_replace('/\{([a-z]+)\}/','(?P<\1>[a-z-]+)', $route);     
+        $route = preg_replace('/\{([a-z]+)\}/','(?P<\1>[a-zA-Z-]+)', $route);     
         
         //convert variables with custom regex eg: {id: \d+}
         $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
@@ -78,7 +78,7 @@ class BaseRouter
         self::$routes[$route] = $params;
         if ($r) {
             self::set($r, $params, $http_method);
-        }
+        } 
     }    
 
     /**
@@ -161,7 +161,7 @@ class BaseRouter
     public static function dispatch($url)
     {
         $url = self::removeQueryString($url);
-
+       
         if (self::match($url)) {
             if (preg_match('/controller$/i', self::$params['controller']) == 0) {
                 $controller = self::$params['controller'].'Controller';
@@ -173,9 +173,8 @@ class BaseRouter
             $controller = self::getNamespace() . $controller;
             
             if (class_exists($controller)){
-                $controller_object = new $controller(self::$params);
-                $action = self::$params['action'];
-                $action = self::convertToCamelCase($action);
+                $controller_class = new $controller(self::$params);
+                $action = self::convertToCamelCase(self::$params['action']);
 
                 if (preg_match('/action$/i', $action) == 0) {
                     $request = $_SERVER['REQUEST_METHOD'];
@@ -186,7 +185,8 @@ class BaseRouter
                     if ($request === $user_request_method
                         || $user_request_method === 'ANY'
                     ) {
-                        echo $controller_object->$action(new \Simple\Request);
+                        $dispatcher = new ControllerDispatcher(static::$params);
+                        $dispatcher->dispatch($controller_class, $action);
                     } else {
                         throw new \Exception("$request Method not allowed", 405);
                     } 

@@ -23,7 +23,7 @@ class Router Extends BaseRouter
      * @return Router
      */
     public static function get($route, $params = [])
-    {     
+    {
         parent::set($route, $params, 'GET');
         return new static;
     }
