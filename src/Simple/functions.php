@@ -61,7 +61,7 @@ namespace Simple;
                 $localhost =true;
             }
             $url = $localhost == true ? substr($_SERVER['REQUEST_URI'],1) : $_SERVER['QUERY_STRING'];
-            return $url;
+            return preg_replace('/\/*$/', '', $url);
         }
     }
 
@@ -76,8 +76,12 @@ namespace Simple;
                 if ($alias == $key){
                     $url=$val['url'];
                 if ($param!==null) {
-                    $url = preg_replace('/\{([a-z]+):([^\}]+)\}/', $param, $val['url']);
+                    $url = preg_replace('/\{([a-z]+)\}/', $param, $val['url']);     
+                    if(preg_match('/\{([a-z]+):([^\}]+)\}/', $val['url'])) {
+                        $url = preg_replace('/\{([a-z]+):([^\}]+)\}/', $param, $val['url']);
+                    }
                 }   
+               
                 return $url;
                }
            }
