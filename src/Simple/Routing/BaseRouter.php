@@ -8,19 +8,20 @@ class BaseRouter
      * Associative array of register routes
      * @var array
      */
-    protected static $routes = [];
+    protected static array $routes = [];
 
     /**
      * Parameters from matched routes
      * @var array
      */
-    protected static $params = [];
+    protected static array $params = [];
 
-    private static $current_route;
-    private static $current_param;
-    protected static $raw_current_route;
-    protected static $compiled_routes =[];
-    protected static $currentGroupPrefix = '';
+    private static string $current_route;
+    private static array $current_param;
+    protected static string $raw_current_route;
+    protected static array $compiled_routes =[];
+    protected static string $currentGroupPrefix = '';
+
 
     /**
      * register routes
@@ -28,79 +29,92 @@ class BaseRouter
      * @param array $params Parameters (controller, action, etc.)
      * @param string $http_method - Request method
      */
-    protected static function set($route, $params = [], $http_method="ANY")
+    protected static function set(string $route, $params = [], $http_method="ANY")
     {
         //Assign group to route
         $route = self::$currentGroupPrefix . $route;
 
-        if (is_string($params)){            
+        if (is_string($params)){
             $param = explode('@', $params);
             $params = [];
             $params['controller'] = $param[0];
             $params['action'] = $param[1];
 
-        } 
+        }
         $params['request_method'] = $http_method;
         self::$raw_current_route = $route;
 
-        $r = null;
+        $twin_route = null;
         /**
          * Check if there's a optional parameter that is set
-         * store it and create a route without the optional 
+         * store it and create a route without the optional
          * so it will not result in 404
          */
-        if (preg_match('/\{([a-z]+)([?]+)\}/', $route)) {
-            $r = preg_replace('/\/{([a-z]+)([?]+)\}/','', $route);
+        if (preg_match('/{([a-z]+)(\?)}/', $route)) {
+            $twin_route = preg_replace('/\/{([a-z]+)(\?)}/','', $route);
         }
-        
-        //convert the route to a regular exp. escape forward slashes
-        $route = preg_replace('/\//','\\/', $route);        
+        // optional parameter with a regex
+        if (preg_match('/{([a-z]+)(\?):([^}]+)}/', $route)) {
+            $twin_route = preg_replace('/\/{([a-z]+)(\?):([^}]+)}/','', $route);
+        }
 
-        //convert var like {controller}
-        $route = preg_replace('/\{([a-z]+)\}/','(?P<\1>[a-zA-Z-]+)', $route);     
-        
+        //convert the route to a regular exp. escape forward slashes
+        $route = preg_replace('/\//','\\/', $route);
+
+        //convert var like {controller} with accept case insensitive letters and numbers
+        $route = preg_replace('/{([a-z]+)}/','(?P<\1>[a-zA-Z0-9]+)', $route);
+
         //convert variables with custom regex eg: {id: \d+}
-        $route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $route);
+        $route = preg_replace('/{([a-z]+):([^}]+)}/', '(?P<\1>\2)', $route);
 
         //this convert {:all?} to accept any url pass through
-        $route = preg_replace('/\{([:]+)([all]+)([?]+)\}/', '(?P<\2>([a-z0-9\/-]+))\3', $route);
-        
+        $route = preg_replace('/{(:all\?)}/', '(?P<all>[a-z0-9\/-]+)', $route);
+
         //convert optional variable
-        $route = preg_replace('/\{([a-z]+)([?]+)\}/', '(?P<\1>\w+)\2', $route);
+        $route = preg_replace('/{([a-z]+)(\?)}/', '(?P<$1>[a-zA-Z0-9-]+)', $route);
+
+        //convert optional variables with custom regex eg: {id?:\d+}
+        $route = preg_replace('/{([a-z]+)(\?):([^}]+)}/','(?P<\1>\3)', $route);
 
         //add start and end delimiters, case insensitive flag
-        $route = '/^' . $route . '$/i';
+        $route = self::addDelimiters($route);
 
         // this set the variable value to be use in alias()
         self::$current_route = $route;
         self::$current_param = $params;
 
         self::$routes[$route] = $params;
-        if ($r) {
-            self::set($r, $params, $http_method);
-        } 
-    }    
+        if ($twin_route) {
+            $route = self::addDelimiters($twin_route);
+            self::$routes[$route] = $params;
+        }
+    }
 
-    /**
-     * Set an alias to a route 
-     * @param string 
-     * @return void
-     */
-    public static function alias($alias)
-    {       
-        self::routeCompiler($alias, '/'.self::$raw_current_route, self::$current_param); 
-        self::$current_param['alias'] = $alias;
-        self::$routes[self::$current_route] =self::$current_param;        
+    public static function addDelimiters(string $route): string
+    {
+        return '/^' . $route . '$/i';
     }
 
     /**
-     * Routes compiler 
+     * Set an alias to a route
+     * @param string
+     * @return void
+     */
+    public static function alias($alias)
+    {
+        self::routeCompiler($alias, '/'.self::$raw_current_route, self::$current_param);
+        self::$current_param['alias'] = $alias;
+        self::$routes[self::$current_route] =self::$current_param;
+    }
+
+    /**
+     * Routes compiler
      * @param string $name route alias
      * @param string $route url
      * @param array $params url parameters
      * @return void
      */
-    public static function routeCompiler($name, $route, $params=[])
+    public static function routeCompiler(string $name, string $route, $params=[])
     {
         $params['url'] = $route;
         self::$compiled_routes[$name] = $params;
@@ -110,7 +124,7 @@ class BaseRouter
      * Return Compiled routes that has an alias
      * @return array
      */
-    public static function compiledRoutes()
+    public static function compiledRoutes(): array
     {
         return self::$compiled_routes;
     }
@@ -119,7 +133,7 @@ class BaseRouter
      * Return all available routes
      * @return array
      */
-    public static function getRoutes()
+    public static function getRoutes(): array
     {
         return self::$routes;
     }
@@ -130,7 +144,7 @@ class BaseRouter
      * @param string $url - The route URL
      * @return boolean true if match found else false
      */
-    public static function match($url)
+    public static function match(string $url): bool
     {
         foreach(self::$routes as $route => $params){
             if (preg_match($route, $url, $matches)){
@@ -144,12 +158,12 @@ class BaseRouter
             }
         }
         return false;
-    }    
+    }
 
     /**
      * Get matched parameters
      */
-    public static function getParams()
+    public static function getParams(): array
     {
         return self::$params;
     }
@@ -157,21 +171,22 @@ class BaseRouter
     /**
      * Dispatch route parameter to URL
      *
+     * @throws \Exception
      */
     public static function dispatch($url)
     {
-        $url = self::removeQueryString($url);
-       
+        $url =  self::removeQueryString($url);
+
         if (self::match($url)) {
             if (preg_match('/controller$/i', self::$params['controller']) == 0) {
                 $controller = self::$params['controller'].'Controller';
             } else {
                 $controller = self::$params['controller'];
             }
-            
+
             $controller = self::convertToStudlyCaps($controller);
             $controller = self::getNamespace() . $controller;
-            
+
             if (class_exists($controller)){
                 $controller_class = new $controller(self::$params);
                 $action = self::convertToCamelCase(self::$params['action']);
@@ -180,7 +195,7 @@ class BaseRouter
                     $request = $_SERVER['REQUEST_METHOD'];
                     if (isset($_POST['_method'])){
                         $request = $_POST['_method'];
-                    }           
+                    }
                     $user_request_method = strtoupper(self::$params['request_method']);
                     if ($request === $user_request_method
                         || $user_request_method === 'ANY'
@@ -189,7 +204,7 @@ class BaseRouter
                         $dispatcher->dispatch($controller_class, $action);
                     } else {
                         throw new \Exception("$request Method not allowed", 405);
-                    } 
+                    }
                 } else {
                     throw new \Exception("Method [$action] (in Controller [$controller] ) can't be called explicitly. Remove Action suffix instead");
                 }
@@ -206,7 +221,7 @@ class BaseRouter
      * @var string
      * @return string
      */
-    private static function convertToStudlyCaps($string)
+    private static function convertToStudlyCaps($string): string
     {
         return str_replace(' ','',ucwords(str_replace('-',' ', $string)));
     }
@@ -216,7 +231,7 @@ class BaseRouter
      * @var string
      * @return string
      */
-    private static function convertToCamelCase($string)
+    private static function convertToCamelCase($string): string
     {
         return lcfirst(self::convertToStudlyCaps($string));
     }
@@ -227,7 +242,7 @@ class BaseRouter
      * @param string $url
      * @return array or string URL
      */
-    protected static function removeQueryString($url)
+    protected static function removeQueryString(string $url)
     {
         if ($url != ''){
             $parts = explode('&', $url, 2);
@@ -247,15 +262,15 @@ class BaseRouter
     }
 
     /**
-     * Getnamespace in route params to specify where it has to be called
+     * Get namespace in route params to specify where it has to be called
      * @return string $namespace
      */
-    protected static function getNamespace()
+    protected static function getNamespace(): string
     {
         $namespace = 'App\Controllers\\';
         if (array_key_exists('namespace', self::$params)) {
             $namespace .= self::$params['namespace'] . '\\';
-        }        
+        }
         return $namespace;
     }
 }
