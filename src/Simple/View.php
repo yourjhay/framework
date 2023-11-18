@@ -4,6 +4,13 @@ namespace Simple;
 
 class View
 {
+    private Request $request;
+
+    public function __construct()
+    {
+        $this->request = new Request;
+    }
+
     /**
      * Render A view
      * @param string $view - The file my dear
@@ -47,24 +54,22 @@ class View
         }
         if ($html==true){
             return $file.'.view.html';
-        } 
-            
+        }
+
         return $file.'.view.php';
-        
+
     }
 
     /**
      * Render A view using twig template Engine
-     * 
      * @param string $template - View name
      * @param array $args - Data to be pass in the view
-     * 
      * @return string
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
      */
-    public static function render(string $template, array $args = []): string
+    public function render(string $template, array $args = []): string
     {
         $views    =  '../app/Views';
         $cache    =  '../simply/Cache/Views';
@@ -75,19 +80,22 @@ class View
 
         if (CACHE_VIEWS == true) {
             $twig = new \Twig\Environment($loader, [
-                'cache' => $cache,
+                'cache' => $cache
             ]);
         } else {
-            $twig = new \Twig\Environment($loader);
+            $twig = new \Twig\Environment($loader, [
+                'debug' => SHOW_ERRORS
+            ]);
         }
         foreach (glob('../app/Helper/Twig/*.php',GLOB_BRACE) as $filename)
         {
             $class = "\App\Helper\Twig\\" . explode('.',basename($filename))[0];
             $twig->addExtension(new $class);
         }
-
+        $twig->addExtension(new \Twig\Extension\DebugExtension());
         $twig->addGlobal('flushable', Session::getFlushable());
         $twig->addGlobal('baseurl', $url);
+        $twig->addGlobal('request', $this->request);
         $twig->addGlobal('old', Session::get('_old'));
         $twig->addGlobal('_get', $_GET);
         if (Session::get('user')) {
