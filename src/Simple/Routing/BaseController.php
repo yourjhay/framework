@@ -4,18 +4,6 @@ namespace Simple\Routing;
 
 abstract class BaseController
 {
-    /**
-     * Parameters from the matched routes
-     */
-    protected static $route_params = [];
-
-    /**
-     * @param array $route_params - Parameters from the route
-     */
-    public function __construct($route_params)
-    {
-        self::$route_params = $route_params;
-    }
 
     /**
      * Magic method called when a non-existent or inaccessible method is
@@ -35,7 +23,7 @@ abstract class BaseController
             if ($this->before() !== false) {
                 echo call_user_func_array([$this, $method], $args);
                 $this->after();
-            } 
+            }
         } else {
             throw new \Exception("Method [$method] not found in controller [" .
             get_class($this)."]");
