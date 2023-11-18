@@ -43,7 +43,7 @@ class Session
     /**
      * Return the session data
      * @param string|null $key Session to be return
-     * @return $_SESSION
+     * @return string|$_SESSION
      */
     public static function get(string $key = null)
     {
