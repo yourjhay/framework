@@ -61,7 +61,7 @@ class Request
             if (isset($_GET[$key])) {
                 return $_GET[$key];
             }
-            return null; 
+            return null;
         }
     }
 
@@ -77,7 +77,7 @@ class Request
             if (isset($_POST[$key])) {
                 return $_POST[$key];
             }
-            return null; 
+            return null;
         }
     }
 
@@ -111,13 +111,13 @@ class Request
 
     /**
      * Get the variables passed to route as parameters eg: id, name, product_id
-     * @param $var Pass variable to route
+     * @param string $var variable to route
      * @return string
      */
-    public static function route($var)
+    public static function route(string $var): ?string
     {
         $params = \Simple\Routing\Router::getParams();
-        return isset($params[$var]) ? $params[$var] : null ;
+        return $params[$var] ?? null;
     }
 
     /**
