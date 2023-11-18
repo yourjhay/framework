@@ -36,6 +36,6 @@ define('DBTESTMODE', false);
 
 class Model extends \Simple\Model
 {
-    protected array $fillable =['fn'];
-    protected string $table = 'users';
+    protected $fillable =['fn'];
+    protected $table = 'users';
 }
