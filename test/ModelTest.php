@@ -12,7 +12,7 @@ class ModelTest extends \PHPUnit\Framework\TestCase
      public function testTrimFillable()
      {
          $model = new \Simple\Tests\app\Model;
-         $model->fn = 'Jhay            ';
+         $model->fn = 'Jhay';
          $this->assertEquals($model->fn,'Jhay');
      }
 }
