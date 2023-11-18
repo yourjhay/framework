@@ -1,13 +1,13 @@
 <?php
 namespace Simple\Engine;
 
-use Simple\Engine\ConsoleOutput as co; 
+use Simple\Engine\ConsoleOutput as co;
 use mysqli;
 use Simple\Session;
 use PDO;
 
 
-class Console 
+class Console
 {
     private $argv;
     private $status;
@@ -91,34 +91,34 @@ class Console
             {
                 $name = $name.'Controller';
             }
-            $name = self::convertToStudlyCaps($name);       
+            $name = self::convertToStudlyCaps($name);
 if ($option== trim("-r") || $option== trim("-rm")){
     $contentController = '<?php
 namespace App\Controllers;
-    
+
 Use Simple\Request;
-    
-class '.$name.' extends Controller 
+
+class '.$name.' extends Controller
 {
-    
+
     /**
      * the index action can be use to show all the records
      *
      * @return void
      */
-    public function index() 
+    public function index()
     {
 
     }
 
     /**
      * Shows the from for creating '.$name.'
-     * 
+     *
      * @return void
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -129,7 +129,7 @@ class '.$name.' extends Controller
      */
     public function store(Request $request)
     {
-        
+
     }
 
     /**
@@ -141,7 +141,7 @@ class '.$name.' extends Controller
     public function edit(Request $request)
     {
         $id = $request->route(\'id\');
-    
+
     }
 
     /**
@@ -153,11 +153,11 @@ class '.$name.' extends Controller
     public function update(Request $request)
     {
         $id = $request->route(\'id\');
-    
+
     }
 
     /**
-    * Delete the record 
+    * Delete the record
     *
     * @param Request $request
     * @return void
@@ -165,7 +165,7 @@ class '.$name.' extends Controller
     public function destroy(Request $request)
     {
         $id = $request->route(\'id\');
-    
+
     }
 
 }';
@@ -175,33 +175,33 @@ class '.$name.' extends Controller
 } else if ($option==null) {
     $contentController = '<?php
 namespace App\Controllers;
-    
+
 Use Simple\Request;
-    
-class '.$name.' extends Controller 
+
+class '.$name.' extends Controller
 {
-    
-    public function index() 
+
+    public function index()
     {
-    
+
     }
-    
+
 }';
 
 } else if ($option == trim("-m")) {
     $contentController = '<?php
 namespace App\Controllers;
-    
+
 Use Simple\Request;
-    
-class '.$name.' extends Controller 
+
+class '.$name.' extends Controller
 {
-    
-    public function index() 
+
+    public function index()
     {
-    
+
     }
-    
+
 }';
     self::createModel($model);
 }
@@ -228,20 +228,20 @@ class '.$name.' extends Controller
             $content = '<?php
 
 namespace App\Observers;
-            
+
 use Simple\Model;
-            
-class UserObserver
+
+class '.$model.'Observer
 {
     /**
      * Define your observers here with the following methods:
      * created, updated, deleted, restored, forceDeleted
-     * 
+     *
      * @param Model $model
      * @return void
      */
-                
-}'; 
+
+}';
             if (file_exists("$this->observerPath{$model}Observer.php")) {
                 $this->status = 'error: '.$model.' Observer is already exist!'.PHP_EOL;
             } else {
@@ -261,7 +261,7 @@ class UserObserver
     private function createModel($model)
     {
         if ($model) {
-            $model = self::convertToStudlyCaps($model);  
+            $model = self::convertToStudlyCaps($model);
 $content = '<?php
 namespace App\Models;
 
@@ -277,7 +277,7 @@ class '.$model.' extends Model
     protected $table = \''.\strtolower($model) .'s\';
 
     /**
-     * Fillables - the columns in you $table 
+     * Fillables - the columns in you $table
      *
      * @var array
      */
@@ -285,7 +285,7 @@ class '.$model.' extends Model
 
     /**
      *  This is generated '.$model.' model.
-     *  It is recommended that you put all queries here. 
+     *  It is recommended that you put all queries here.
      *  Create Something great!
      */
 }
@@ -301,18 +301,18 @@ class '.$model.' extends Model
                 }
                 fclose($file);
             }
-    
+
         } else {
             $this->status = 'error: Model name must be defined '.PHP_EOL;
         }
     }
 
     /**
-     * convert string into Studly Case format 
+     * convert string into Studly Case format
      * @var string
      * @return string
      */
-    private static function convertToStudlyCaps($string) 
+    private static function convertToStudlyCaps($string)
     {
         return str_replace(' ','',ucwords(str_replace('-',' ', $string)));
     }
@@ -320,7 +320,7 @@ class '.$model.' extends Model
     private function migrate($file, $com)
     {
         require './app/Config/global.php';
-        $directory = './database'; 
+        $directory = './database';
         $imports = scandir($directory);
 
         if (DBENGINE == 'mysql' || DBENGINE == 'mysqli') {
@@ -331,14 +331,14 @@ class '.$model.' extends Model
             $files = [];
             if ($file == null)
             {
-                
+
                 foreach ($imports as $file) {
                     // Exclude the current directory (.)
                     // and parent directory (..) from the loop
                     if ($file === '.' || $file === '..') {
                         continue;
                     }
-                    
+
                     // Create the full path to the file/directory
                     $filePath = $directory . '/' . $file;
 
@@ -358,7 +358,7 @@ class '.$model.' extends Model
                         }
                     }
                 }
-                
+
             } else {
                 $mysqlImportFilename ="./database/$file.sql";
 
@@ -381,13 +381,13 @@ class '.$model.' extends Model
                 }
 
             }
-            
-        } elseif (DBENGINE == 'sqlite') { 
+
+        } elseif (DBENGINE == 'sqlite') {
             try {
             $table = 'users';
             $db = new PDO("sqlite:"."./database/database.db");
             $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 if ($file=='-c'){
                     $sql = $com;
                 } elseif ($file =='users') {
@@ -397,43 +397,43 @@ class '.$model.' extends Model
                         email TEXT NOT NULL,
                         password_hash TEXT NOT NULL,
                         reset_token TEXT NULL)";
-                }           
-                   
+                }
+
                     echo PHP_EOL;
                     $command_ = explode(' ', $sql);
                     if (strtoupper($command_[0]) === "SELECT"){
-                        $res = $db->query($sql);   
-                        $i=0;          
-                        $col=[]; 
-                        $rows=[]; 
+                        $res = $db->query($sql);
+                        $i=0;
+                        $col=[];
+                        $rows=[];
                         $v=[];
-                        $table = new \LucidFrame\Console\ConsoleTable(); 
+                        $table = new \LucidFrame\Console\ConsoleTable();
                         foreach($res as $row)
                         {
                             $i++;
                             foreach($row as $key => $val){
                                if ($i==1){
                                     $col[] .= $key;
-                                   
+
                                 } $v[]=$val;
                             }
                             $rows[$i] = $v;
                             unset($v);
-                        }                       
-                        $table->setHeaders($col);                      
+                        }
+                        $table->setHeaders($col);
                         foreach($rows as $r){
                             $table->addRow($r);
                         }
                         $table->display();
                     }else{
                         $c = $db->exec($sql);
-                        print("Command successfull. $c affected rows.\n");  
-                    }                  
+                        print("Command successfull. $c affected rows.\n");
+                    }
             } catch (Exception $e) {
                 echo "Unable to connect".PHP_EOL;
                 echo $e->getMessage();
                 exit;
-            } 
+            }
         }
     }
 
@@ -467,7 +467,7 @@ class '.$model.' extends Model
             $file = fopen($dest, "w");
             copy($filename, $dest);
             fclose($file);
-        } 
+        }
         foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/Views/Auth/*.html') as $filename)
         {
             $dest = "app/Views/auth/".basename($filename);
@@ -485,7 +485,7 @@ class '.$model.' extends Model
             copy($filename, $dest);
             fclose($file);
         }
-        
+
         $routeFile = './vendor/simplyphp/framework/src/AuthScaffolding/routes.simply';
         $file = file_get_contents($routeFile, FILE_USE_INCLUDE_PATH);
         $mainRoute = "./app/Routes.php";
@@ -496,11 +496,11 @@ class '.$model.' extends Model
         }
     }
 
-    private function seed() 
-    {   
+    private function seed()
+    {
         require './app/Config/global.php';
-        
-            
+
+
             $dbname = DBNAME;
             $dbuser = DBUSER;
             $dbpass = DBPASS;
@@ -526,7 +526,7 @@ class '.$model.' extends Model
             if (DBENGINE=='mysqli' || DBENGINE == 'mysql') {
                 $db = new mysqli ($dbserver, $dbuser, $dbpass, $dbname);
                 $stmt = $db->prepare("INSERT INTO users(name,email,password_hash) VALUES(?,?,?)") or die($db->error);
-               
+
                 $stmt->bind_param("sss", $name, $email, $password);
                 if ($stmt->execute()){
                     echo $this->output->print_o(PHP_EOL." Seeding successfull " , "black", "green");
@@ -537,8 +537,8 @@ class '.$model.' extends Model
                 try {
                     $table = 'users';
                     $db = new PDO("sqlite:"."./database/database.db");
-                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);  
-                        
+                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
                             $sql ="INSERT INTO users(name, email, password_hash) VALUES (?,?,?)";
                             $stmt=$db->prepare($sql);
                             $data = array(
@@ -548,16 +548,16 @@ class '.$model.' extends Model
                             );
                             echo($sql);
                             echo PHP_EOL;
-                            
+
                             $stmt->execute($data);
                             echo $this->output->print_o(PHP_EOL." Seeding successfull " , "black", "green");
                             unset($stmt);
-                            $db = null;         
+                            $db = null;
                     } catch (Exception $e) {
                         echo "Unable to connect".PHP_EOL;
                         echo $e->getMessage();
                         exit;
-                    } 
+                    }
             }
             echo PHP_EOL."Do you want to seed another entry? (yes|no): ";
             $handle = fopen ("php://stdin","r");
@@ -569,7 +569,7 @@ class '.$model.' extends Model
             } else {
                 return false;
             }
-        
+
     }
 
     /**
@@ -580,7 +580,7 @@ class '.$model.' extends Model
     {
             $host = $host == null ? 'localhost':$host;
             $port = $port == null ? '8000':explode('=', $port);
-            $port = is_array($port) ? $port[1] : $port;  
+            $port = is_array($port) ? $port[1] : $port;
         $command = "php -S $host:$port -t public/";
         echo $this->output->print_o("Simply Development Server started at: http://$host:$port".PHP_EOL, 'green', 'white');
         echo $this->output->print_o("Press CTRL+C to cancel".PHP_EOL, 'green', 'black');
@@ -594,20 +594,20 @@ class '.$model.' extends Model
     {
             $key = $key = \Simple\Security\Encryption::generateKey();
             $id = "define('APP_KEY'";
-            $new_line = "define('APP_KEY', '$key');"; 
+            $new_line = "define('APP_KEY', '$key');";
             $dir = './app/Config/global.php';
             $contents = file_get_contents($dir);
             $new_contents= "";
-            if ( strpos($contents, $id) !== false) { 
+            if ( strpos($contents, $id) !== false) {
                 $contents_array = preg_split("/\\r\\n|\\r|\\n/", $contents);
-                foreach ($contents_array as &$record) { 
-                    if (strpos($record, $id) !== false) { 
-                        $new_contents .= $new_line.PHP_EOL; 
+                foreach ($contents_array as &$record) {
+                    if (strpos($record, $id) !== false) {
+                        $new_contents .= $new_line.PHP_EOL;
                     }else{
                         $new_contents .= $record . "\r";
                     }
                 }
-                file_put_contents($dir, $new_contents); 
+                file_put_contents($dir, $new_contents);
                 echo "Application Key Generated Successfully!".PHP_EOL;
             }
             else{
@@ -621,7 +621,7 @@ class '.$model.' extends Model
         $n=0;
         $compile_routes = \Simple\Routing\Router::compiledRoutes();
             echo '-----------------------------------------------------------------'.PHP_EOL;
-         foreach($compile_routes as $key => $val){            
+         foreach($compile_routes as $key => $val){
             echo $this->output->print_o($val['request_method']."  '$key'",'green', 'black') .' => ' . $val['url'].PHP_EOL;
             echo '-----------------------------------------------------------------'.PHP_EOL;
          $n++;
@@ -630,7 +630,7 @@ class '.$model.' extends Model
     }
 
     public function cliHelp()
-    {   
+    {
         echo PHP_EOL;
         echo ">> php cli + command".PHP_EOL;
         echo PHP_EOL;
