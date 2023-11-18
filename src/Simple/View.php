@@ -4,12 +4,6 @@ namespace Simple;
 
 class View
 {
-    private Request $request;
-
-    public function __construct()
-    {
-        $this->request = new Request;
-    }
 
     /**
      * Render A view
@@ -95,7 +89,6 @@ class View
         $twig->addExtension(new \Twig\Extension\DebugExtension());
         $twig->addGlobal('flushable', Session::getFlushable());
         $twig->addGlobal('baseurl', $url);
-        $twig->addGlobal('request', $this->request);
         $twig->addGlobal('old', Session::get('_old'));
         $twig->addGlobal('_get', $_GET);
         if (Session::get('user')) {
