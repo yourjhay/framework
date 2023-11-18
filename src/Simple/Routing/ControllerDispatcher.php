@@ -3,18 +3,19 @@
 namespace Simple\Routing;
 
 use ReflectionClass;
+use Simple\Request;
 
 class ControllerDispatcher
 {
 
-    private $params;
+    private array $params;
 
     /**
      * new instance of ControllerDispatcher
      *
-     * @param [type] $params
+     * @param array $params
      */
-    public function __construct($params)
+    public function __construct(array $params)
     {
         $this->params = $params;
     }
@@ -22,30 +23,55 @@ class ControllerDispatcher
     /**
      * Get All parameters pass on controller action
      *
-     * @param [type] $controller
-     * @param [type] $action
+     * @param BaseController $controller
+     * @param string $action
      * @return void
+     * @throws \ReflectionException
      */
     public function dispatch(BaseController $controller, string $action)
     {
         $params = [];
         $refClass = new ReflectionClass($controller);
         $method = $refClass->getMethod($action);
-
+        $isRequestClassCalled = false;
         foreach ($method->getParameters() as $methodParameter) {
             $name = $methodParameter->getName();
             $type = $methodParameter->getType();
 
             if ($type !== null && $type->isBuiltin() === false) {
+
                 $classRef = new ReflectionClass($type->getName());
-                $params[$name] = $classRef->newInstance();
-            } else {        
-                $this->validateParameter($name, $controller, $action);
-                $params[$name] = $this->params[$name];
+                if($type->getName()==='Simple\Request') {
+                    $requestClass = $classRef->newInstance($_GET,
+                        $_POST,
+                        [],
+                        $_COOKIE,
+                        $_FILES,
+                        $_SERVER);
+                    $requestClass->bootstrap();
+                    $params[$name] = $requestClass;
+                    $isRequestClassCalled=true;
+                } else {
+                    $params[$name] = $classRef->newInstance();
+                }
+            } else {
+                $arg_valid = $this->validateParameter($name);
+                if($arg_valid) {
+                    $params[$name] = $this->params[$name];
+                } else {
+                    $params[$name] = null;
+                }
             }
         }
-        
-        
+        if(!$isRequestClassCalled) {
+            (new Request($_GET,
+                $_POST,
+                [],
+                $_COOKIE,
+                $_FILES,
+                $_SERVER))->bootstrap();
+        }
+
         return $controller->$action(...$params);
     }
 
@@ -53,24 +79,13 @@ class ControllerDispatcher
      * Validate parameter if exists on route variable
      *
      * @param string $name
-     * @param BaseController $controller
-     * @param string $action
-     * @return void
+     * @return bool
      */
-    public function validateParameter(string $name, BaseController $controller, string $action)
+    public function validateParameter(string $name): bool
     {
-        $class =  get_class($controller) .  "::$action";
-        $style="";
-        $style_closing= "";
-        
-        if(ERROR_HANDLER=="simply") {
-            $class = "<span style='color:#ffbf6b'>" . get_class($controller) . "</span>" . "<span style='color:cyan'>::$action</span>";
-            $style="<span style='color:cyan'>";
-            $style_closing= "</span>";
-        } 
-        
         if (!isset($this->params[$name])){
-            throw new \RuntimeException("Invalid route variable $style $$name $style_closing pass on $class. Please check your route");
+            return false;
         }
+        return true;
     }
 }
