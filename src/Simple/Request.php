@@ -2,83 +2,30 @@
 
 namespace Simple;
 use Simple\Database\Connection;
+use Symfony\Component\HttpFoundation\Request as RQ;
 
-class Request
+class Request extends RQ
 {
     use Connection;
 
-    /**
-     * Connect to Database upon booting request
-     * then run service provider
-     */
-    public function __construct()
+    public function bootstrap()
     {
         $this->connect();
-        if (class_exists(\App\Providers\EventServiceProvider::class)) {
+        if(class_exists(\App\Providers\EventServiceProvider::class)) {
             $events = new \App\Providers\EventServiceProvider;
             $events->boot();
         }
     }
 
     /**
-     * Filters a request wether a POST, GET etc..
-     * @param $user_request Request Method: POST, GET, DELETE, PUT
-     * @return bool
-     * @throws \Exception - if Method is not allowed
-     */
-    public function filterRequest($user_request)
-    {
-        $request = $_SERVER['REQUEST_METHOD'];
-        if ($request == strtoupper($user_request)) {
-            return true;
-        } else {
-            throw new \Exception("$request Method not allowed");
-        }
-    }
-
-    /**
-     * Return data from GET, POST $_COOKIES
-     * @return array
-     */
-    public function request($key = null)
-    {
-        if ($key == null) {
-            return $_REQUEST;
-        } else {
-            return $_REQUEST[$key];
-        }
-    }
-
-    /**
+     * Return POST values
      * @param null $key
-     * @return mixed
+     * @return array|bool|float|int|string|null
      */
-    public function get($key=null)
+    public function post($key = null)
     {
-        if ($key == null) {
-            return $_GET;
-        } else {
-            if (isset($_GET[$key])) {
-                return $_GET[$key];
-            }
-            return null;
-        }
-    }
-
-    /**
-     * @param null $key
-     * @return mixed
-     */
-    public function post($key=null)
-    {
-        if ($key == null) {
-            return $_POST;
-        } else {
-            if (isset($_POST[$key])) {
-                return $_POST[$key];
-            }
-            return null;
-        }
+        if($key!==null) return $this->request->get($key);
+        return $this->request->all();
     }
 
     /**
@@ -86,7 +33,7 @@ class Request
      * @param string $url - Redirect to given URL
      * @param array $param - GET parameters to be pass
      */
-    public static function redirect($url,  $param = [])
+    public static function redirect(string $url, $param = [])
     {
         $params="?";
         foreach ($param as $key => $value) {
@@ -97,50 +44,14 @@ class Request
         exit();
     }
 
-    public function __get($name)
-    {
-        $file = file_get_contents("php://input");
-        $file = explode("&", $file);
-        for ($i = 0; $i < count($file); $i++) {
-            $sub = explode('=', $file[$i]);
-            if ($sub[0] == $name) {
-                return utf8_decode(urldecode($sub[1]));
-            }
-        }
-    }
-
     /**
      * Get the variables passed to route as parameters eg: id, name, product_id
-     * @param string $var variable to route
-     * @return string
+     * @param string|null $key variable to route
+     * @return array|string
      */
-    public static function route(string $var): ?string
+    public static function route(string $key=null)
     {
         $params = \Simple\Routing\Router::getParams();
-        return $params[$var] ?? null;
-    }
-
-    /**
-     * @param $name
-     * @param $args
-     * @throws \Exception
-     */
-    public function __call($name, $args)
-    {
-        throw new \Exception('Method '.$name.' not found');
-    }
-
-    /**
-     * @param $fieldname: The name of the file upload field
-     * @return FileUpload: FileUpload object
-     * @throws \Exception
-     */
-    public function file($fieldname)
-    {
-        if ($fieldname != null) {
-            $file = new FileUpload($fieldname);
-            return $file;
-        }
-        throw new \Exception("Please provide the name of the file upload field");
+        return $params[$key] ?? $params;
     }
 }
