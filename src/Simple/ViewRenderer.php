@@ -12,10 +12,10 @@ if (!function_exists('\view'))
      * @return string
      *@throws
      */
-    function view(string $view, array $args = [], string $engine = 'twig'): ?string
+    function view(string $view, array $args = [], string $engine = 'twig')
     {
         if ($engine == 'twig') {
-            return View::render($view, $args);
+            echo (new View)->render($view, $args);
         } else {
             return View::renderNormal($view, $args);
         }
