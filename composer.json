@@ -14,7 +14,6 @@
     "require": {
         "php": "^7.4|^8.0",
         "ext-pdo": "*",
-        "catfan/medoo": "^2.0",
         "illuminate/database": "^10.13",
         "illuminate/events": "^10.13",
         "illuminate/pagination": "^10.13",
@@ -32,7 +31,7 @@
             "src/Simple/functions.php",
             "src/Simple/ViewRenderer.php"
         ],
-        "psr-4": {  
+        "psr-4": {
             "Simple\\": "src/Simple"
         }
     },
