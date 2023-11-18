@@ -7,10 +7,10 @@ class Router Extends BaseRouter
     /**
      * SET Route to accept only POST method
      * @param $route string URL of your route
-     * @param mixed $params Paramaters like controller and action
+     * @param mixed $params Parameters like controller and action
      * @return Router
      */
-    public static function post($route, $params = [])
+    public static function post(string $route, $params = []): Router
     {
         parent::set($route, $params, 'POST');
         return new static;
@@ -19,10 +19,10 @@ class Router Extends BaseRouter
     /**
      * SET Route to accept only GET method
      * @param $route string URL of your route
-     * @param mixed $params Paramaters like controller and action
+     * @param mixed $params Parameters like controller and action
      * @return Router
      */
-    public static function get($route, $params = [])
+    public static function get(string $route, $params = []): Router
     {
         parent::set($route, $params, 'GET');
         return new static;
@@ -31,10 +31,10 @@ class Router Extends BaseRouter
     /**
      * SET Route to accept only PUT method
      * @param $route string URL of your route
-     * @param mixed $params Paramaters like controller and action
+     * @param mixed $params Parameters like controller and action
      * @return Router
      */
-    public static function put($route, $params = [])
+    public static function put(string $route, $params = []): Router
     {
         parent::set($route, $params, 'PUT');
         return new static;
@@ -43,10 +43,10 @@ class Router Extends BaseRouter
     /**
      * SET Route to accept only DELETE method
      * @param $route string URL of your route
-     * @param mixed $params Paramaters like controller and action
+     * @param mixed $params Parameters like controller and action
      * @return Router
      */
-    public static function delete($route, $params = [])
+    public static function delete(string $route, $params = []): Router
     {
         parent::set($route, $params, 'DELETE');
         return new static;
@@ -55,10 +55,10 @@ class Router Extends BaseRouter
     /**
      * SET Route to accept only PATCH method
      * @param $route string URL of your route
-     * @param mixed $params Paramaters like controller and action
+     * @param mixed $params Parameters like controller and action
      * @return Router
      */
-    public static function patch($route, $params = [])
+    public static function patch(string $route, $params = []): Router
     {
         parent::set($route, $params, 'PATCH');
         return new static;
@@ -67,10 +67,10 @@ class Router Extends BaseRouter
     /**
      * SET Route to accept only ANY method
      * @param $route string URL of your route
-     * @param mixed $params Paramaters like controller and action
+     * @param mixed $params Parameters like controller and action
      * @return Router
      */
-    public static function any($route, $params = [])
+    public static function any(string $route, $params = []): Router
     {
         parent::set($route, $params, 'ANY');
         return new static;
@@ -79,10 +79,10 @@ class Router Extends BaseRouter
     /**
      * SET Route to accept only HEAD method
      * @param $route string URL of your route
-     * @param mixed $params Paramaters like controller and action
+     * @param mixed $params Parameters like controller and action
      * @return Router
      */
-    public static function head($route, $params = [])
+    public static function head(string $route, $params = []): Router
     {
         parent::set($route, $params, 'HEAD');
         return new static;
@@ -105,7 +105,7 @@ class Router Extends BaseRouter
      * @param string $route  route URL
      * @param string $controller  Controller name
      */
-    public static function resource($route, $controller)
+    public static function resource(string $route, string $controller)
     {
         self::get($route, ['controller' => $controller, 'action' => 'index'])
             ->alias("$controller.index");
@@ -144,6 +144,5 @@ class Router Extends BaseRouter
             self::post('/signup-new','Auth\Signup@signup-new')
                 ->alias('auth.signup-new');
         });
-        //self::set('{controller:password}/{action:\breset|\bemail}/{token?}');
     }
 }
