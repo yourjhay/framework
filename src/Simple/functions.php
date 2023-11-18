@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 /**
- * Core Functions 
+ * Core Functions
  */
 namespace Simple;
 
@@ -14,7 +14,7 @@ namespace Simple;
              *  use function Simple\example;
              */
         }
-    } 
+    }
 
     if (!function_exists(__NAMESPACE__ . '\bcrypt'))
     {
@@ -23,7 +23,7 @@ namespace Simple;
          * @param array $option (optional) password_hash option
          * @return string
          */
-        function bcrypt($string, $option = array())
+        function bcrypt(string $string, $option = array()): string
         {
             if ($option) {
                 return password_hash($string, PASSWORD_BCRYPT, $option);
@@ -41,7 +41,7 @@ namespace Simple;
          * @param string $hash - Hashed to be verify
          * @return bool
          */
-        function bcrypt_verify($string, $hash): bool
+        function bcrypt_verify(string $string, string $hash): bool
         {
             return password_verify($string, $hash);
         }
@@ -66,22 +66,25 @@ namespace Simple;
     }
 
     if (!function_exists(__NAMESPACE__ . '\alias'))
-    {        
+    {
+        /**
+         * @throws \Exception
+         */
         function alias($alias, $param=null)
         {
-           $compile_routes = Routing\Router::compiledRoutes();          
+           $compile_routes = Routing\Router::compiledRoutes();
             $url='';
            foreach ($compile_routes as $key => $val)
-           {               
+           {
                 if ($alias == $key){
-                    $url=$val['url'];
-                if ($param!==null) {
-                    $url = preg_replace('/\{([a-z]+)\}/', $param, $val['url']);     
-                    if(preg_match('/\{([a-z]+):([^\}]+)\}/', $val['url'])) {
-                        $url = preg_replace('/\{([a-z]+):([^\}]+)\}/', $param, $val['url']);
+                    $url = preg_replace('/\{([a-z?]+)\}/', '', $val['url']);
+                    if ($param!==null) {
+                        $url = preg_replace('/\{([a-z?]+)\}/', $param, $val['url']);
+                        if(preg_match('/\{([a-z]+):([^\}]+)\}/', $val['url'])) {
+                            $url = preg_replace('/\{([a-z]+):([^\}]+)\}/', $param, $val['url']);
+                        }
                     }
-                }   
-               
+
                 return $url;
                }
            }
