@@ -14,13 +14,16 @@
     "require": {
         "php": "^7.4|^8.0",
         "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-mysqli": "*",
+        "ext-pdo_mysql": "*",
         "illuminate/database": "^10.13",
         "illuminate/events": "^10.13",
         "illuminate/pagination": "^10.13",
         "phplucidframe/console-table": "^1.2",
         "phpmailer/phpmailer": "^6.2",
         "symfony/http-foundation": "^6.3",
-        "symfony/var-dumper": "^4.3",
+        "symfony/var-dumper": ">=6.3",
         "twig/twig": "^3.0"
     },
     "suggest": {

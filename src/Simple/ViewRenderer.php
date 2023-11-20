@@ -15,7 +15,7 @@ if (!function_exists('\view'))
     function view(string $view, array $args = [], string $engine = 'twig')
     {
         if ($engine == 'twig') {
-            echo (new View)->render($view, $args);
+            return (new View)->render($view, $args);
         } else {
             return View::renderNormal($view, $args);
         }

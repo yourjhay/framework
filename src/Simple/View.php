@@ -19,7 +19,7 @@ class View
     ) {
         extract($args, EXTR_SKIP);
         $view = self::create($view, $html);
-        $file = "../app/Views$view";
+        $file = "../app/Views/$view";
         if (is_readable($file)){
             require $file;
         } else {
