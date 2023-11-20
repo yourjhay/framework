@@ -14,6 +14,9 @@
     "require": {
         "php": "^7.4|^8.0",
         "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-mysqli": "*",
+        "ext-pdo_mysql": "*",
         "illuminate/database": "^10.13",
         "illuminate/events": "^10.13",
         "illuminate/pagination": "^10.13",
