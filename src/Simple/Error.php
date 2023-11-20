@@ -12,7 +12,7 @@ class Error
      * @throws \ErrorException throws the catch error
      * @return void
      */
-    public static function errorHandler($level, $message, $file, $line) 
+    public static function errorHandler($level, $message, $file, $line)
     {
         if (error_reporting() !== 0) {
             throw new \ErrorException($message, 0, $level, $file, $line);
@@ -22,10 +22,10 @@ class Error
     /**
      * @param $exception Application Exeption
      */
-    public static function exceptionHandler($exception) 
+    public static function exceptionHandler($exception)
     {
         $code = $exception->getCode();
-        if ($code != 404) {
+        if ($code == 0) {
             $code = 500;
         }
         http_response_code($code);
