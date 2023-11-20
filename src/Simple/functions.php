@@ -3,7 +3,6 @@ declare(strict_types=1);
 /**
  * Core Functions
  */
-namespace Simple;
 
     if (!function_exists(__NAMESPACE__ . '\example'))
     {
