@@ -2,6 +2,7 @@
 
 namespace Simple\Routing;
 
+use Illuminate\Pagination\Paginator;
 use ReflectionClass;
 use Simple\Request;
 
@@ -64,15 +65,21 @@ class ControllerDispatcher
             }
         }
         if(!$isRequestClassCalled) {
-            (new Request($_GET,
+            $requestClass = new Request($_GET,
                 $_POST,
                 [],
                 $_COOKIE,
                 $_FILES,
-                $_SERVER))->bootstrap();
+                $_SERVER);
+            $requestClass->bootstrap();
         }
 
-        return $controller->$action(...$params);
+        $currentPage = $requestClass->get('page');
+        Paginator::currentPageResolver(function () use ($currentPage){
+            return $currentPage;
+        });
+
+        echo $controller->$action(...$params);
     }
 
     /**

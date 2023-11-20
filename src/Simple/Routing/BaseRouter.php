@@ -39,8 +39,13 @@ class BaseRouter
             $params = [];
             $params['controller'] = $param[0];
             $params['action'] = $param[1];
-
         }
+        if(($params instanceof \Closure)){
+            $closure = $params;
+            $params=[];
+            $params['closure'] = $closure;
+        }
+
         $params['request_method'] = $http_method;
         self::$raw_current_route = $route;
 
@@ -102,7 +107,7 @@ class BaseRouter
      */
     public static function alias($alias)
     {
-        self::routeCompiler($alias, '/'.self::$raw_current_route, self::$current_param);
+        self::routeCompiler($alias, self::$raw_current_route, self::$current_param);
         self::$current_param['alias'] = $alias;
         self::$routes[self::$current_route] =self::$current_param;
     }
@@ -178,6 +183,15 @@ class BaseRouter
         $url =  self::removeQueryString($url);
 
         if (self::match($url)) {
+            /**
+             * If route parameter is a Closure
+             */
+            if(isset(self::$params['closure'])){
+                $closure = call_user_func(self::$params['closure']) ;
+                echo $closure;
+                return;
+            }
+
             if (preg_match('/controller$/i', self::$params['controller']) == 0) {
                 $controller = self::$params['controller'].'Controller';
             } else {
