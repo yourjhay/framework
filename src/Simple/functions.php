@@ -71,7 +71,7 @@ declare(strict_types=1);
          */
         function alias($alias, $param=null)
         {
-           $compile_routes = Routing\Router::compiledRoutes();
+           $compile_routes = Simple\Routing\Router::compiledRoutes();
             $url='';
            foreach ($compile_routes as $key => $val)
            {
