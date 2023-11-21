@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Simple\Model;
 
-class User extends Model 
+class User extends Model
 {
     /**
      * $table - table name using by this model
@@ -15,7 +15,7 @@ class User extends Model
     /**
      * Fillables - the columns in your $table
      * @var array
-     */ 
+     */
     protected $fillable = [
         'name',
         'email',
@@ -27,7 +27,7 @@ class User extends Model
      * @return mixed
      * @throws \Exception
      */
-    public static function findByEmail($email)
+    public static function findByEmail(string $email)
     {
         return self::where('email', $email)->first();
     }

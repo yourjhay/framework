@@ -9,10 +9,10 @@ use Illuminate\Container\Container;
 /**
  * Trait for Capsule Connetion
  */
-trait Connection 
+trait Connection
 {
 
-    private $capsule = null;
+    public ?Capsule $capsule = null;
 
     /**
      * Initiate Connection using capsule;
@@ -20,7 +20,7 @@ trait Connection
      * @return void
      */
     public function connect()
-    {      
+    {
         if (!$this->capsule) {
             $capsule = new Capsule;
             $capsule->addConnection
@@ -33,10 +33,9 @@ trait Connection
                 'charset'   => 'utf8',
                 'collation' => 'utf8_unicode_ci',
                 'prefix'   => '',
-            ]); 
+            ]);
 
             // Set the event dispatcher used by Eloquent models... (optional)
-           
             $capsule->setEventDispatcher(new Dispatcher(new Container));
 
             // Make this Capsule instance available globally via static methods... (optional)
@@ -44,6 +43,6 @@ trait Connection
 
             $capsule->bootEloquent();
             $this->capsule = $capsule;
-        }  
+        }
     }
 }
