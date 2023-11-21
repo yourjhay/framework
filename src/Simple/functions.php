@@ -76,15 +76,15 @@ declare(strict_types=1);
            foreach ($compile_routes as $key => $val)
            {
                 if ($alias == $key){
-                    $url = preg_replace('/\{([a-z?]+)\}/', '', $val['url']);
+                    $url = preg_replace('/{([a-z?]+)}/', '', $val['url']);
                     if ($param!==null) {
-                        $url = preg_replace('/\{([a-z?]+)\}/', $param, $val['url']);
-                        if(preg_match('/\{([a-z]+):([^\}]+)\}/', $val['url'])) {
-                            $url = preg_replace('/\{([a-z]+):([^\}]+)\}/', $param, $val['url']);
+                        $url = preg_replace('/{([a-z?]+)}/', $param, $val['url']);
+                        if(preg_match('/{([a-z]+):([^\}]+)}/', $val['url'])) {
+                            $url = preg_replace('/{([a-z]+):([^\}]+)}/', $param, $val['url']);
                         }
                     }
 
-                return $url;
+                return '/'.$url;
                }
            }
            throw new \Exception("Route with alias [$alias] not found", 500);
