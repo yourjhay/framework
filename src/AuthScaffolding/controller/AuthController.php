@@ -9,35 +9,34 @@ use App\Helper\Auth\AuthHelper as auth;
 class AuthController extends Controller
 {
     /**
-     * @var $destination url after successfully login
+     * @var string $destination - url after successfully login
      */
-    protected static $destination = '/';
+    protected static string $destination = '/';
 
     /**
      * @param Request $request
+     * @return string
      */
-    public function index(Request $request)
+    public function index(Request $request): string
     {
         if (Auth::user()) {
             $request->redirect(self::$destination);
-        } else {
-            return view('auth.index');
         }
+        return view('auth.index');
     }
 
     /**
      * @param Request $request
-     * @return object|void
+     * @return string
      * @throws \Exception
      */
-    public function authenticate(Request $request)
+    public function authenticate(Request $request): string
     {
         if (auth::attempt($request->post())) {
-            $request->redirect(self::$destination);
-        } else {
-            Session::flush('Invalid Username or Password');
-            return view('auth.index');
+           $request->redirect(self::$destination);
         }
+        Session::flush('Invalid Username or Password');
+        return view('auth.index');
     }
 
     /**

@@ -12,7 +12,7 @@ class AuthHelper
      * @return bool
      * @throws \Exception
      */
-    public static function attempt($data)
+    public static function attempt($data): bool
     {
         $user =  User::findByEmail($data['email']);
         if ($user) {

@@ -129,7 +129,7 @@ class Router Extends BaseRouter
     public static function auth()
     {
         self::group('auth', function(){
-            self::get('/','Auth\Auth@index')
+            self::get('/login','Auth\Auth@index')
             ->alias('auth.index');
 
             self::get('/logout','Auth\Auth@logout')

@@ -3,7 +3,6 @@ declare(strict_types=1);
 /**
  * Core Functions
  */
-namespace Simple;
 
     if (!function_exists(__NAMESPACE__ . '\example'))
     {
@@ -72,20 +71,20 @@ namespace Simple;
          */
         function alias($alias, $param=null)
         {
-           $compile_routes = Routing\Router::compiledRoutes();
+           $compile_routes = Simple\Routing\Router::compiledRoutes();
             $url='';
            foreach ($compile_routes as $key => $val)
            {
                 if ($alias == $key){
-                    $url = preg_replace('/\{([a-z?]+)\}/', '', $val['url']);
+                    $url = preg_replace('/{([a-z?]+)}/', '', $val['url']);
                     if ($param!==null) {
-                        $url = preg_replace('/\{([a-z?]+)\}/', $param, $val['url']);
-                        if(preg_match('/\{([a-z]+):([^\}]+)\}/', $val['url'])) {
-                            $url = preg_replace('/\{([a-z]+):([^\}]+)\}/', $param, $val['url']);
+                        $url = preg_replace('/{([a-z?]+)}/', $param, $val['url']);
+                        if(preg_match('/{([a-z]+):([^\}]+)}/', $val['url'])) {
+                            $url = preg_replace('/{([a-z]+):([^\}]+)}/', $param, $val['url']);
                         }
                     }
 
-                return $url;
+                return '/'.$url;
                }
            }
            throw new \Exception("Route with alias [$alias] not found", 500);

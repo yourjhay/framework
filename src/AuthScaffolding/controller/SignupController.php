@@ -10,21 +10,19 @@ use App\Controllers\Controller;
 use App\Models\User;
 use Simple\{Request, Session};
 
-use function Simple\bcrypt;
 
 class SignupController extends Controller
 {
     /**
-     * @return object|void
+     * @return string
      */
-    public function signup()
+    public function signup(): string
     {
         return view('auth.signup');
     }
 
     /**
      * @param Request $request
-     * @return object|void
      * @throws \Exception
      */
     public function signupNew(Request $request)
@@ -50,15 +48,15 @@ class SignupController extends Controller
                 $request->redirect('/auth');
             }
         } else {
-            Session::flush($v->get_errors_array());            
-            return view('auth.signup');
+            Session::flush($v->get_errors_array());
+            $request->redirect(alias('auth.signup'));
         }
     }
 
     /*
      * @return view
      */
-    public function success()
+    public function success(): string
     {
         return view('signup.index');
     }

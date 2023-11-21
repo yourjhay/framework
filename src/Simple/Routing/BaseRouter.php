@@ -220,10 +220,10 @@ class BaseRouter
                         throw new \Exception("$request Method not allowed", 405);
                     }
                 } else {
-                    throw new \Exception("Method [$action] (in Controller [$controller] ) can't be called explicitly. Remove Action suffix instead");
+                    throw new \Exception("Method [$action] (in Controller [$controller] ) can't be called explicitly. Remove Action suffix instead", 500);
                 }
             } else {
-                throw new \Exception("Controller class [$controller] not found");
+                throw new \Exception("Controller class [$controller] not found", 500);
             }
         } else {
             throw new \Exception("INVALID ROUTE [$url]", 404);
