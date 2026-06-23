@@ -2,164 +2,129 @@
 
 namespace Simple;
 
-use finfo;
+use Simple\Storage\Storage;
 
 class FileUpload
 {
-    protected $filename;
-    protected $tempName;
-    protected $filesize;
-    protected $extension;
-    protected $fileType;
-    protected $error;
-    protected $storage;
+    private array $file;
+    private string $originalName;
+    private string $tempName;
+    private int $size;
+    private string $extension;
+    private string $mimeType;
+    private int $error;
+    private array $allowedTypes = [];
+    private ?int $maxSize = null;
 
-    public function __construct($name)
+    public function __construct(string $key)
     {
-        $this->filename = $_FILES[$name]['name'];
-        $this->tempName = $_FILES[$name]['tmp_name'];
-        $this->filesize = $_FILES[$name]['size'];
-        $this->extension = pathinfo($_FILES[$name]['name'], PATHINFO_EXTENSION);
-        $this->fileType = $_FILES[$name]['type'];
-        $this->error = $_FILES[$name]['error'];
-
-        $this->storage = '../public/storage/';
+        if (!isset($_FILES[$key])) {
+            throw new \RuntimeException("Upload field [$key] not found.");
+        }
+        $this->file = $_FILES[$key];
+        $this->originalName = $this->file['name'];
+        $this->tempName = $this->file['tmp_name'];
+        $this->size = $this->file['size'];
+        $this->extension = strtolower(pathinfo($this->originalName, PATHINFO_EXTENSION));
+        $this->mimeType = $this->file['type'];
+        $this->error = $this->file['error'];
     }
 
-
-    /**
-     *  Return the filename of the uploaded file
-     * @return string
-     */
-    public function getFileName()
+    public function validateTypes(array $types): static
     {
-        return $this->filename;
+        $this->allowedTypes = array_map('strtolower', $types);
+        return $this;
     }
 
-    /**
-     * Return the uploaded file size
-     * @return mixed
-     */
-    public function getFileSize()
+    public function validateMaxSize(int $maxKb): static
     {
-        return $this->filesize;
+        $this->maxSize = $maxKb * 1024;
+        return $this;
     }
 
-    /**
-     * Return the file extension
-     * @return mixed
-     */
-    public function getFileExtension()
+    public function store(string $directory = '', string $disk = null): string
+    {
+        $directory = $directory ? trim($directory, '/') . '/' : '';
+        return $this->storeAs($directory, $this->hashName(), $disk);
+    }
+
+    public function storeAs(string $path, string $name, string $disk = null): string
+    {
+        $this->validate();
+
+        $path = rtrim($path, '/') . '/' . $this->sanitizeName($name);
+
+        $stream = fopen($this->tempName, 'rb');
+        Storage::disk($disk)->writeStream($path, $stream);
+
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+
+        return $path;
+    }
+
+    public function getOriginalName(): string
+    {
+        return $this->originalName;
+    }
+
+    public function getSize(): int
+    {
+        return $this->size;
+    }
+
+    public function getClientExtension(): string
     {
         return $this->extension;
     }
 
-    /**
-     * return the filetype
-     * @return mixed
-     */
-    public function getFileType()
+    public function getClientMimeType(): string
     {
-        return $this->fileType;
+        return $this->mimeType;
     }
 
-    /**
-     * Return the  uploaded filename
-     * @return string
-     */
-    public function getUploadedFileName()
+    public function getHash(): string
     {
-        $filename = sprintf("%s.%s",
-            sha1_file($this->tempName),
-            $this->extension
-        );
-        return $filename;
+        return sha1_file($this->tempName);
     }
 
-    /**
-     * @param string $path: The folder where the file is going to be uploaded.
-     * @return bool
-     * @throws \Exception
-     */
-    public function upload($path = 'null')
+    public function getError(): int
     {
-        try
-        {
-            if (
-                !isset($this->error) ||
-                is_array($this->error)
-            ) {
-                throw new \Exception('Invalid parameters.');
-            }
+        return $this->error;
+    }
 
-            switch ($this->error) {
-                case UPLOAD_ERR_OK:
-                    break;
-                case UPLOAD_ERR_NO_FILE:
-                    throw new \Exception('You are uploading an empty file.');
-                case UPLOAD_ERR_INI_SIZE:
-                case UPLOAD_ERR_FORM_SIZE:
-                    throw new \Exception('Uploaded file exceeded filesize limit.');
-                default:
-                    throw new \Exception('Unknown errors.');
-            }
+    private function hashName(): string
+    {
+        return $this->getHash() . '.' . $this->extension;
+    }
 
-            $finfo = new finfo(FILEINFO_MIME_TYPE);
-            if (false === $ext = array_search(
-                    $finfo->file($this->tempName),
-                    array(
-                        'jpg' => 'image/jpeg',
-                        'png' => 'image/png',
-                        'gif' => 'image/gif',
-                        'csv' => 'text/csv',
-                        'txt' => 'text/plain',
-                        'json' => 'application/json',
-                        'xml' => 'application/xml',
-                        'zip' => 'application/zip',
-                        'pdf' => 'application/pdf',
-                        'sql' => 'application/sql',
-                        'doc' => 'application/msword',
-                        'xls' => 'application/vnd.ms-excel',
-                        'ppt' => 'application/vnd.ms-powerpoint',
-                        'odt' => 'application/vnd.oasis.opendocument.text',
-                        'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                        'avi' => 'video/x-msvideo',
-                        'jpm' => 'video/jpm',
-                        'jpgv' => 'video/jpeg',
-                        'mpeg' => 'video/mpeg',
-                        'mp4' => 'video/mp4',
-                        'mp3' => 'audio/mpeg'
-                    ),
-                    true
-                )) {
-                throw new RuntimeException('Invalid file format.');
-            }
-            if ($path!=null){
-                $this->storage = $this->storage.$path;
-            }
-            if ( ! is_dir($this->storage)) {
-                mkdir($this->storage,666,true);
-            }
-            $filename = sprintf("./$this->storage/%s.%s",
-                sha1_file($this->tempName),
-                $ext
-            );
-            if (!move_uploaded_file(
-                $this->tempName,
-                $filename
-            )) {
-                if (SHOW_ERRORS==true)
-                    throw new \Exception('Failed to move uploaded file.');
-                return false;
-            } else {
-                return true;
-            }
+    private function sanitizeName(string $name): string
+    {
+        $name = preg_replace('/[^\w.\-]/', '_', $name);
+        return preg_replace('/_{2,}/', '_', $name);
+    }
+
+    private function validate(): void
+    {
+        if ($this->error !== UPLOAD_ERR_OK) {
+            throw new \RuntimeException(match ($this->error) {
+                UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'Uploaded file exceeded size limit.',
+                UPLOAD_ERR_NO_FILE => 'No file was uploaded.',
+                default => 'Unknown upload error.',
+            });
         }
-        catch (\RuntimeException $e)
-        {
-            throw new \Exception('Failed to move uploaded file. '.$e->getMessage());
+
+        if (!is_uploaded_file($this->tempName)) {
+            throw new \RuntimeException('File is not a valid upload.');
+        }
+
+        if ($this->maxSize !== null && $this->size > $this->maxSize) {
+            throw new \RuntimeException('File exceeds the maximum allowed size.');
+        }
+
+        if (!empty($this->allowedTypes) && !in_array($this->extension, $this->allowedTypes, true)) {
+            throw new \RuntimeException("File type [{$this->extension}] is not allowed.");
         }
     }
 }

@@ -245,6 +245,11 @@ class '.$model.'Observer
             if (file_exists("$this->observerPath{$model}Observer.php")) {
                 $this->status = 'error: '.$model.' Observer is already exist!'.PHP_EOL;
             } else {
+                $dir = dirname("$this->observerPath{$model}Observer.php");
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0755, true);
+                }
+
                 $file = fopen("$this->observerPath{$model}Observer.php", 'w');
                 if (fwrite($file, $content)) {
                     $this->status = 'success: Observer '.$model.' created successfuly '.PHP_EOL;
