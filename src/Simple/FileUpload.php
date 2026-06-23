@@ -14,6 +14,7 @@ class FileUpload
     private string $mimeType;
     private int $error;
     private array $allowedTypes = [];
+    private array $allowedMimes = [];
     private ?int $maxSize = null;
 
     public function __construct(string $key)
@@ -26,13 +27,21 @@ class FileUpload
         $this->tempName = $this->file['tmp_name'];
         $this->size = $this->file['size'];
         $this->extension = strtolower(pathinfo($this->originalName, PATHINFO_EXTENSION));
-        $this->mimeType = $this->file['type'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $this->mimeType = finfo_file($finfo, $this->tempName);
+        finfo_close($finfo);
         $this->error = $this->file['error'];
     }
 
     public function validateTypes(array $types): static
     {
         $this->allowedTypes = array_map('strtolower', $types);
+        return $this;
+    }
+
+    public function validateMimes(array $mimes): static
+    {
+        $this->allowedMimes = array_map('strtolower', $mimes);
         return $this;
     }
 
@@ -125,6 +134,10 @@ class FileUpload
 
         if (!empty($this->allowedTypes) && !in_array($this->extension, $this->allowedTypes, true)) {
             throw new \RuntimeException("File type [{$this->extension}] is not allowed.");
+        }
+
+        if (!empty($this->allowedMimes) && !in_array($this->mimeType, $this->allowedMimes, true)) {
+            throw new \RuntimeException("File MIME type [{$this->mimeType}] is not allowed.");
         }
     }
 }
