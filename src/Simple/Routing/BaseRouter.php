@@ -29,8 +29,13 @@ class BaseRouter
      * @param array $params Parameters (controller, action, etc.)
      * @param string $http_method - Request method
      */
-    protected static function set(string $route, $params = [], $http_method="ANY")
+    public static function set(string $route, $params = [], $http_method="ANY")
     {
+        // Normalize: treat '' and '/' as the same root route
+        if ($route === '') {
+            $route = '/';
+        }
+
         //Assign group to route
         $route = self::$currentGroupPrefix . $route;
 
