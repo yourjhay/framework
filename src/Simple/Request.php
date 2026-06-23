@@ -35,6 +35,9 @@ class Request extends RQ
      */
     public static function redirect(string $url, $param = [])
     {
+        if (preg_match('#^(https?:)?//#i', $url)) {
+            throw new \RuntimeException('Redirect to external URLs is not allowed.');
+        }
         $params="?";
         foreach ($param as $key => $value) {
             $params.=$key.'='.$value.'&';

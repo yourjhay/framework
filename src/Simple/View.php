@@ -67,21 +67,27 @@ class View
     {
         $views    =  '../app/Views';
         $cache    =  '../simply/Cache/Views';
-        $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === true ? 'https://' : 'http://';
-        $url      = $protocol . $_SERVER['HTTP_HOST'];
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        if (preg_match('/^[a-zA-Z0-9.\-:]+$/', $host) !== 1) {
+            $host = 'localhost';
+        }
+        $url      = $protocol . $host;
         $temp     = self::create($template, true);
         $loader   = new \Twig\Loader\FilesystemLoader($views);
 
         if (CACHE_VIEWS == true) {
             $twig = new \Twig\Environment($loader, [
-                'cache' => $cache
+                'cache' => $cache,
+                'autoescape' => 'html',
             ]);
         } else {
             $twig = new \Twig\Environment($loader, [
-                'debug' => SHOW_ERRORS
+                'debug' => SHOW_ERRORS,
+                'autoescape' => 'html',
             ]);
         }
-        foreach (glob('../app/Helper/Twig/*.php',GLOB_BRACE) as $filename)
+        foreach (glob('../app/Helper/Twig/*.php') as $filename)
         {
             $class = "\App\Helper\Twig\\" . explode('.',basename($filename))[0];
             $twig->addExtension(new $class);
@@ -90,7 +96,13 @@ class View
         $twig->addGlobal('flushable', Session::getFlushable());
         $twig->addGlobal('baseurl', $url);
         $twig->addGlobal('old', Session::get('_old'));
-        $twig->addGlobal('_get', $_GET);
+        $twig->addFunction(new \Twig\TwigFunction('csrf_token', function () {
+            return \Simple\Session::token();
+        }));
+        $twig->addFunction(new \Twig\TwigFunction('csrf_field', function () {
+            $token = \Simple\Session::token();
+            return '<input type="hidden" name="_token" value="' . htmlspecialchars($token, ENT_QUOTES, 'UTF-8') . '">';
+        }));
         if (Session::get('user')) {
             $twig->addGlobal('user', json_decode(Session::get('user'), true));
         }
