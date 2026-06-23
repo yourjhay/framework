@@ -17,6 +17,7 @@ class AuthHelper
         $user =  User::findByEmail($data['email']);
         if ($user) {
             if (password_verify($data['password'], $user->password_hash)) {
+                session_regenerate_id(true);
                 $user_data = json_encode($user);
                 Session::set('user', $user_data);
                 return true;

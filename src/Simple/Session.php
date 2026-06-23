@@ -14,9 +14,10 @@ class Session
      * Start new session if none
      * @return void
      */
-    protected static function init()
+    public static function init()
     {
         if (session_status() == PHP_SESSION_NONE){
+            ini_set('session.cookie_samesite', 'Lax');
             session_start();
         }
         if (!isset($_SESSION['_old'])) {
@@ -38,6 +39,14 @@ class Session
      * @param string $key Session Key
      * @param array|string $data Session data associated with the key
      */
+    public static function token(): string
+    {
+        if (empty($_SESSION['_token'])) {
+            $_SESSION['_token'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['_token'];
+    }
+
     public static function set(string $key, $data=[])
     {
         $_SESSION[$key] = $data;
