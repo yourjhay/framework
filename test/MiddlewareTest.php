@@ -161,4 +161,40 @@ class MiddlewareTest extends TestCase
         });
         $this->assertTrue($passed);
     }
+
+    public function testSecurityHeadersSet(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $request = new Request([], [], [], [], [], $_SERVER);
+        $headers = new \Simple\Middleware\SecurityHeaders;
+        $passed = false;
+        $headers->handle($request, function($req) use (&$passed) {
+            $passed = true;
+        });
+        $this->assertTrue($passed);
+    }
+
+    public function testAuthWithUserPasses(): void
+    {
+        $_SESSION['user'] = json_encode(['id' => 1, 'email' => 'test@test.com']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $request = new Request([], [], [], [], [], $_SERVER);
+        $auth = new \Simple\Middleware\Auth;
+        $passed = false;
+        $auth->handle($request, function($req) use (&$passed) {
+            $passed = true;
+        });
+        $this->assertTrue($passed);
+    }
+
+    public function testAuthWithoutUserThrows(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unauthenticated');
+        $_SESSION = [];
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $request = new Request([], [], [], [], [], $_SERVER);
+        $auth = new \Simple\Middleware\Auth;
+        $auth->handle($request, function($req) {});
+    }
 }
