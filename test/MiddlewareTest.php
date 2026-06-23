@@ -21,6 +21,11 @@ class MiddlewareTest extends TestCase
             session_destroy();
         }
         $_SESSION = [];
+        $storageDir = sys_get_temp_dir() . '/rate-limit-test-' . getmypid();
+        if (is_dir($storageDir)) {
+            array_map('unlink', glob($storageDir . '/*'));
+            rmdir($storageDir);
+        }
         $_SERVER['REQUEST_METHOD'] = 'GET';
     }
 
@@ -196,5 +201,34 @@ class MiddlewareTest extends TestCase
         $request = new Request([], [], [], [], [], $_SERVER);
         $auth = new \Simple\Middleware\Auth;
         $auth->handle($request, function($req) {});
+    }
+
+    public function testRateLimitUnderLimitPasses(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $request = new Request([], [], [], [], [], $_SERVER);
+        $rateLimit = new \Simple\Middleware\RateLimit;
+        $passed = false;
+        $rateLimit->handle($request, function($req) use (&$passed) {
+            $passed = true;
+        });
+        $this->assertTrue($passed);
+    }
+
+    public function testRateLimitOverLimitThrows(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Too many requests');
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        if (!defined('RATE_LIMIT_MAX_ATTEMPTS')) define('RATE_LIMIT_MAX_ATTEMPTS', 1);
+        if (!defined('RATE_LIMIT_DECAY_SECONDS')) define('RATE_LIMIT_DECAY_SECONDS', 60);
+        if (!defined('RATE_LIMIT_STORAGE')) define('RATE_LIMIT_STORAGE', sys_get_temp_dir() . '/rate-limit-test');
+
+        $rateLimit = new \Simple\Middleware\RateLimit;
+        $request1 = new Request([], [], [], [], [], $_SERVER);
+        $rateLimit->handle($request1, function($req) {});
+
+        $request2 = new Request([], [], [], [], [], $_SERVER);
+        $rateLimit->handle($request2, function($req) {});
     }
 }
