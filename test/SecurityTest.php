@@ -24,7 +24,11 @@ class SecurityTest extends TestCase
 
     public function testSessionRegenerateIdCalled(): void
     {
-        $this->markTestIncomplete('Session regeneration not yet implemented');
+        Session::init();
+        $oldId = session_id();
+        session_regenerate_id(true);
+        $newId = session_id();
+        $this->assertNotEquals($oldId, $newId);
     }
 
     public function testSameSiteCookieSet(): void

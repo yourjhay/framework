@@ -34,19 +34,20 @@ class Session
         return session_id();
     }
 
-    /**
-     * Set a new session
-     * @param string $key Session Key
-     * @param array|string $data Session data associated with the key
-     */
     public static function token(): string
     {
+        self::init();
         if (empty($_SESSION['_token'])) {
             $_SESSION['_token'] = bin2hex(random_bytes(32));
         }
         return $_SESSION['_token'];
     }
 
+    /**
+     * Set a new session
+     * @param string $key Session Key
+     * @param array|string $data Session data associated with the key
+     */
     public static function set(string $key, $data=[])
     {
         $_SESSION[$key] = $data;
