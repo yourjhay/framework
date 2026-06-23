@@ -49,37 +49,20 @@ class BaseRouter
         $params['request_method'] = $http_method;
         self::$raw_current_route = $route;
 
-        $twin_route = null;
-        /**
-         * Check if there's a optional parameter that is set
-         * store it and create a route without the optional
-         * so it will not result in 404
-         */
-        if (preg_match('/{([a-z]+)(\?)}/', $route)) {
-            $twin_route = preg_replace('/\/{([a-z]+)(\?)}/','', $route);
-        }
-        // optional parameter with a regex
-        if (preg_match('/{([a-z]+)(\?):([^}]+)}/', $route)) {
-            $twin_route = preg_replace('/\/{([a-z]+)(\?):([^}]+)}/','', $route);
-        }
-
-        //convert the route to a regular exp. escape forward slashes
-        $route = preg_replace('/\//','\\/', $route);
-
-        //convert var like {controller} with accept case insensitive letters and numbers
-        $route = preg_replace('/{([a-z]+)}/','(?P<\1>[a-zA-Z0-9]+)', $route);
+        //convert var like {controller} with accept any non-slash characters
+        $route = preg_replace('/{([a-z]+)}/','(?P<\1>[^/]+)', $route);
 
         //convert variables with custom regex eg: {id: \d+}
         $route = preg_replace('/{([a-z]+):([^}]+)}/', '(?P<\1>\2)', $route);
 
         //this convert {:all?} to accept any url pass through
-        $route = preg_replace('/{(:all\?)}/', '(?P<all>[a-z0-9\/-]+)', $route);
+        $route = preg_replace('/\/{(:all\?)}/', '(/(?P<all>.*))?', $route);
 
-        //convert optional variable
-        $route = preg_replace('/{([a-z]+)(\?)}/', '(?P<$1>[a-zA-Z0-9-]+)', $route);
+        //convert optional variable — wrap preceding slash into the optional group
+        $route = preg_replace('/\/{([a-z]+)(\?)}/', '(/(?P<$1>[^/]+))?', $route);
 
         //convert optional variables with custom regex eg: {id?:\d+}
-        $route = preg_replace('/{([a-z]+)(\?):([^}]+)}/','(?P<\1>\3)', $route);
+        $route = preg_replace('/\/{([a-z]+)(\?):([^}]+)}/','(/(?P<\1>\3))?', $route);
 
         //add start and end delimiters, case insensitive flag
         $route = self::addDelimiters($route);
@@ -89,15 +72,11 @@ class BaseRouter
         self::$current_param = $params;
 
         self::$routes[$route] = $params;
-        if ($twin_route) {
-            $route = self::addDelimiters($twin_route);
-            self::$routes[$route] = $params;
-        }
     }
 
     public static function addDelimiters(string $route): string
     {
-        return '/^' . $route . '$/i';
+        return '~^' . $route . '$~i';
     }
 
     /**
@@ -180,7 +159,11 @@ class BaseRouter
      */
     public static function dispatch($url)
     {
-        $url =  self::removeQueryString($url);
+        $url = self::removeQueryString($url);
+
+        if ($url !== '/' && substr($url, -1) === '/') {
+            $url = rtrim($url, '/');
+        }
 
         if (self::match($url)) {
             /**

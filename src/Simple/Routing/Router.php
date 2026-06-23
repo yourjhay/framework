@@ -95,9 +95,13 @@ class Router Extends BaseRouter
     public static function group(string $prefix, callable $routes)
     {
         $prevGroupPrefix = parent::$currentGroupPrefix;
-        parent::$currentGroupPrefix = $prefix . $prevGroupPrefix;
-        call_user_func($routes);
-        parent::$currentGroupPrefix='';
+        $prefix = '/' . trim($prefix, '/');
+        parent::$currentGroupPrefix = $prevGroupPrefix . $prefix;
+        try {
+            call_user_func($routes);
+        } finally {
+            parent::$currentGroupPrefix = $prevGroupPrefix;
+        }
     }
 
     /**
@@ -107,6 +111,7 @@ class Router Extends BaseRouter
      */
     public static function resource(string $route, string $controller)
     {
+        $route = '/' . ltrim($route, '/');
         self::get($route, ['controller' => $controller, 'action' => 'index'])
             ->alias("$controller.index");
         self::post("$route/store", ['controller' => $controller, 'action' => 'store'])

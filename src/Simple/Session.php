@@ -19,6 +19,9 @@ class Session
         if (session_status() == PHP_SESSION_NONE){
             session_start();
         }
+        if (!isset($_SESSION['_old'])) {
+            $_SESSION['_old'] = $_POST;
+        }
     }
 
     /**
@@ -63,13 +66,21 @@ class Session
         if (!isset($_SESSION['flush'])) {
             $_SESSION['flush'] = [];
         }
-        $_SESSION['_old'] = $_POST;
         $_SESSION['flush'][] = $message;
     }
 
     /**
+     * Preserve current input data for repopulating forms
+     * @param array|null $data
+     */
+    public static function preserveInput(array $data = null)
+    {
+        $_SESSION['_old'] = $data ?? $_POST;
+    }
+
+    /**
      *  Return the flushable message from session
-     * @return array|null
+     * @return mixed
      */
     public static function getFlushable()
     {

@@ -33,6 +33,9 @@ class ControllerDispatcher
     {
         $params = [];
         $refClass = new ReflectionClass($controller);
+        if (!$refClass->hasMethod($action)) {
+            $action = $action . 'Action';
+        }
         $method = $refClass->getMethod($action);
         $isRequestClassCalled = false;
         foreach ($method->getParameters() as $methodParameter) {
