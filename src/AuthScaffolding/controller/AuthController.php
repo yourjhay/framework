@@ -4,6 +4,7 @@ namespace App\Controllers\Auth;
 
 use App\Controllers\Controller;
 use Simple\{Request, Session};
+use Simple\Middleware\RateLimit;
 use App\Helper\Auth\AuthHelper as auth;
 
 class AuthController extends Controller
@@ -33,6 +34,7 @@ class AuthController extends Controller
     public function authenticate(Request $request): string
     {
         if (auth::attempt($request->post())) {
+           RateLimit::clear();
            $request->redirect(self::$destination);
         }
         Session::flush('Invalid Username or Password');
