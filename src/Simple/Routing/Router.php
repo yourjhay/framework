@@ -5,6 +5,20 @@ namespace Simple\Routing;
 class Router Extends BaseRouter
 {
     /**
+     * Fluent middleware setter for the current route
+     */
+    public function middleware($middleware): Router
+    {
+        $params = parent::getCurrentParam();
+        if (!isset($params['middleware'])) {
+            $params['middleware'] = [];
+        }
+        $middlewareList = is_array($middleware) ? $middleware : [$middleware];
+        $params['middleware'] = array_merge($params['middleware'], $middlewareList);
+        parent::updateCurrentRoute($params);
+        return $this;
+    }
+    /**
      * SET Route to accept only POST method
      * @param $route string URL of your route
      * @param mixed $params Parameters like controller and action
@@ -89,17 +103,34 @@ class Router Extends BaseRouter
     }
 
     /**
-     * @param string $prefix Route prefix
+     * @param string|array $prefix Route prefix or array of options
      * @param callable $routes routes callable
      */
-    public static function group(string $prefix, callable $routes)
+    public static function group($prefix, callable $routes)
     {
+        if (is_string($prefix)) {
+            $options = ['prefix' => $prefix];
+        } else {
+            $options = $prefix;
+            $prefix = $options['prefix'] ?? '';
+        }
+
         $prevGroupPrefix = parent::$currentGroupPrefix;
         $prefix = '/' . trim($prefix, '/');
         parent::$currentGroupPrefix = $prevGroupPrefix . $prefix;
+
+        $groupMiddleware = $options['middleware'] ?? [];
+        if (!empty($groupMiddleware)) {
+            array_push(parent::$currentGroupMiddleware, ...(is_array($groupMiddleware) ? $groupMiddleware : [$groupMiddleware]));
+        }
+
         try {
             call_user_func($routes);
         } finally {
+            if (!empty($groupMiddleware)) {
+                $count = is_array($groupMiddleware) ? count($groupMiddleware) : 1;
+                array_splice(parent::$currentGroupMiddleware, -$count);
+            }
             parent::$currentGroupPrefix = $prevGroupPrefix;
         }
     }

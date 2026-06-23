@@ -2,6 +2,8 @@
 
 namespace Simple\Routing;
 
+use Simple\Middleware\Pipeline;
+
 class BaseRouter
 {
     /**
@@ -21,6 +23,9 @@ class BaseRouter
     protected static string $raw_current_route;
     protected static array $compiled_routes =[];
     protected static string $currentGroupPrefix = '';
+    protected static array $globalMiddleware = [];
+    protected static array $middlewareAliases = [];
+    protected static array $currentGroupMiddleware = [];
 
 
     /**
@@ -157,6 +162,56 @@ class BaseRouter
         return self::$params;
     }
 
+    public static function middlewareAlias(string $name, string $class): void
+    {
+        self::$middlewareAliases[$name] = $class;
+    }
+
+    public static function globalMiddleware(array $names): void
+    {
+        self::$globalMiddleware = $names;
+    }
+
+    protected static function resolveMiddleware(array $params): array
+    {
+        $classes = [];
+        foreach (self::$globalMiddleware as $name) {
+            $classes[] = self::resolveMiddlewareClass($name);
+        }
+        foreach (self::$currentGroupMiddleware as $name) {
+            $classes[] = self::resolveMiddlewareClass($name);
+        }
+        if (isset($params['middleware'])) {
+            $routeMiddleware = is_array($params['middleware']) ? $params['middleware'] : [$params['middleware']];
+            foreach ($routeMiddleware as $name) {
+                $classes[] = self::resolveMiddlewareClass($name);
+            }
+        }
+        return $classes;
+    }
+
+    private static function resolveMiddlewareClass(string $name): string
+    {
+        if (strpos($name, '\\') !== false) {
+            return $name;
+        }
+        if (isset(self::$middlewareAliases[$name])) {
+            return self::$middlewareAliases[$name];
+        }
+        throw new \RuntimeException("Middleware [$name] not registered.");
+    }
+
+    public static function getCurrentParam(): array
+    {
+        return self::$current_param;
+    }
+
+    public static function updateCurrentRoute(array $params): void
+    {
+        self::$current_param = $params;
+        self::$routes[self::$current_route] = $params;
+    }
+
     /**
      * Dispatch route parameter to URL
      *
@@ -171,50 +226,60 @@ class BaseRouter
         }
 
         if (self::match($url)) {
-            /**
-             * If route parameter is a Closure
-             */
-            if(isset(self::$params['closure'])){
-                $closure = call_user_func(self::$params['closure']) ;
-                echo $closure;
+            $middlewareClasses = self::resolveMiddleware(self::$params);
+            if (!empty($middlewareClasses)) {
+                $request = new \Simple\Request($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
+                $pipeline = new Pipeline($middlewareClasses);
+                $pipeline->send($request, function($request) {
+                    self::executeController();
+                });
                 return;
             }
 
-            if (preg_match('/controller$/i', self::$params['controller']) == 0) {
-                $controller = self::$params['controller'].'Controller';
-            } else {
-                $controller = self::$params['controller'];
-            }
-
-            $controller = self::convertToStudlyCaps($controller);
-            $controller = self::getNamespace() . $controller;
-
-            if (class_exists($controller)){
-                $controller_class = new $controller(self::$params);
-                $action = self::convertToCamelCase(self::$params['action']);
-
-                if (preg_match('/action$/i', $action) == 0) {
-                    $request = $_SERVER['REQUEST_METHOD'];
-                    if (isset($_POST['_method'])){
-                        $request = $_POST['_method'];
-                    }
-                    $user_request_method = strtoupper(self::$params['request_method']);
-                    if ($request === $user_request_method
-                        || $user_request_method === 'ANY'
-                    ) {
-                        $dispatcher = new ControllerDispatcher(static::$params);
-                        $dispatcher->dispatch($controller_class, $action);
-                    } else {
-                        throw new \Exception("$request Method not allowed", 405);
-                    }
-                } else {
-                    throw new \Exception("Method [$action] (in Controller [$controller] ) can't be called explicitly. Remove Action suffix instead", 500);
-                }
-            } else {
-                throw new \Exception("Controller class [$controller] not found", 500);
-            }
+            self::executeController();
         } else {
             throw new \Exception("INVALID ROUTE [$url]", 404);
+        }
+    }
+
+    protected static function executeController(): void
+    {
+        if(isset(self::$params['closure'])){
+            $closure = call_user_func(self::$params['closure']) ;
+            echo $closure;
+            return;
+        }
+
+        if (preg_match('/controller$/i', self::$params['controller']) == 0) {
+            $controller = self::$params['controller'].'Controller';
+        } else {
+            $controller = self::$params['controller'];
+        }
+
+        $controller = self::convertToStudlyCaps($controller);
+        $controller = self::getNamespace() . $controller;
+
+        if (class_exists($controller)){
+            $controller_class = new $controller(self::$params);
+            $action = self::convertToCamelCase(self::$params['action']);
+
+            if (preg_match('/action$/i', $action) == 0) {
+                $request = $_SERVER['REQUEST_METHOD'];
+                if (isset($_POST['_method'])){
+                    $request = $_POST['_method'];
+                }
+                $user_request_method = strtoupper(self::$params['request_method']);
+                if ($request === $user_request_method || $user_request_method === 'ANY') {
+                    $dispatcher = new ControllerDispatcher(static::$params);
+                    $dispatcher->dispatch($controller_class, $action);
+                } else {
+                    throw new \Exception("$request Method not allowed", 405);
+                }
+            } else {
+                throw new \Exception("Method [$action] (in Controller [$controller] ) can't be called explicitly. Remove Action suffix instead", 500);
+            }
+        } else {
+            throw new \Exception("Controller class [$controller] not found", 500);
         }
     }
 
