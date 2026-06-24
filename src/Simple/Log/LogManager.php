@@ -49,7 +49,7 @@ class LogManager
     {
         $formatter = new LineFormatter(
             "[%datetime%] %channel%.%level_name%: %message%\n",
-            null,
+            "Y-m-d h:i:s A",
             true
         );
         $handler->setFormatter($formatter);
