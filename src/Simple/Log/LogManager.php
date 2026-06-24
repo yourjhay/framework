@@ -8,6 +8,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\SyslogHandler;
 use Monolog\Handler\ErrorLogHandler;
+use Monolog\Formatter\LineFormatter;
 
 class LogManager
 {
@@ -40,8 +41,19 @@ class LogManager
                 $level
             ),
         };
-        $logger->pushHandler($handler);
+        $logger->pushHandler(self::formatHandler($handler));
         return $logger;
+    }
+
+    private static function formatHandler($handler)
+    {
+        $formatter = new LineFormatter(
+            "[%datetime%] %channel%.%level_name%: %message%\n",
+            null,
+            true
+        );
+        $handler->setFormatter($formatter);
+        return $handler;
     }
 
     public static function resolvePath(string $path): string

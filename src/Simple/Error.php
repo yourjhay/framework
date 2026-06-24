@@ -107,12 +107,14 @@ class Error
                 exit();
             }
         } else {
-            Log::error($exception->getMessage(), [
-                'exception' => get_class($exception),
-                'file'      => $exception->getFile(),
-                'line'      => $exception->getLine(),
-                'trace'     => $exception->getTraceAsString(),
-            ]);
+            Log::error(
+                $exception->getMessage() . "\n" . $exception->getTraceAsString(),
+                [
+                    'exception' => get_class($exception),
+                    'file'      => $exception->getFile(),
+                    'line'      => $exception->getLine(),
+                ]
+            );
             if ($code == 404) {
                 print view('error.404',[
                     'name' => Config::get('app.name', 'Simply PHP')
