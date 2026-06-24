@@ -22,7 +22,9 @@ class LogTest extends TestCase
 
     protected function tearDown(): void
     {
-        @unlink($this->logFile);
+        if (file_exists($this->logFile)) {
+            unlink($this->logFile);
+        }
     }
 
     public function testInfoLogsMessage(): void
