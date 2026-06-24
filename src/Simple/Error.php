@@ -107,16 +107,12 @@ class Error
                 exit();
             }
         } else {
-            if (!file_exists('../simply/Logs')) {
-                mkdir('../simply/Logs/', 0777, true);
-            }
-            $log = '../simply/Logs/' . date('Y-m-d') . '.txt';
-            ini_set('error_log', $log);
-            $m = 'Uncaught exception: [' .get_class($exception).']';
-            $m .= ' with message ['.$exception->getMessage().']'.PHP_EOL;
-            $m .= 'Stack trace: ['.$exception->getTraceAsString().']'.PHP_EOL;
-            $m .= 'Thrown in ['.$exception->getFile().'] on line:'. $exception->getLine();
-            error_log($m);
+            Log::error($exception->getMessage(), [
+                'exception' => get_class($exception),
+                'file'      => $exception->getFile(),
+                'line'      => $exception->getLine(),
+                'trace'     => $exception->getTraceAsString(),
+            ]);
             if ($code == 404) {
                 print view('error.404',[
                     'name' => Config::get('app.name', 'Simply PHP')
