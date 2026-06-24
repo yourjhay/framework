@@ -18,6 +18,12 @@ class Application
         }
 
         Config::load($configDir);
+
+        $projectRoot = $this->findProjectRoot();
+        if ($projectRoot !== null) {
+            Config::set('app.project_root', $projectRoot);
+        }
+
         $this->initSession();
         $this->setErrorHandler();
     }

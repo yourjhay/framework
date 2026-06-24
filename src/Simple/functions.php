@@ -17,36 +17,7 @@ namespace Simple
         }
     }
 
-    if (!function_exists(__NAMESPACE__ . '\bcrypt'))
-    {
-        /**
-         * @param string $string String to be hashed
-         * @param array $option (optional) password_hash option
-         * @return string
-         */
-        function bcrypt(string $string, $option = array()): string
-        {
-            if ($option) {
-                return password_hash($string, PASSWORD_BCRYPT, $option);
-            } else {
-                return password_hash($string, PASSWORD_BCRYPT);
-            }
-        }
-    }
 
-    if (!function_exists(__NAMESPACE__ . '\bcrypt_verify'))
-    {
-        /**
-         * Verify the hashed string
-         * @param string $string String to be verify
-         * @param string $hash - Hashed to be verify
-         * @return bool
-         */
-        function bcrypt_verify(string $string, string $hash): bool
-        {
-            return password_verify($string, $hash);
-        }
-    }
 
     if (!function_exists(__NAMESPACE__ . '\url_init'))
     {
@@ -61,6 +32,25 @@ namespace Simple
 
 namespace
 {
+    if (!function_exists('bcrypt'))
+    {
+        function bcrypt(string $string, array $option = []): string
+        {
+            if ($option) {
+                return password_hash($string, PASSWORD_BCRYPT, $option);
+            }
+            return password_hash($string, PASSWORD_BCRYPT);
+        }
+    }
+
+    if (!function_exists('bcrypt_verify'))
+    {
+        function bcrypt_verify(string $string, string $hash): bool
+        {
+            return password_verify($string, $hash);
+        }
+    }
+
     if (!function_exists('alias'))
     {
         /**

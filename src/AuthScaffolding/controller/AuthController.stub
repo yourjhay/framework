@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         if (auth::attempt(['email' => $email, 'password' => $password])) {
             RateLimit::clear();
-            Session::forget('login_attempts');
+            Session::unset('login_attempts');
             $request->redirect(self::$destination);
         }
 

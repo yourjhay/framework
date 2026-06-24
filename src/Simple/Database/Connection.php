@@ -23,8 +23,7 @@ trait Connection
     {
         if (!$this->capsule) {
             $capsule = new Capsule;
-            $capsule->addConnection
-            ([
+            $dbConfig = [
                 'driver'    => \Simple\Config::get('database.engine', 'sqlite'),
                 'host'      => \Simple\Config::get('database.server', 'localhost'),
                 'database'  => \Simple\Config::get('database.name', './database/database.db'),
@@ -33,7 +32,17 @@ trait Connection
                 'charset'   => 'utf8',
                 'collation' => 'utf8_unicode_ci',
                 'prefix'   => '',
-            ]);
+            ];
+
+            if ($dbConfig['driver'] === 'sqlite'
+                && $dbConfig['database'] !== ':memory:'
+                && $dbConfig['database'][0] !== '/'
+            ) {
+                $root = \Simple\Config::get('app.project_root', getcwd());
+                $dbConfig['database'] = $root . '/' . ltrim($dbConfig['database'], './');
+            }
+
+            $capsule->addConnection($dbConfig);
 
             // Set the event dispatcher used by Eloquent models... (optional)
             $capsule->setEventDispatcher(new Dispatcher(new Container));

@@ -400,9 +400,12 @@ class '.$model.' extends Model
                     $sql ="CREATE TABLE IF NOT EXISTS $table(
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name TEXT NOT NULL,
-                        email TEXT NOT NULL,
+                        email TEXT NOT NULL UNIQUE,
                         password_hash TEXT NOT NULL,
-                        reset_token TEXT NULL)";
+                        reset_token TEXT NULL,
+                        email_verified_at TEXT NULL,
+                        created_at TEXT NULL,
+                        updated_at TEXT NULL)";
                 }
 
                     echo PHP_EOL;

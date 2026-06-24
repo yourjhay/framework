@@ -25,7 +25,7 @@ class Error
     public static function exceptionHandler($exception)
     {
         $code = $exception->getCode();
-        if ($code == 0) {
+        if (!is_int($code) || $code < 100 || $code > 599) {
             $code = 500;
         }
         http_response_code($code);
