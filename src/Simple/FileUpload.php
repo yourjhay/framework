@@ -51,13 +51,13 @@ class FileUpload
         return $this;
     }
 
-    public function store(string $directory = '', string $disk = null): string
+    public function store(string $directory = '', ?string $disk = null): string
     {
         $directory = $directory ? trim($directory, '/') . '/' : '';
         return $this->storeAs($directory, $this->hashName(), $disk);
     }
 
-    public function storeAs(string $path, string $name, string $disk = null): string
+    public function storeAs(string $path, string $name, ?string $disk = null): string
     {
         $this->validate();
 

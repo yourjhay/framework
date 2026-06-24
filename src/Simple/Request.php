@@ -52,7 +52,7 @@ class Request extends RQ
      * @param string|null $key variable to route
      * @return array|string
      */
-    public static function route(string $key=null)
+    public static function route(?string $key = null)
     {
         $params = \Simple\Routing\Router::getParams();
         return $params[$key] ?? $params;

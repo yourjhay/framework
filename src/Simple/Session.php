@@ -58,7 +58,7 @@ class Session
      * @param string|null $key Session to be return
      * @return string|$_SESSION
      */
-    public static function get(string $key = null)
+    public static function get(?string $key = null)
     {
         if ($key!=null) {
             return $_SESSION[$key] ?? null;
@@ -83,7 +83,7 @@ class Session
      * Preserve current input data for repopulating forms
      * @param array|null $data
      */
-    public static function preserveInput(array $data = null)
+    public static function preserveInput(?array $data = null)
     {
         $_SESSION['_old'] = $data ?? $_POST;
     }
