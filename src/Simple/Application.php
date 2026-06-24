@@ -9,9 +9,44 @@ class Application
     public function boot(?string $configDir = null): void
     {
         $this->loadEnvironment();
+
+        if ($configDir === null) {
+            $root = $this->findProjectRoot();
+            if ($root !== null) {
+                $configDir = $root . '/app/Config';
+            }
+        }
+
         Config::load($configDir);
         $this->initSession();
         $this->setErrorHandler();
+    }
+
+    protected function findProjectRoot(): ?string
+    {
+        if (file_exists(getcwd() . '/app/Config')) {
+            return getcwd();
+        }
+
+        if (!empty($_SERVER['SCRIPT_FILENAME'])) {
+            $dir = dirname($_SERVER['SCRIPT_FILENAME']);
+            for ($i = 0; $i < 3; $i++) {
+                $dir = dirname($dir);
+                if (file_exists($dir . '/app/Config')) {
+                    return $dir;
+                }
+            }
+        }
+
+        $dir = __DIR__;
+        for ($i = 0; $i < 7; $i++) {
+            $dir = dirname($dir);
+            if (file_exists($dir . '/app/Config')) {
+                return $dir;
+            }
+        }
+
+        return null;
     }
 
     protected function loadEnvironment(): void
