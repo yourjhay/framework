@@ -43,7 +43,7 @@ class Request extends RQ
             $params.=$key.'='.$value.'&';
         }
         $url .= substr($params, 0 , -1);
-        header('location:'.BASEURL.$url,true,303);
+        header('location:'.\Simple\Config::get('app.baseurl', '').$url,true,303);
         exit();
     }
 

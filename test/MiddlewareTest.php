@@ -2,11 +2,16 @@
 
 namespace Simple\Tests;
 
-if (!defined('DBENGINE')) { define('DBENGINE', 'mysql'); }
-if (!defined('DBSERVER')) { define('DBSERVER', 'localhost'); }
-if (!defined('DBNAME'))   { define('DBNAME', 'test'); }
-if (!defined('DBUSER'))   { define('DBUSER', 'root'); }
-if (!defined('DBPASS'))   { define('DBPASS', ''); }
+$rateLimitStorage = sys_get_temp_dir() . '/rate-limit-test-' . getmypid();
+
+\Simple\Config::set('database.engine', 'mysql');
+\Simple\Config::set('database.server', 'localhost');
+\Simple\Config::set('database.name', 'test');
+\Simple\Config::set('database.user', 'root');
+\Simple\Config::set('database.pass', '');
+\Simple\Config::set('security.rate_limit_max', 5);
+\Simple\Config::set('security.rate_limit_decay', 60);
+\Simple\Config::set('security.rate_limit_storage', $rateLimitStorage);
 
 use PHPUnit\Framework\TestCase;
 use Simple\Middleware\Pipeline;
@@ -220,9 +225,9 @@ class MiddlewareTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Too many requests');
         $_SERVER['REQUEST_METHOD'] = 'GET';
-        if (!defined('RATE_LIMIT_MAX_ATTEMPTS')) define('RATE_LIMIT_MAX_ATTEMPTS', 1);
-        if (!defined('RATE_LIMIT_DECAY_SECONDS')) define('RATE_LIMIT_DECAY_SECONDS', 60);
-        if (!defined('RATE_LIMIT_STORAGE')) define('RATE_LIMIT_STORAGE', sys_get_temp_dir() . '/rate-limit-test');
+        \Simple\Config::set('security.rate_limit_max', 1);
+        \Simple\Config::set('security.rate_limit_decay', 60);
+        \Simple\Config::set('security.rate_limit_storage', sys_get_temp_dir() . '/rate-limit-test');
 
         $rateLimit = new \Simple\Middleware\RateLimit;
         $request1 = new Request([], [], [], [], [], $_SERVER);

@@ -58,22 +58,6 @@ class ConfigTest extends TestCase
         rmdir($tmpDir);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
-    public function testLoadDefinesConstants(): void
-    {
-        $tmpDir = sys_get_temp_dir() . '/config-test-bc-' . getmypid();
-        mkdir($tmpDir, 0755, true);
-        file_put_contents($tmpDir . '/app.php', '<?php return ["name" => "BCApp"];');
-
-        Config::load($tmpDir);
-        $this->assertEquals('BCApp', APP_NAME);
-
-        array_map('unlink', glob($tmpDir . '/*'));
-        rmdir($tmpDir);
-    }
-
     public function testEnvReturnsDefaultWhenNotSet(): void
     {
         putenv('TEST_VAR');

@@ -324,15 +324,16 @@ class '.$model.' extends Model
 
     private function migrate($file, $com)
     {
-        require './app/Config/global.php';
+        \Simple\Config::load('./app/Config');
         $directory = './database';
         $imports = scandir($directory);
 
-        if (DBENGINE == 'mysql' || DBENGINE == 'mysqli') {
-            $mysqlDatabaseName = DBNAME;
-            $mysqlUserName =DBUSER;
-            $mysqlPassword =DBPASS;
-            $mysqlHostName =DBSERVER;
+        $dbEngine = \Simple\Config::get('database.engine', 'mysql');
+        if ($dbEngine == 'mysql' || $dbEngine == 'mysqli') {
+            $mysqlDatabaseName = \Simple\Config::get('database.name', '');
+            $mysqlUserName = \Simple\Config::get('database.user', '');
+            $mysqlPassword = \Simple\Config::get('database.pass', '');
+            $mysqlHostName = \Simple\Config::get('database.server', 'localhost');
             $files = [];
             if ($file == null)
             {
@@ -387,7 +388,7 @@ class '.$model.' extends Model
 
             }
 
-        } elseif (DBENGINE == 'sqlite') {
+            } elseif ($seedDbEngine == 'sqlite') {
             try {
             $table = 'users';
             $db = new PDO("sqlite:"."./database/database.db");
@@ -503,13 +504,13 @@ class '.$model.' extends Model
 
     private function seed()
     {
-        require './app/Config/global.php';
+        \Simple\Config::load('./app/Config');
 
 
-            $dbname = DBNAME;
-            $dbuser = DBUSER;
-            $dbpass = DBPASS;
-            $dbserver = DBSERVER;
+            $dbname = \Simple\Config::get('database.name', '');
+            $dbuser = \Simple\Config::get('database.user', '');
+            $dbpass = \Simple\Config::get('database.pass', '');
+            $dbserver = \Simple\Config::get('database.server', 'localhost');
             start:
             echo "seeding...".PHP_EOL;
             echo $this->output->print_o(" Enter name: ","white","cyan");
@@ -528,7 +529,8 @@ class '.$model.' extends Model
             $password = trim($line);
             fclose($handle);
             $password = password_hash($password, PASSWORD_BCRYPT);
-            if (DBENGINE=='mysqli' || DBENGINE == 'mysql') {
+            $seedDbEngine = \Simple\Config::get('database.engine', 'mysql');
+            if ($seedDbEngine=='mysqli' || $seedDbEngine == 'mysql') {
                 $db = new mysqli ($dbserver, $dbuser, $dbpass, $dbname);
                 $stmt = $db->prepare("INSERT INTO users(name,email,password_hash) VALUES(?,?,?)") or die($db->error);
 
@@ -538,7 +540,7 @@ class '.$model.' extends Model
                 } else {
                     echo $this->output->print_o(" Seeding failed: $stmt->error", "white", "red");
                 }
-            } elseif (DBENGINE == 'sqlite') {
+        } elseif ($dbEngine == 'sqlite') {
                 try {
                     $table = 'users';
                     $db = new PDO("sqlite:"."./database/database.db");

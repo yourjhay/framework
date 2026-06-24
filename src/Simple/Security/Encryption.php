@@ -11,7 +11,7 @@ class Encryption {
 
     public static function loadEncryptionKeyFromConfig()
     {
-        $keyAscii = APP_KEY;
+        $keyAscii = \Simple\Config::get('app.key', '');
         return Key::loadFromAsciiSafeString($keyAscii);
     }
 

@@ -25,11 +25,11 @@ trait Connection
             $capsule = new Capsule;
             $capsule->addConnection
             ([
-                'driver'    => DBENGINE,
-                'host'      => DBSERVER,
-                'database'  => DBNAME,
-                'username'  => DBUSER,
-                'password'  => DBPASS,
+                'driver'    => \Simple\Config::get('database.engine', 'mysql'),
+                'host'      => \Simple\Config::get('database.server', 'localhost'),
+                'database'  => \Simple\Config::get('database.name', 'simply'),
+                'username'  => \Simple\Config::get('database.user', 'root'),
+                'password'  => \Simple\Config::get('database.pass', ''),
                 'charset'   => 'utf8',
                 'collation' => 'utf8_unicode_ci',
                 'prefix'   => '',

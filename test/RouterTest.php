@@ -11,11 +11,11 @@ class StubController extends BaseController
 
 namespace Simple\Tests;
 
-if (!defined('DBENGINE')) { define('DBENGINE', 'mysql'); }
-if (!defined('DBSERVER')) { define('DBSERVER', 'localhost'); }
-if (!defined('DBNAME'))   { define('DBNAME', 'test'); }
-if (!defined('DBUSER'))   { define('DBUSER', 'root'); }
-if (!defined('DBPASS'))   { define('DBPASS', ''); }
+\Simple\Config::set('database.engine', 'mysql');
+\Simple\Config::set('database.server', 'localhost');
+\Simple\Config::set('database.name', 'test');
+\Simple\Config::set('database.user', 'root');
+\Simple\Config::set('database.pass', '');
 
 use PHPUnit\Framework\TestCase;
 use Simple\Routing\BaseRouter;

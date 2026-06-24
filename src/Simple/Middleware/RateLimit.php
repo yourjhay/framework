@@ -13,11 +13,9 @@ class RateLimit implements Middleware
 
     public function __construct()
     {
-        $this->maxAttempts = defined('RATE_LIMIT_MAX_ATTEMPTS') ? RATE_LIMIT_MAX_ATTEMPTS : 5;
-        $this->decaySeconds = defined('RATE_LIMIT_DECAY_SECONDS') ? RATE_LIMIT_DECAY_SECONDS : 60;
-        $this->storageDir = defined('RATE_LIMIT_STORAGE')
-            ? RATE_LIMIT_STORAGE
-            : '../app/storage/framework/rate-limit';
+        $this->maxAttempts = \Simple\Config::get('security.rate_limit_max', 5);
+        $this->decaySeconds = \Simple\Config::get('security.rate_limit_decay', 60);
+        $this->storageDir = \Simple\Config::get('security.rate_limit_storage', '../app/storage/framework/rate-limit');
     }
 
     public function handle(Request $request, Closure $next)
@@ -59,9 +57,7 @@ class RateLimit implements Middleware
 
     public static function clear(): void
     {
-        $storageDir = defined('RATE_LIMIT_STORAGE')
-            ? RATE_LIMIT_STORAGE
-            : '../app/storage/framework/rate-limit';
+        $storageDir = \Simple\Config::get('security.rate_limit_storage', '../app/storage/framework/rate-limit');
         $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         $route = $_SERVER['REQUEST_URI'] ?? '/';
         $signature = md5($route);

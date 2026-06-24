@@ -76,14 +76,14 @@ class View
         $temp     = self::create($template, true);
         $loader   = new \Twig\Loader\FilesystemLoader($views);
 
-        if (CACHE_VIEWS == true) {
+        if (\Simple\Config::get('cache.views', false)) {
             $twig = new \Twig\Environment($loader, [
                 'cache' => $cache,
                 'autoescape' => 'html',
             ]);
         } else {
             $twig = new \Twig\Environment($loader, [
-                'debug' => SHOW_ERRORS,
+                'debug' => \Simple\Config::get('security.show_errors', false),
                 'autoescape' => 'html',
             ]);
         }

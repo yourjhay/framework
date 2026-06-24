@@ -13,7 +13,7 @@ class SecurityHeaders implements Middleware
         header('X-Content-Type-Options: nosniff');
         header('Referrer-Policy: same-origin');
 
-        $csp = defined('CSP_POLICY') ? CSP_POLICY : "default-src 'self'";
+        $csp = \Simple\Config::get('security.csp_policy', "default-src 'self'");
         header("Content-Security-Policy: $csp");
 
         if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {

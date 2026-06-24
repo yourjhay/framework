@@ -55,7 +55,7 @@ class Error
         );
         $random_title = array_rand($errorTitle);
 
-        if (SHOW_ERRORS == true) {
+        if (Config::get('security.show_errors', true)) {
             $class = htmlspecialchars(get_class($exception), ENT_QUOTES, 'UTF-8');
             $message = htmlspecialchars($exception->getMessage(), ENT_QUOTES, 'UTF-8');
             $trace = htmlspecialchars($exception->getTraceAsString(), ENT_QUOTES, 'UTF-8');
@@ -119,11 +119,11 @@ class Error
             error_log($m);
             if ($code == 404) {
                 print view('error.404',[
-                    'name' => APP_NAME
+                    'name' => Config::get('app.name', 'Simply PHP')
                 ]);
             } else {
                 print view('error.500',[
-                    'name' => APP_NAME
+                    'name' => Config::get('app.name', 'Simply PHP')
                 ]);
             }
         }

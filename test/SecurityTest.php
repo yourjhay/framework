@@ -2,12 +2,12 @@
 
 namespace Simple\Tests;
 
-if (!defined('DBENGINE')) { define('DBENGINE', 'mysql'); }
-if (!defined('DBSERVER')) { define('DBSERVER', 'localhost'); }
-if (!defined('DBNAME'))   { define('DBNAME', 'test'); }
-if (!defined('DBUSER'))   { define('DBUSER', 'root'); }
-if (!defined('DBPASS'))   { define('DBPASS', ''); }
-if (!defined('SHOW_ERRORS')) { define('SHOW_ERRORS', true); }
+\Simple\Config::set('database.engine', 'mysql');
+\Simple\Config::set('database.server', 'localhost');
+\Simple\Config::set('database.name', 'test');
+\Simple\Config::set('database.user', 'root');
+\Simple\Config::set('database.pass', '');
+\Simple\Config::set('security.show_errors', true);
 
 use PHPUnit\Framework\TestCase;
 use Simple\Session;

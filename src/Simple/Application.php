@@ -61,14 +61,22 @@ class Application
 
     protected function findEnvPath(): ?string
     {
-        // Check CWD first (works for most containerized setups)
         if (file_exists(getcwd() . '/.env')) {
             return getcwd();
         }
 
-        // Walk up from src/Simple/ to find project root
+        if (!empty($_SERVER['SCRIPT_FILENAME'])) {
+            $dir = dirname($_SERVER['SCRIPT_FILENAME']);
+            for ($i = 0; $i < 5; $i++) {
+                $dir = dirname($dir);
+                if (file_exists($dir . '/.env')) {
+                    return $dir;
+                }
+            }
+        }
+
         $dir = __DIR__;
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 7; $i++) {
             $dir = dirname($dir);
             if (file_exists($dir . '/.env')) {
                 return $dir;
