@@ -34,7 +34,7 @@ class Config
         }
 
         if ($configDir === null) {
-            $configDir = dirname(__DIR__, 4) . '/app/Config';
+            $configDir = dirname(__DIR__, 5) . '/app/Config';
         }
 
         foreach (glob($configDir . '/*.php') as $file) {
@@ -67,7 +67,17 @@ class Config
 
     public static function has(string $key): bool
     {
-        return static::get($key, '__MISSING__') !== '__MISSING__';
+        $segments = explode('.', $key);
+        $value = static::$items;
+
+        foreach ($segments as $segment) {
+            if (!is_array($value) || !array_key_exists($segment, $value)) {
+                return false;
+            }
+            $value = $value[$segment];
+        }
+
+        return true;
     }
 
     public static function set(string $key, mixed $value): void
@@ -76,7 +86,7 @@ class Config
         $target = &static::$items;
 
         foreach ($segments as $segment) {
-            if (!isset($target[$segment]) || !is_array($target[$segment])) {
+            if (!array_key_exists($segment, $target) || !is_array($target[$segment])) {
                 $target[$segment] = [];
             }
             $target = &$target[$segment];
