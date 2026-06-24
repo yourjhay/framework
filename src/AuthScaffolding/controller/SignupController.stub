@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Controllers\Auth;
+
+use App\Controllers\Controller;
+use App\Helper\Auth\AuthHelper as auth;
+use App\Helper\Validation\Validator as validate;
+use App\Models\User;
+use Simple\{Config, Request, Session};
+
+class SignupController extends Controller
+{
+    public function signup(): string
+    {
+        return view('auth.signup', [
+            'name' => Config::get('app.name', 'Simply PHP')
+        ]);
+    }
+
+    public function signupNew(Request $request): void
+    {
+        $v = new validate;
+        $v->validation_rules([
+            'name'     => 'required|valid_name|min_len,6',
+            'email'    => 'required|valid_email|unique,users',
+            'password' => 'required|min_len,8|strong_password',
+        ]);
+        $validated = $v->run($request->post());
+
+        if ($validated) {
+            $user = new User();
+            $user->name = trim($request->post('name'));
+            $user->email = trim($request->post('email'));
+            $user->password_hash = bcrypt($request->post('password'));
+            $user->save();
+
+            if (auth::attempt($request->post())) {
+                $request->redirect('/');
+            } else {
+                $request->redirect(alias('auth.index'));
+            }
+        } else {
+            Session::flush($v->get_errors_array());
+            $request->redirect(alias('auth.signup'));
+        }
+    }
+}

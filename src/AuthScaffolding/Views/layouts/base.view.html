@@ -37,7 +37,7 @@
               </li>
             {% else %}
               <li class="nav-item">
-                <a class="nav-link" href="#">Welcome <strong>{{ user.name }}!</strong></a>
+                <a class="nav-link" href="#">Welcome <strong>{{ user.name ?? user }}!</strong></a>
               </li>
             
               <li class="nav-item">

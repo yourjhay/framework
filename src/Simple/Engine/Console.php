@@ -446,9 +446,9 @@ class '.$model.' extends Model
     private function makeAuth()
     {
         $success = true;
-        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/controller/*.php') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/controller/*.stub') as $filename)
         {
-            $dest = "app/Controllers/Auth/".basename($filename);
+            $dest = "app/Controllers/Auth/".str_replace('.stub', '.php', basename($filename));
             if (!file_exists('app/Controllers/Auth')) {
                 mkdir('app/Controllers/Auth', 0777, true);
             }
@@ -457,9 +457,9 @@ class '.$model.' extends Model
             fclose($file);
         }
 
-        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/helper/*.php') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/helper/*.stub') as $filename)
         {
-            $dest = "app/Helper/Auth/".basename($filename);
+            $dest = "app/Helper/Auth/".str_replace('.stub', '.php', basename($filename));
             if (!file_exists('app/Helper/Auth')) {
                 mkdir('app/Helper/Auth', 0777, true);
             }
@@ -467,9 +467,9 @@ class '.$model.' extends Model
             copy($filename, $dest);
             fclose($file);
         }
-        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/model/*.php') as $filename)
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/model/*.stub') as $filename)
         {
-            $dest = "app/Models/".basename($filename);
+            $dest = "app/Models/".str_replace('.stub', '.php', basename($filename));
             $file = fopen($dest, "w");
             copy($filename, $dest);
             fclose($file);

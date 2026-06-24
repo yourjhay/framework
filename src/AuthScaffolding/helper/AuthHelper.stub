@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Helper\Auth;
+
+use App\Models\User;
+use Simple\Session;
+
+class AuthHelper
+{
+    public static function attempt(array $data): bool
+    {
+        $email = trim($data['email'] ?? '');
+        if ($email === '') {
+            return false;
+        }
+
+        $user = User::findByEmail($email);
+        if (!$user) {
+            return false;
+        }
+
+        if (!password_verify($data['password'] ?? '', $user->password_hash)) {
+            return false;
+        }
+
+        if (password_needs_rehash($user->password_hash, PASSWORD_BCRYPT, ['cost' => 12])) {
+            $user->password_hash = password_hash($data['password'], PASSWORD_BCRYPT, ['cost' => 12]);
+            $user->save();
+        }
+
+        session_regenerate_id(true);
+
+        Session::set('user', json_encode([
+            'id'    => $user->id,
+            'name'  => $user->name,
+            'email' => $user->email,
+        ]));
+
+        return true;
+    }
+
+    public static function user(): ?object
+    {
+        $data = Session::get('user');
+        if ($data === null) {
+            return null;
+        }
+        return json_decode($data);
+    }
+
+    public static function destroy(): void
+    {
+        Session::destroy();
+    }
+}
