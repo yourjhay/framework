@@ -17,6 +17,7 @@
         "ext-mysqli": "*",
         "ext-pdo": "*",
         "ext-pdo_mysql": "*",
+        "filp/whoops": "^2.16",
         "illuminate/database": "^10.13",
         "illuminate/events": "^10.13",
         "illuminate/pagination": "^10.13",

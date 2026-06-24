@@ -25,6 +25,7 @@ class Application
             Config::set('app.project_root', $projectRoot);
         }
 
+        date_default_timezone_set(Config::get('app.timezone', 'UTC'));
         $this->setupLogging();
         $this->initSession();
         $this->setErrorHandler();
@@ -108,7 +109,7 @@ class Application
     protected function setErrorHandler(): void
     {
         error_reporting(E_ALL);
-        $handler = Config::get('security.error_handler', 'simply');
+        $handler = Config::get('security.error_handler', 'whoops');
 
         if ($handler === 'simply' || $handler === 'none') {
             set_error_handler('Simple\Error::errorHandler');
