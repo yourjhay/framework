@@ -25,9 +25,9 @@ trait Connection
             $capsule = new Capsule;
             $capsule->addConnection
             ([
-                'driver'    => \Simple\Config::get('database.engine', 'mysql'),
+                'driver'    => \Simple\Config::get('database.engine', 'sqlite'),
                 'host'      => \Simple\Config::get('database.server', 'localhost'),
-                'database'  => \Simple\Config::get('database.name', 'simply'),
+                'database'  => \Simple\Config::get('database.name', './database/database.db'),
                 'username'  => \Simple\Config::get('database.user', 'root'),
                 'password'  => \Simple\Config::get('database.pass', ''),
                 'charset'   => 'utf8',

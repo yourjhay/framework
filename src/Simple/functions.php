@@ -52,28 +52,23 @@ namespace Simple
     {
         function url_init()
         {
-            $addr = array(
-                '::1',
-                '127.0.0.1'
-            );
-            $localhost = false;
-            if (in_array($_SERVER['REMOTE_ADDR'], $addr))
-            {
-                $localhost =true;
-            }
-            $url = $localhost == true ? substr($_SERVER['REQUEST_URI'],1) : $_SERVER['QUERY_STRING'];
-            return preg_replace('/\/*$/', '', $url);
+            $url = $_SERVER['REQUEST_URI'];
+            $url = parse_url($url, PHP_URL_PATH);
+            return rtrim($url, '/') ?: '/';
         }
     }
+}
 
-    if (!function_exists(__NAMESPACE__ . '\alias'))
+namespace
+{
+    if (!function_exists('alias'))
     {
         /**
          * @throws \Exception
          */
         function alias($alias, $param=null)
         {
-           $compile_routes = Simple\Routing\Router::compiledRoutes();
+           $compile_routes = \Simple\Routing\Router::compiledRoutes();
             $url='';
            foreach ($compile_routes as $key => $val)
            {
@@ -86,16 +81,13 @@ namespace Simple
                         }
                     }
 
-                return '/'.$url;
+                return $url ?: '/';
                }
            }
            throw new \Exception("Route with alias [$alias] not found", 500);
         }
     }
-}
 
-namespace
-{
     if (!function_exists('env'))
     {
         function env(string $key, mixed $default = null): mixed

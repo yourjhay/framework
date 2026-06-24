@@ -102,6 +102,10 @@ class View
         $twig->addFunction(new \Twig\TwigFunction('csrf_field', function () {
             $token = \Simple\Session::token();
             return '<input type="hidden" name="_token" value="' . htmlspecialchars($token, ENT_QUOTES, 'UTF-8') . '">';
+        }, ['is_safe' => ['html']]));
+        $twig->addFunction(new \Twig\TwigFunction('alias', function ($alias) {
+            $routes = \Simple\Routing\BaseRouter::compiledRoutes();
+            return $routes[$alias]['url'] ?? '#';
         }));
         if (Session::get('user')) {
             $twig->addGlobal('user', json_decode(Session::get('user'), true));

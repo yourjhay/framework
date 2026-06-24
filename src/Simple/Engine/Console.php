@@ -388,7 +388,7 @@ class '.$model.' extends Model
 
             }
 
-            } elseif ($seedDbEngine == 'sqlite') {
+            } elseif ($dbEngine == 'sqlite') {
             try {
             $table = 'users';
             $db = new PDO("sqlite:"."./database/database.db");
@@ -487,9 +487,11 @@ class '.$model.' extends Model
         foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/Views/layouts/*.html') as $filename)
         {
             $dest = "app/Views/layouts/".basename($filename);
-            $file = fopen($dest, "w");
-            copy($filename, $dest);
-            fclose($file);
+            if (!file_exists($dest)) {
+                $file = fopen($dest, "w");
+                copy($filename, $dest);
+                fclose($file);
+            }
         }
 
         $routeFile = './vendor/simplyphp/framework/src/AuthScaffolding/routes.simply';
@@ -599,27 +601,20 @@ class '.$model.' extends Model
      */
     public function keyGenerate()
     {
-            $key = $key = \Simple\Security\Encryption::generateKey();
-            $id = "define('APP_KEY'";
-            $new_line = "define('APP_KEY', '$key');";
-            $dir = './app/Config/global.php';
-            $contents = file_get_contents($dir);
-            $new_contents= "";
-            if ( strpos($contents, $id) !== false) {
-                $contents_array = preg_split("/\\r\\n|\\r|\\n/", $contents);
-                foreach ($contents_array as &$record) {
-                    if (strpos($record, $id) !== false) {
-                        $new_contents .= $new_line.PHP_EOL;
-                    }else{
-                        $new_contents .= $record . "\r";
-                    }
-                }
-                file_put_contents($dir, $new_contents);
-                echo "Application Key Generated Successfully!".PHP_EOL;
-            }
-            else{
-                echo "Failed to generate application key".PHP_EOL;
-            }
+        $key = \Simple\Security\Encryption::generateKey();
+        $envFile = './.env';
+        if (!file_exists($envFile)) {
+            echo "Failed to generate application key: .env not found".PHP_EOL;
+            return;
+        }
+        $contents = file_get_contents($envFile);
+        if (preg_match('/^APP_KEY=.*$/m', $contents)) {
+            $contents = preg_replace('/^APP_KEY=.*$/m', "APP_KEY=$key", $contents);
+        } else {
+            $contents .= PHP_EOL."APP_KEY=$key".PHP_EOL;
+        }
+        file_put_contents($envFile, $contents);
+        echo "Application Key Generated Successfully!".PHP_EOL;
     }
 
     public function routeList()
