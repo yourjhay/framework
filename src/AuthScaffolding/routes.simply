@@ -1,4 +1,1 @@
-/** ---------------------------------------------
-* router::auth() is the routes for authentication
-*/
-router::auth();
+Router::auth();
