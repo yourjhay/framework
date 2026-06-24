@@ -48,7 +48,7 @@ class LogManager
     private static function formatHandler($handler)
     {
         $formatter = new LineFormatter(
-            "[%datetime%] %channel%.%level_name%: %message%\n",
+            "[%datetime%] %level_name%: %message%\n",
             "Y-m-d h:i:s A",
             true
         );
