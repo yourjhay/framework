@@ -4,16 +4,16 @@ namespace Simple\Tests\app;
 /**
  * Application Configuration Settings
  */
-define('APP_NAME', 'Rey Jhon : Me');
-define('APP_DESCRIPTION', 'The "Simply-PHP" Framework');
-define('BASEURL', '');
-define('APP_KEY', '');
+defined('APP_NAME') ? null : define('APP_NAME', 'Rey Jhon : Me');
+defined('APP_DESCRIPTION') ? null : define('APP_DESCRIPTION', 'The "Simply-PHP" Framework');
+defined('BASEURL') ? null : define('BASEURL', '');
+defined('APP_KEY') ? null : define('APP_KEY', '');
 
 /**
  * Error handling behaviour
  * Set to false in production
  */
-define('SHOW_ERRORS', true);
+defined('SHOW_ERRORS') ? null : define('SHOW_ERRORS', true);
 
 /**
  * Options:
@@ -22,15 +22,15 @@ define('SHOW_ERRORS', true);
  *  **IF you set whoops as default ERROR_HANDLER you need to install it.
  *    run: composer require filp/whoops
  */
-define('ERROR_HANDLER', 'whoops');
+defined('ERROR_HANDLER') ? null : define('ERROR_HANDLER', 'whoops');
 
-define('DBENGINE', 'mysql');
+defined('DBENGINE') ? null : define('DBENGINE', 'mysql');
 
-define('DBSERVER', 'localhost');
-define('DBUSER', 'jhay');
-define('DBPASS', 'password');
-define('DBNAME', 'portfolio');
-define('DBTESTMODE', false);
+defined('DBSERVER') ? null : define('DBSERVER', 'localhost');
+defined('DBUSER') ? null : define('DBUSER', 'jhay');
+defined('DBPASS') ? null : define('DBPASS', 'password');
+defined('DBNAME') ? null : define('DBNAME', 'portfolio');
+defined('DBTESTMODE') ? null : define('DBTESTMODE', false);
 
 
 
