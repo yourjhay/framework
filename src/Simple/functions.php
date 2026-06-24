@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
-namespace Simple;
 /**
  * Core Functions
  */
 
+namespace Simple
+{
     if (!function_exists(__NAMESPACE__ . '\example'))
     {
         function example()
@@ -91,3 +92,35 @@ namespace Simple;
            throw new \Exception("Route with alias [$alias] not found", 500);
         }
     }
+}
+
+namespace
+{
+    if (!function_exists('env'))
+    {
+        function env(string $key, mixed $default = null): mixed
+        {
+            $value = $_ENV[$key] ?? getenv($key);
+            if ($value === false || $value === null) {
+                return $default;
+            }
+            return match (strtolower((string) $value)) {
+                'true', '(true)' => true,
+                'false', '(false)' => false,
+                'null', '(null)' => null,
+                default => $value,
+            };
+        }
+    }
+
+    if (!function_exists('config'))
+    {
+        function config(?string $key = null, mixed $default = null): mixed
+        {
+            if ($key === null) {
+                return null;
+            }
+            return \Simple\Config::get($key, $default);
+        }
+    }
+}

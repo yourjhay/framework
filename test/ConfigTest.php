@@ -73,4 +73,36 @@ class ConfigTest extends TestCase
         array_map('unlink', glob($tmpDir . '/*'));
         rmdir($tmpDir);
     }
+
+    public function testEnvReturnsDefaultWhenNotSet(): void
+    {
+        putenv('TEST_VAR');
+        $_ENV['TEST_VAR'] = null;
+        $this->assertEquals('default', env('TEST_VAR', 'default'));
+    }
+
+    public function testEnvCastsBooleanStrings(): void
+    {
+        putenv('TEST_TRUE=true');
+        putenv('TEST_FALSE=false');
+        $this->assertTrue(env('TEST_TRUE'));
+        $this->assertFalse(env('TEST_FALSE'));
+    }
+
+    public function testEnvCastsNullString(): void
+    {
+        putenv('TEST_NULL=null');
+        $this->assertNull(env('TEST_NULL'));
+    }
+
+    public function testConfigHelperReturnsConfigValue(): void
+    {
+        Config::set('app.test_key', 'helper_value');
+        $this->assertEquals('helper_value', config('app.test_key'));
+    }
+
+    public function testConfigHelperReturnsDefault(): void
+    {
+        $this->assertEquals('fallback', config('nonexistent.key', 'fallback'));
+    }
 }
