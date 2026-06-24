@@ -3,6 +3,7 @@
 namespace Simple;
 
 use Dotenv\Dotenv;
+use Simple\Log\LogManager;
 
 class Application
 {
@@ -24,6 +25,7 @@ class Application
             Config::set('app.project_root', $projectRoot);
         }
 
+        $this->setupLogging();
         $this->initSession();
         $this->setErrorHandler();
     }
@@ -119,5 +121,17 @@ class Application
             set_error_handler('Simple\Error::errorHandler');
             set_exception_handler('Simple\Error::exceptionHandler');
         }
+    }
+
+    protected function setupLogging(): void
+    {
+        $logConfig = Config::get('logging', [
+            'name'    => 'simply',
+            'handler' => 'daily',
+            'path'    => './storage/logs/app.log',
+            'level'   => 'debug',
+            'days'    => 14,
+        ]);
+        Log::setLogger(LogManager::make($logConfig));
     }
 }
