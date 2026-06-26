@@ -260,7 +260,7 @@ class BaseRouter
         $controller = self::getNamespace() . $controller;
 
         if (class_exists($controller)){
-            $controller_class = new $controller(self::$params);
+            $controller_class = new $controller;
             $action = self::convertToCamelCase(self::$params['action']);
 
             if (preg_match('/action$/i', $action) == 0) {

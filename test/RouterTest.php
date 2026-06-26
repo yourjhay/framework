@@ -3,10 +3,106 @@
 namespace App\Controllers;
 
 use Simple\Routing\BaseController;
+use Simple\Request;
+use Simple\Validation\FormRequest;
+use Simple\Validation\ValidationException;
 
 class StubController extends BaseController
 {
     public function indexAction() {}
+}
+
+class ParamController extends BaseController
+{
+    public function show($id)
+    {
+        echo "id:$id";
+    }
+
+    public function showWithDefault($id, $sort = 'asc')
+    {
+        echo "id:$id,sort:$sort";
+    }
+
+    public function requestInjection(Request $request)
+    {
+        echo $request ? 'request:injected' : 'request:null';
+    }
+
+    public function mixedParams(Request $request, $id)
+    {
+        echo "id:$id";
+    }
+
+    public function optionalParam($page = 1)
+    {
+        echo "page:$page";
+    }
+}
+
+class ServiceWithoutDeps
+{
+    public function greet(): string
+    {
+        return 'hello from service';
+    }
+}
+
+class ServiceWithDeps
+{
+    public ServiceWithoutDeps $service;
+
+    public function __construct(ServiceWithoutDeps $service)
+    {
+        $this->service = $service;
+    }
+}
+
+class AutoWireController extends BaseController
+{
+    public function autoService(ServiceWithoutDeps $service)
+    {
+        echo $service->greet();
+    }
+
+    public function nestedService(ServiceWithDeps $service)
+    {
+        echo $service->service->greet();
+    }
+}
+
+class CustomFormRequest extends Request
+{
+    public function validated(): array
+    {
+        return ['name' => 'test'];
+    }
+}
+
+class FormRequestController extends BaseController
+{
+    public function store(CustomFormRequest $request)
+    {
+        echo json_encode($request->validated());
+    }
+}
+
+class TestFormRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|alpha',
+        ];
+    }
+}
+
+class FormRequestIntegrationController extends BaseController
+{
+    public function store(TestFormRequest $request)
+    {
+        echo 'validated';
+    }
 }
 
 namespace Simple\Tests;
@@ -19,7 +115,9 @@ namespace Simple\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Simple\Routing\BaseRouter;
+use Simple\Routing\ControllerDispatcher;
 use Simple\Routing\Router;
+use Simple\Validation\ValidationException;
 
 class RouterTest extends TestCase
 {
@@ -55,6 +153,7 @@ class RouterTest extends TestCase
     protected function tearDown(): void
     {
         self::resetRouterState();
+        ControllerDispatcher::reset();
     }
 
     // -----------------------------------------------------------------------
@@ -597,5 +696,125 @@ class RouterTest extends TestCase
         Router::post('/resource', ['controller' => 'Resource', 'action' => 'store']);
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $this->assertTrue(BaseRouter::match('/resource'));
+    }
+
+    // -----------------------------------------------------------------------
+    // ControllerDispatcher — parameter resolution
+    // -----------------------------------------------------------------------
+
+    public function testRouteParamInjectedByName(): void
+    {
+        Router::get('/user/{id}', ['controller' => 'Param', 'action' => 'show']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/user/42');
+        $output = ob_get_clean();
+        $this->assertSame('id:42', $output);
+    }
+
+    public function testDefaultValuePreservedWhenParamMissing(): void
+    {
+        Router::get('/items', ['controller' => 'Param', 'action' => 'optionalParam']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/items');
+        $output = ob_get_clean();
+        $this->assertSame('page:1', $output);
+    }
+
+    public function testDefaultValueOverriddenByRouteParam(): void
+    {
+        Router::get('/items/{page}', ['controller' => 'Param', 'action' => 'optionalParam']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/items/5');
+        $output = ob_get_clean();
+        $this->assertSame('page:5', $output);
+    }
+
+    public function testRequestInjectedByTypeHint(): void
+    {
+        Router::get('/inject-request', ['controller' => 'Param', 'action' => 'requestInjection']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/inject-request');
+        $output = ob_get_clean();
+        $this->assertSame('request:injected', $output);
+    }
+
+    public function testMixedRequestAndRouteParams(): void
+    {
+        Router::get('/mixed/{id}', ['controller' => 'Param', 'action' => 'mixedParams']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/mixed/99');
+        $output = ob_get_clean();
+        $this->assertSame('id:99', $output);
+    }
+
+    public function testServiceWithDefaultValueSkipsMissingParam(): void
+    {
+        Router::get('/show-default', ['controller' => 'Param', 'action' => 'showWithDefault']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/show-default');
+        $output = ob_get_clean();
+        $this->assertSame('id:,sort:asc', $output);
+    }
+
+    public function testAutoWireSimpleService(): void
+    {
+        Router::get('/auto-service', ['controller' => 'AutoWire', 'action' => 'autoService']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/auto-service');
+        $output = ob_get_clean();
+        $this->assertSame('hello from service', $output);
+    }
+
+    public function testAutoWireNestedService(): void
+    {
+        Router::get('/nested-service', ['controller' => 'AutoWire', 'action' => 'nestedService']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/nested-service');
+        $output = ob_get_clean();
+        $this->assertSame('hello from service', $output);
+    }
+
+    public function testFormRequestSubclassInjected(): void
+    {
+        Router::get('/form-request', ['controller' => 'FormRequest', 'action' => 'store']);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/form-request');
+        $output = ob_get_clean();
+        $this->assertStringContainsString('test', $output);
+    }
+
+    public function testFormRequestValidPasses(): void
+    {
+        $_GET['name'] = 'John';
+        Router::get('/form-valid', [
+            'controller' => 'FormRequestIntegration',
+            'action' => 'store'
+        ]);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/form-valid');
+        $output = ob_get_clean();
+        $this->assertSame('validated', $output);
+    }
+
+    public function testFormRequestValidationFails(): void
+    {
+        $_GET['name'] = '123';
+        Router::get('/form-invalid', [
+            'controller' => 'FormRequestIntegration',
+            'action' => 'store'
+        ]);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $this->expectException(ValidationException::class);
+        BaseRouter::dispatch('/form-invalid');
     }
 }

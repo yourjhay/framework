@@ -109,12 +109,10 @@ class Application
     protected function setErrorHandler(): void
     {
         error_reporting(E_ALL);
+        $showErrors = Config::get('security.show_errors', true);
         $handler = Config::get('security.error_handler', 'whoops');
 
-        if ($handler === 'simply' || $handler === 'none') {
-            set_error_handler('Simple\Error::errorHandler');
-            set_exception_handler('Simple\Error::exceptionHandler');
-        } elseif ($handler === 'whoops') {
+        if ($showErrors && $handler === 'whoops') {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
             $whoops->register();

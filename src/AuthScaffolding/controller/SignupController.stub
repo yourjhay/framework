@@ -4,7 +4,6 @@ namespace App\Controllers\Auth;
 
 use App\Controllers\Controller;
 use App\Helper\Auth\AuthHelper as auth;
-use App\Helper\Validation\Validator as validate;
 use App\Models\User;
 use Simple\{Config, Request, Session};
 

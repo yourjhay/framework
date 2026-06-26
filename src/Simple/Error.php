@@ -55,6 +55,14 @@ class Error
         );
         $random_title = array_rand($errorTitle);
 
+        Log::error(
+            $exception->getMessage() . "\n" . $exception->getTraceAsString(),
+            [
+                'exception' => get_class($exception),
+                'file'      => $exception->getFile(),
+                'line'      => $exception->getLine(),
+            ]
+        );
         if (Config::get('security.show_errors', true)) {
             $class = htmlspecialchars(get_class($exception), ENT_QUOTES, 'UTF-8');
             $message = htmlspecialchars($exception->getMessage(), ENT_QUOTES, 'UTF-8');
@@ -107,14 +115,7 @@ class Error
                 exit();
             }
         } else {
-            Log::error(
-                $exception->getMessage() . "\n" . $exception->getTraceAsString(),
-                [
-                    'exception' => get_class($exception),
-                    'file'      => $exception->getFile(),
-                    'line'      => $exception->getLine(),
-                ]
-            );
+            
             if ($code == 404) {
                 print view('error.404',[
                     'name' => Config::get('app.name', 'Simply PHP')

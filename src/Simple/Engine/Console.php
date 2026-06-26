@@ -14,6 +14,7 @@ class Console
     private $controllerPath = './app/Controllers/';
     private $modelPath  = 'app/Models/';
     private $observerPath  = 'app/Observers/';
+    private $requestPath = 'app/Requests/';
     private $output;
     public function __construct($argc, $argv)
     {
@@ -36,6 +37,9 @@ class Console
             break;
             case "make:observer":
             $this->createObserver($this->argv[2] ?? null);
+            break;
+            case "make:request":
+            $this->createRequest($this->argv[2] ?? null);
             break;
             case "migrate":
             $this->migrate($this->argv[2] ?? null, $this->argv[3] ?? null);
@@ -260,6 +264,66 @@ class '.$model.'Observer
             }
         } else {
             $this->status = 'error: Model name must be defined '.PHP_EOL;
+        }
+    }
+
+    private function createRequest($name)
+    {
+        if ($name) {
+            $name = self::convertToStudlyCaps($name);
+            $content = '<?php
+
+namespace App\Requests;
+
+use Simple\Validation\FormRequest;
+
+class '.$name.' extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            // \'field\' => \'required|valid_email\',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            // \'field\' => [
+            //     \'required\' => \'The {field} is required.\',
+            // ],
+        ];
+    }
+
+    public function fields(): array
+    {
+        return [
+            // \'field\' => \'Friendly Field Name\',
+        ];
+    }
+}';
+            $dir = $this->requestPath;
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            if (file_exists("$dir$name.php")) {
+                $this->status = 'error: '.$name.' Request is already exist!'.PHP_EOL;
+            } else {
+                $file = fopen("$dir$name.php", 'w');
+                if (fwrite($file, $content)) {
+                    $this->status = 'success: Request '.$name.' created successfully '.PHP_EOL;
+                } else {
+                    $this->status = 'error: failed to create request '.PHP_EOL;
+                }
+                fclose($file);
+            }
+        } else {
+            $this->status = 'error: Request name must be defined '.PHP_EOL;
         }
     }
 
@@ -648,6 +712,7 @@ class '.$model.' extends Model
         echo $this->output->print_o("       options: -r or -rm",'blue','black') . " Make the controller a resource(for CRUD), also creates the model automatically".PHP_EOL;
         echo $this->output->print_o(" make:model",'green','black') . " This creates a model in app/Models".PHP_EOL;
         echo $this->output->print_o(" make:auth",'green','black') . " This creates a authentication scaffoldings for your application".PHP_EOL;
+        echo $this->output->print_o(" make:request RequestName",'green','black') . " This creates a form request class for validation".PHP_EOL;
         echo $this->output->print_o(" user:seed",'green','black') . " Insert data to users table".PHP_EOL;
         echo $this->output->print_o(" migrate sqlfilename",'green','black') . " Migrate the sqlfiles in database folder(for mysql only)".PHP_EOL;
         echo $this->output->print_o(" migrate users",'green','black') . " This creates users table in you database(for sqlite and mysql)".PHP_EOL;
