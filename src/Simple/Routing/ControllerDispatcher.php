@@ -94,7 +94,7 @@ class ControllerDispatcher
                 } catch (ValidationException $e) {
                     Session::init();
                     Session::set('_errors', $e->errors());
-                    Session::preserveInput($request->all());
+                    Session::preserveInput(array_merge($request->query->all(), $request->request->all()));
 
                     if ($request->isXmlHttpRequest()) {
                         http_response_code(422);
