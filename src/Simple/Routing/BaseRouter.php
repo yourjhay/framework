@@ -250,14 +250,18 @@ class BaseRouter
             return;
         }
 
-        if (preg_match('/controller$/i', self::$params['controller']) == 0) {
-            $controller = self::$params['controller'].'Controller';
-        } else {
+        if (str_contains(self::$params['controller'], '\\')) {
             $controller = self::$params['controller'];
-        }
+        } else {
+            if (preg_match('/controller$/i', self::$params['controller']) == 0) {
+                $controller = self::$params['controller'].'Controller';
+            } else {
+                $controller = self::$params['controller'];
+            }
 
-        $controller = self::convertToStudlyCaps($controller);
-        $controller = self::getNamespace() . $controller;
+            $controller = self::convertToStudlyCaps($controller);
+            $controller = self::getNamespace() . $controller;
+        }
 
         if (class_exists($controller)){
             $controller_class = new $controller;
