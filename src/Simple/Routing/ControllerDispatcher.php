@@ -7,7 +7,9 @@ use ReflectionClass;
 use ReflectionMethod;
 use ReflectionParameter;
 use Simple\Request;
+use Simple\Session;
 use Simple\Validation\FormRequest;
+use Simple\Validation\ValidationException;
 
 class ControllerDispatcher
 {
@@ -87,7 +89,24 @@ class ControllerDispatcher
             $request->bootstrap();
 
             if ($request instanceof FormRequest) {
-                $request->validate();
+                try {
+                    $request->validate();
+                } catch (ValidationException $e) {
+                    Session::init();
+                    Session::set('_errors', $e->errors());
+                    Session::preserveInput();
+
+                    if ($request->isXmlHttpRequest()) {
+                        http_response_code(422);
+                        header('Content-Type: application/json');
+                        echo json_encode(['errors' => $e->errors()]);
+                        exit;
+                    }
+
+                    $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+                    header('location: ' . $referer, true, 303);
+                    exit;
+                }
             }
 
             return $request;

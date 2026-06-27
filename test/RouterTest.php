@@ -808,13 +808,10 @@ class RouterTest extends TestCase
 
     public function testFormRequestValidationFails(): void
     {
-        $_GET['name'] = '123';
-        Router::get('/form-invalid', [
-            'controller' => 'FormRequestIntegration',
-            'action' => 'store'
-        ]);
-        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $request = new \App\Controllers\TestFormRequest(
+            ['name' => '123'], [], [], [], [], []
+        );
         $this->expectException(ValidationException::class);
-        BaseRouter::dispatch('/form-invalid');
+        $request->validate();
     }
 }
