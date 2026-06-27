@@ -108,7 +108,7 @@ class Error
             <p><h3>Thrown in:</h3> "'.$file.'" on line: '.$line.'</p>
             <br>
             <p>&copy; The Simply PHP Framework </p>
-            <small class="exp">Creator: <a target="_blank" href="https://rjhon.net">RJ</a> - Simply PHP</small>
+            <small class="exp">Creator: <a target="_blank" href="https://simply.rjhon.net">RJ</a> - Simply PHP</small>
             </div>
             ';
             if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
