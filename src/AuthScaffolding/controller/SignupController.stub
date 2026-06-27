@@ -6,7 +6,7 @@ use App\Controllers\Controller;
 use App\Helper\Auth\AuthHelper as auth;
 use App\Models\User;
 use App\Requests\SignupRequest;
-use Simple\{Config, Session};
+use Simple\Config;
 
 class SignupController extends Controller
 {
@@ -19,15 +19,9 @@ class SignupController extends Controller
 
     public function signupNew(SignupRequest $request): void
     {
-        $name = trim($request->post('name') ?? '');
-        $email = trim($request->post('email') ?? '');
-        $password = $request->post('password') ?? '';
-
-        if (User::where('email', $email)->exists()) {
-            Session::set('_errors', ['email' => 'This email is already registered.']);
-            Session::preserveInput($request->request->all());
-            $request->redirect(alias('auth.signup'));
-        }
+        $name = trim($request->input('name') ?? '');
+        $email = trim($request->input('email') ?? '');
+        $password = $request->input('password') ?? '';
 
         $user = new User();
         $user->name = $name;

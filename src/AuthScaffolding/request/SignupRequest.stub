@@ -15,7 +15,7 @@ class SignupRequest extends FormRequest
     {
         return [
             'name'     => 'required|min_len,6',
-            'email'    => 'required|valid_email',
+            'email'    => 'required|valid_email|unique,users',
             'password' => 'required|min_len,8',
         ];
     }
@@ -30,6 +30,7 @@ class SignupRequest extends FormRequest
             'email' => [
                 'required'    => 'Please enter your email address.',
                 'valid_email' => 'Please provide a valid email address.',
+                'unique'      => 'This email is already registered.',
             ],
             'password' => [
                 'required' => 'Please enter a password.',
