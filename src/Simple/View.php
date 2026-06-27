@@ -66,7 +66,7 @@ class View
     public function render(string $template, array $args = []): string
     {
         $views    =  '../app/Views';
-        $cache    =  '../simply/Cache/Views';
+        $cache    =  '../storage/framework/cache/views';
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
         if (preg_match('/^[a-zA-Z0-9.\-:]+$/', $host) !== 1) {
