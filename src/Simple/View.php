@@ -96,6 +96,7 @@ class View
         $twig->addGlobal('flushable', Session::getFlushable());
         $twig->addGlobal('baseurl', $url);
         $twig->addGlobal('old', Session::get('_old'));
+        $twig->addGlobal('errors', Session::get('_errors'));
         $twig->addFunction(new \Twig\TwigFunction('csrf_token', function () {
             return \Simple\Session::token();
         }));
@@ -111,6 +112,7 @@ class View
             $twig->addGlobal('user', json_decode(Session::get('user'), true));
         }
         Session::unset('_old');
+        Session::unset('_errors');
         return $twig->render($temp, $args);
     }
 }
