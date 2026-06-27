@@ -4,6 +4,7 @@ namespace App\Controllers\Auth;
 
 use App\Controllers\Controller;
 use App\Helper\Auth\AuthHelper as auth;
+use App\Requests\LoginRequest;
 use Simple\{Config, Request, Session};
 use Simple\Middleware\RateLimit;
 
@@ -21,15 +22,10 @@ class AuthController extends Controller
         ]);
     }
 
-    public function authenticate(Request $request): string
+    public function authenticate(LoginRequest $request): string
     {
         $email = trim($request->post('email') ?? '');
         $password = $request->post('password') ?? '';
-
-        if (empty($email) || empty($password)) {
-            Session::flush('Please enter your email and password.');
-            return view('auth.index');
-        }
 
         if (auth::attempt(['email' => $email, 'password' => $password])) {
             RateLimit::clear();
@@ -38,7 +34,9 @@ class AuthController extends Controller
         }
 
         Session::flush('Invalid email or password.');
-        return view('auth.index');
+        return view('auth.index', [
+            'name' => Config::get('app.name', 'Simply PHP')
+        ]);
     }
 
     public function logout(): void

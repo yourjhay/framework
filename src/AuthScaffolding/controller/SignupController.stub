@@ -5,7 +5,8 @@ namespace App\Controllers\Auth;
 use App\Controllers\Controller;
 use App\Helper\Auth\AuthHelper as auth;
 use App\Models\User;
-use Simple\{Config, Request, Session};
+use App\Requests\SignupRequest;
+use Simple\{Config, Session};
 
 class SignupController extends Controller
 {
@@ -16,31 +17,15 @@ class SignupController extends Controller
         ]);
     }
 
-    public function signupNew(Request $request): void
+    public function signupNew(SignupRequest $request): void
     {
-        $data = $request->post();
-        $errors = [];
+        $name = trim($request->post('name') ?? '');
+        $email = trim($request->post('email') ?? '');
+        $password = $request->post('password') ?? '';
 
-        $name = trim($data['name'] ?? '');
-        $email = trim($data['email'] ?? '');
-        $password = $data['password'] ?? '';
-
-        if (strlen($name) < 6) {
-            $errors['name'] = 'Name must be at least 6 characters.';
-        }
-
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = 'Please provide a valid email address.';
-        } elseif (User::where('email', $email)->exists()) {
-            $errors['email'] = 'This email is already registered.';
-        }
-
-        if (strlen($password) < 8) {
-            $errors['password'] = 'Password must be at least 8 characters.';
-        }
-
-        if (!empty($errors)) {
-            Session::flush($errors);
+        if (User::where('email', $email)->exists()) {
+            Session::set('_errors', ['email' => 'This email is already registered.']);
+            Session::preserveInput($request->request->all());
             $request->redirect(alias('auth.signup'));
         }
 

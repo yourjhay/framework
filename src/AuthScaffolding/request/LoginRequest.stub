@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Requests;
+
+use Simple\Validation\FormRequest;
+
+class LoginRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'email'    => 'required|valid_email',
+            'password' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'email' => [
+                'required'    => 'Please enter your email address.',
+                'valid_email' => 'Please provide a valid email address.',
+            ],
+            'password' => [
+                'required' => 'Please enter your password.',
+            ],
+        ];
+    }
+
+    public function fields(): array
+    {
+        return [
+            'email'    => 'Email Address',
+            'password' => 'Password',
+        ];
+    }
+}

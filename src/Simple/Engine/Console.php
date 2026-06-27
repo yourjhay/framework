@@ -561,6 +561,17 @@ class '.$model.' extends Model
             }
         }
 
+        foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/request/*.stub') as $filename)
+        {
+            $dest = "app/Requests/".str_replace('.stub', '.php', basename($filename));
+            if (!file_exists('app/Requests')) {
+                mkdir('app/Requests', 0777, true);
+            }
+            $file = fopen($dest, "w");
+            copy($filename, $dest);
+            fclose($file);
+        }
+
         $routeFile = './vendor/simplyphp/framework/src/AuthScaffolding/routes.simply';
         $file = file_get_contents($routeFile, FILE_USE_INCLUDE_PATH);
         $mainRoute = "./app/Routes.php";

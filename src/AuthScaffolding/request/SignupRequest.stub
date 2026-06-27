@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Requests;
+
+use Simple\Validation\FormRequest;
+
+class SignupRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name'     => 'required|min_len,6',
+            'email'    => 'required|valid_email',
+            'password' => 'required|min_len,8',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name' => [
+                'required' => 'Please enter your name.',
+                'min_len'  => 'Name must be at least 6 characters.',
+            ],
+            'email' => [
+                'required'    => 'Please enter your email address.',
+                'valid_email' => 'Please provide a valid email address.',
+            ],
+            'password' => [
+                'required' => 'Please enter a password.',
+                'min_len'  => 'Password must be at least 8 characters.',
+            ],
+        ];
+    }
+
+    public function fields(): array
+    {
+        return [
+            'name'     => 'Name',
+            'email'    => 'Email Address',
+            'password' => 'Password',
+        ];
+    }
+}
