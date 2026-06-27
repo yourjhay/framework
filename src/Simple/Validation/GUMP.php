@@ -264,6 +264,21 @@ class GUMP
     }
 
     /**
+     * Sanitize data by stripping HTML tags and encoding special characters.
+     *
+     * @param array $data
+     * @return array
+     */
+    public static function xss_clean(array $data): array
+    {
+        foreach ($data as $k => $v) {
+            $data[$k] = static::polyfill_filter_var_string($v);
+        }
+
+        return $data;
+    }
+
+    /**
      * Adds a custom validation rule using a callback function.
      *
      * @param string $rule

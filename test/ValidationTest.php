@@ -784,6 +784,10 @@ class ValidationTest extends TestCase
 
     public function testIbanPasses(): void
     {
+        if (!function_exists('bcmod')) {
+            $this->markTestSkipped('BCMath extension is required for IBAN validation.');
+        }
+
         $result = $this->validator->validate(
             ['iban' => 'GB29NWBK60161331926819'],
             ['iban' => 'iban']
@@ -1101,6 +1105,7 @@ class ValidationTest extends TestCase
             ['comment' => '<script>alert("xss")</script>']
         );
         $this->assertStringNotContainsString('<script>', $result['comment']);
+        $this->assertStringContainsString('alert', $result['comment']);
     }
 
     // -------------------------------------------
@@ -1236,26 +1241,26 @@ class ValidationTest extends TestCase
 
     public function testAddCustomValidator(): void
     {
-        Validator::add_validator('even', function ($field, array $input, array $params, $value) {
+        Validator::add_validator('is_even', function ($field, array $input, array $params, $value) {
             return is_numeric($value) && $value % 2 === 0;
         }, '{field} must be even.');
 
         $result = $this->validator->validate(
             ['num' => 4],
-            ['num' => 'even']
+            ['num' => 'is_even']
         );
         $this->assertTrue($result);
     }
 
     public function testCustomValidatorFails(): void
     {
-        Validator::add_validator('odd', function ($field, array $input, array $params, $value) {
+        Validator::add_validator('is_odd', function ($field, array $input, array $params, $value) {
             return is_numeric($value) && $value % 2 !== 0;
         }, '{field} must be odd.');
 
         $result = $this->validator->validate(
             ['num' => 4],
-            ['num' => 'odd']
+            ['num' => 'is_odd']
         );
         $this->assertIsArray($result);
     }
@@ -1412,7 +1417,10 @@ class ValidationTest extends TestCase
     {
         $v = new Validator();
         $v->validation_rules(['name' => 'required']);
-        $result = $v->run(['name' => 'John', 'extra' => 'field'], true);
-        $this->assertFalse($result);
+        $v->run(['name' => 'John', 'extra' => 'field'], true);
+        $errors = $v->errors();
+        $this->assertCount(1, $errors);
+        $this->assertSame('extra', $errors[0]['field']);
+        $this->assertSame('mismatch', $errors[0]['rule']);
     }
 }
