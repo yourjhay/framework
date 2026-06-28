@@ -114,10 +114,37 @@ namespace Simple\Tests;
 \Simple\Config::set('database.pass', '');
 
 use PHPUnit\Framework\TestCase;
+use Simple\Middleware\Middleware;
+use Simple\Request;
 use Simple\Routing\BaseRouter;
 use Simple\Routing\ControllerDispatcher;
 use Simple\Routing\Router;
 use Simple\Validation\ValidationException;
+use Closure;
+
+class TestMiddleware implements Middleware
+{
+    public static bool $called = false;
+
+    public function handle(Request $request, Closure $next)
+    {
+        static::$called = true;
+        return $next($request);
+    }
+
+    public static function reset(): void
+    {
+        static::$called = false;
+    }
+}
+
+class BlockingMiddleware implements Middleware
+{
+    public function handle(Request $request, Closure $next)
+    {
+        throw new \RuntimeException('blocked', 403);
+    }
+}
 
 class RouterTest extends TestCase
 {
@@ -442,6 +469,162 @@ class RouterTest extends TestCase
         Router::get('/outside', ['controller' => 'Test', 'action' => 'outside']);
         $this->assertTrue(BaseRouter::match('/outside'));
         $this->assertFalse(BaseRouter::match('/leaky/outside'));
+    }
+
+    // -----------------------------------------------------------------------
+    // Middleware — single route
+    // -----------------------------------------------------------------------
+
+    public function testSingleRouteWithMiddleware(): void
+    {
+        TestMiddleware::reset();
+        Router::get('/secure', ['controller' => 'Stub', 'action' => 'index'])
+            ->middleware(TestMiddleware::class);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $this->assertTrue(BaseRouter::match('/secure'));
+        $params = BaseRouter::getParams();
+        $this->assertArrayHasKey('middleware', $params);
+        $this->assertContains(TestMiddleware::class, $params['middleware']);
+    }
+
+    public function testMiddlewareExecutesOnDispatch(): void
+    {
+        TestMiddleware::reset();
+        Router::get('/middle-exec', ['controller' => 'Stub', 'action' => 'index'])
+            ->middleware(TestMiddleware::class);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/middle-exec');
+        ob_end_clean();
+        $this->assertTrue(TestMiddleware::$called);
+    }
+
+    public function testBlockingMiddlewareStopsRequest(): void
+    {
+        Router::get('/blocked', ['controller' => 'Stub', 'action' => 'index'])
+            ->middleware(BlockingMiddleware::class);
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionCode(403);
+        BaseRouter::dispatch('/blocked');
+    }
+
+    // -----------------------------------------------------------------------
+    // Middleware — group routes
+    // -----------------------------------------------------------------------
+
+    public function testGroupMiddlewarePersistsToRouteParams(): void
+    {
+        TestMiddleware::reset();
+        Router::group(['prefix' => 'admin', 'middleware' => [TestMiddleware::class]], function () {
+            Router::get('/dashboard', ['controller' => 'Admin', 'action' => 'dashboard']);
+        });
+        $this->assertTrue(BaseRouter::match('/admin/dashboard'));
+        $params = BaseRouter::getParams();
+        $this->assertArrayHasKey('middleware', $params);
+        $this->assertContains(TestMiddleware::class, $params['middleware']);
+    }
+
+    public function testGroupMiddlewareExecutesOnDispatch(): void
+    {
+        TestMiddleware::reset();
+        Router::group(['prefix' => 'admin', 'middleware' => [TestMiddleware::class]], function () {
+            Router::get('/dashboard', ['controller' => 'Stub', 'action' => 'index']);
+        });
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/admin/dashboard');
+        ob_end_clean();
+        $this->assertTrue(TestMiddleware::$called);
+    }
+
+    public function testGroupMiddlewareNotAppliedOutsideGroup(): void
+    {
+        TestMiddleware::reset();
+        Router::group(['prefix' => 'admin', 'middleware' => [TestMiddleware::class]], function () {
+            Router::get('/inside', ['controller' => 'Admin', 'action' => 'dashboard']);
+        });
+        Router::get('/outside', ['controller' => 'Public', 'action' => 'index']);
+        $this->assertTrue(BaseRouter::match('/outside'));
+        $params = BaseRouter::getParams();
+        $this->assertArrayNotHasKey('middleware', $params);
+    }
+
+    // -----------------------------------------------------------------------
+    // Middleware — route alias inside group
+    // -----------------------------------------------------------------------
+
+    public function testAliasedRouteInsideMiddlewareGroup(): void
+    {
+        TestMiddleware::reset();
+        Router::group(['prefix' => 'api', 'middleware' => [TestMiddleware::class]], function () {
+            Router::get('/users', 'UserController@index')
+                ->alias('api.users');
+        });
+        $this->assertTrue(BaseRouter::match('/api/users'));
+        $params = BaseRouter::getParams();
+        $this->assertArrayHasKey('middleware', $params);
+        $this->assertContains(TestMiddleware::class, $params['middleware']);
+        $this->assertSame('api.users', $params['alias']);
+    }
+
+    public function testAliasedRouteWithGroupMiddlewareExecutes(): void
+    {
+        TestMiddleware::reset();
+        Router::group(['prefix' => 'api', 'middleware' => [TestMiddleware::class]], function () {
+            Router::get('/users', 'StubController@index')
+                ->alias('api.users');
+        });
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        ob_start();
+        BaseRouter::dispatch('/api/users');
+        ob_end_clean();
+        $this->assertTrue(TestMiddleware::$called);
+    }
+
+    // -----------------------------------------------------------------------
+    // Middleware — nested groups
+    // -----------------------------------------------------------------------
+
+    public function testNestedGroupAccumulatesMiddleware(): void
+    {
+        TestMiddleware::reset();
+        Router::group(['prefix' => 'api', 'middleware' => [TestMiddleware::class]], function () {
+            Router::group(['prefix' => 'v1', 'middleware' => [BlockingMiddleware::class]], function () {
+                Router::get('/users', 'UserController@index');
+            });
+        });
+        $this->assertTrue(BaseRouter::match('/api/v1/users'));
+        $params = BaseRouter::getParams();
+        $this->assertArrayHasKey('middleware', $params);
+        $this->assertCount(2, $params['middleware']);
+    }
+
+    // -----------------------------------------------------------------------
+    // Auth routes middleware (CSRF)
+    // -----------------------------------------------------------------------
+
+    public function testAuthRoutesHaveCsrfMiddleware(): void
+    {
+        Router::auth();
+        $postRoutes = ['/auth/authenticate', '/auth/signup-new'];
+        foreach ($postRoutes as $url) {
+            BaseRouter::match($url);
+            $params = BaseRouter::getParams();
+            $this->assertArrayHasKey('middleware', $params, "Auth POST route $url should have middleware");
+            $this->assertStringContainsString('Csrf', $params['middleware'][0]);
+        }
+    }
+
+    public function testAuthGetRoutesDoNotBlockWithoutToken(): void
+    {
+        TestMiddleware::reset();
+        Router::auth();
+        $getRoutes = ['/auth/login', '/auth/logout', '/auth/signup'];
+        foreach ($getRoutes as $url) {
+            TestMiddleware::reset();
+            $this->assertTrue(BaseRouter::match($url), "Auth GET route $url should match");
+        }
     }
 
     // -----------------------------------------------------------------------
