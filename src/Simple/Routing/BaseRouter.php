@@ -57,6 +57,15 @@ class BaseRouter
         }
 
         $params['request_method'] = $http_method;
+
+        // Carry group middleware into route params
+        if (!empty(self::$currentGroupMiddleware)) {
+            $params['middleware'] = array_merge(
+                isset($params['middleware']) ? (array)$params['middleware'] : [],
+                self::$currentGroupMiddleware
+            );
+        }
+
         self::$raw_current_route = $route;
 
         //convert var like {controller} with accept any non-slash characters
