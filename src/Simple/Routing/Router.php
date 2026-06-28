@@ -164,7 +164,7 @@ class Router Extends BaseRouter
      */
     public static function auth()
     {
-        self::group('auth', function(){
+        self::group(['prefix' => 'auth', 'middleware' => [\Simple\Middleware\Csrf::class]], function(){
             self::get('/login','Auth\Auth@index')
             ->alias('auth.index');
 
