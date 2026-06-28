@@ -2,8 +2,6 @@
 
 namespace Simple\Validation;
 
-use Simple\Model;
-
 class Validator extends \Simple\Validation\GUMP
 {
     protected static bool $booted = false;
@@ -22,7 +20,7 @@ class Validator extends \Simple\Validation\GUMP
             $ignore = $params[1] ?? null;
             $ignoreCol = $params[2] ?? 'id';
 
-            $query = Model::table($table)->where($field, $value);
+            $query = \Simple\Database\DB::table($table)->where($field, $value);
 
             if ($ignore !== null) {
                 $query = $query->where($ignoreCol, '!=', $ignore);
