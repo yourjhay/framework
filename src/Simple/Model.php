@@ -27,7 +27,7 @@ class Model extends EM
             $ignore = $param[1];
         }
 
-        $res = parent::table($table)->where($column, $data);
+        $res = \Simple\Database\DB::table($table)->where($column, $data);
 
         if ($ignore) {
             $res = $res->where($ignore_col, '!', $ignore);
