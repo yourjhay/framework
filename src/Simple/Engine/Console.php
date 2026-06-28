@@ -54,6 +54,9 @@ class Console
             Session::destroy();
             $this->status = 'success: All sessions is destroyed.'.PHP_EOL;
             break;
+            case "cache:clear":
+            $this->clearCacheViews();
+            break;
             case "serve":
             $this->serve($this->argv[2] ?? null, $this->argv[3] ?? null);
             break;
@@ -709,6 +712,26 @@ class '.$model.' extends Model
          echo $this->output->print_o(" You have $n route aliases in your Routes.php",'black','light_gray').PHP_EOL;
     }
 
+    public function clearCacheViews()
+    {
+        $cacheDir = './storage/framework/cache/views';
+        if (!is_dir($cacheDir)) {
+            $this->status = 'error: Views cache directory not found.'.PHP_EOL;
+            return;
+        }
+        $files = glob($cacheDir . '/*');
+        if ($files === false) {
+            $this->status = 'error: Error reading views cache directory.'.PHP_EOL;
+            return;
+        }
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+        $this->status = 'success: Views cache cleared successfully.'.PHP_EOL;
+    }
+
     public function cliHelp()
     {
         echo PHP_EOL;
@@ -728,6 +751,7 @@ class '.$model.' extends Model
         echo $this->output->print_o(" migrate sqlfilename",'green','black') . " Migrate the sqlfiles in database folder(for mysql only)".PHP_EOL;
         echo $this->output->print_o(" migrate users",'green','black') . " This creates users table in you database(for sqlite and mysql)".PHP_EOL;
         echo $this->output->print_o(" migrate -c \"your_query\"",'green','black') . " Communicate with sqlite database".PHP_EOL;
+        echo $this->output->print_o(" cache:clear",'green','black') . " Clears the Twig views cache".PHP_EOL;
         echo PHP_EOL;
     }
 }
