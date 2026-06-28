@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Requests;
+
+use Simple\Validation\FormRequest;
+
+class {{className}} extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            // 'field' => 'required|valid_email',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            // 'field' => [
+            //     'required' => 'The {field} is required.',
+            // ],
+        ];
+    }
+
+    public function fields(): array
+    {
+        return [
+            // 'field' => 'Friendly Field Name',
+        ];
+    }
+}

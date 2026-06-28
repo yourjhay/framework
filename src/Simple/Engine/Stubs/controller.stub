@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Controllers;
+
+use Simple\Request;
+
+class {{className}} extends Controller
+{
+
+    public function index(Request $request)
+    {
+
+    }
+
+}

@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Observers;
+
+use Simple\Model;
+
+class {{className}}Observer
+{
+    /**
+     * Define your observers here with the following methods:
+     * created, updated, deleted, restored, forceDeleted
+     *
+     * @param Model $model
+     * @return void
+     */
+
+}

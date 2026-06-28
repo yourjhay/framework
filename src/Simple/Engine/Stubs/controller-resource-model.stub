@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Controllers;
+
+use Simple\Request;
+
+class {{className}} extends Controller
+{
+
+    /**
+     * the index action can be use to show all the records
+     *
+     * @return void
+     */
+    public function index()
+    {
+
+    }
+
+    /**
+     * Shows the from for creating {{className}}
+     *
+     * @return void
+     */
+    public function create()
+    {
+
+    }
+
+    /**
+     * Store the data from {{className}} POST form
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function store(Request $request)
+    {
+
+    }
+
+    /**
+     * Show the edit form for {{className}}
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function edit(Request $request)
+    {
+        $id = $request->route('id');
+
+    }
+
+    /**
+     * Update the existing record
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function update(Request $request)
+    {
+        $id = $request->route('id');
+
+    }
+
+    /**
+     * Delete the record
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function destroy(Request $request)
+    {
+        $id = $request->route('id');
+
+    }
+
+}

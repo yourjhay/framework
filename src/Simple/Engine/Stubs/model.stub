@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Simple\Model;
+
+class {{className}} extends Model
+{
+    /**
+     * $table - table name using by this model
+     *
+     * @var string
+     */
+    protected $table = '{{tableName}}';
+
+    /**
+     * Fillables - the columns in you $table
+     *
+     * @var array
+     */
+    protected $fillable = [];
+
+    /**
+     *  This is generated {{className}} model.
+     *  It is recommended that you put all queries here.
+     *  Create Something great!
+     */
+}
