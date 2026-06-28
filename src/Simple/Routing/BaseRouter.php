@@ -219,6 +219,7 @@ class BaseRouter
      */
     public static function dispatch($url)
     {
+       
         $url = self::removeQueryString($url);
 
         if ($url !== '/' && substr($url, -1) === '/') {
@@ -250,18 +251,17 @@ class BaseRouter
             return;
         }
 
-        if (str_contains(self::$params['controller'], '\\')) {
-            $controller = self::$params['controller'];
-        } else {
-            if (preg_match('/controller$/i', self::$params['controller']) == 0) {
-                $controller = self::$params['controller'].'Controller';
-            } else {
-                $controller = self::$params['controller'];
-            }
+        $controller = self::$params['controller'];
 
-            $controller = self::convertToStudlyCaps($controller);
-            $controller = self::getNamespace() . $controller;
+        if (preg_match('/controller$/i', $controller) == 0) {
+            $controller .= 'Controller';
         }
+
+        if (!str_contains($controller, '\\')) {
+            $controller = self::convertToStudlyCaps($controller);
+        }
+
+        $controller = self::getNamespace() . $controller;
 
         if (class_exists($controller)){
             $controller_class = new $controller;

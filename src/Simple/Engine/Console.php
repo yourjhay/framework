@@ -557,11 +557,11 @@ class '.$model.' extends Model
         foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/Views/layouts/*.html') as $filename)
         {
             $dest = "app/Views/layouts/".basename($filename);
-            if (!file_exists($dest)) {
+            if (file_exists($dest)) {
                 $file = fopen($dest, "w");
                 copy($filename, $dest);
                 fclose($file);
-            }
+            } 
         }
 
         foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/request/*.stub') as $filename)
