@@ -2,10 +2,14 @@
 
 namespace Simple\Engine\Commands;
 
+use Simple\Database\Connection;
+use Simple\Database\Migrations\MigrationRunner;
 use Simple\Engine\Contracts\CommandInterface;
 
 class MakeAuthCommand implements CommandInterface
 {
+    use Connection;
+
     public function handle(array $args): ?array
     {
         foreach (glob('./vendor/simplyphp/framework/src/AuthScaffolding/controller/*.stub') as $filename) {
@@ -54,6 +58,38 @@ class MakeAuthCommand implements CommandInterface
         $mainRoute = "./app/Routes.php";
         file_put_contents($mainRoute, PHP_EOL . $file, FILE_APPEND | LOCK_EX);
 
-        return ['type' => 'success', 'message' => 'Auth scaffolding created successfully'];
+        $this->createUsersMigration();
+
+        $migrateMsg = '';
+        try {
+            $this->connect();
+            $runner = new MigrationRunner();
+            $count = $runner->run();
+            $migrateMsg = $count > 0
+                ? " and $count migration(s) ran"
+                : ' (no new migrations to run)';
+        } catch (\Throwable $e) {
+            $migrateMsg = ' (could not run migrations: ' . $e->getMessage() . ')';
+        }
+
+        return ['type' => 'success', 'message' => 'Auth scaffolding created successfully' . $migrateMsg];
+    }
+
+    private function createUsersMigration(): void
+    {
+        $dir = 'database/migrations';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $existing = glob($dir . '/*_create_users_table.php');
+        if (!empty($existing)) {
+            return;
+        }
+
+        $stub = file_get_contents(__DIR__ . '/../Stubs/migration-auth.stub');
+        $timestamp = date('Y_m_d_His');
+        $filename = $timestamp . '_create_users_table.php';
+        file_put_contents($dir . '/' . $filename, $stub);
     }
 }

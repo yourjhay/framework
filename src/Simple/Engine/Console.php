@@ -1,6 +1,7 @@
 <?php
 namespace Simple\Engine;
 
+use Simple\Engine\Commands\SeedModelCommand;
 use Simple\Engine\ConsoleOutput as co;
 use Simple\Engine\Contracts\CommandInterface;
 
@@ -26,6 +27,13 @@ class Console
         }
 
         $class = CommandRegistry::get($name);
+
+        $modelName = null;
+        if (!$class && preg_match('/^(\w+):seed$/', $name, $m)) {
+            $class = SeedModelCommand::class;
+            $modelName = $m[1];
+        }
+
         if (!$class) {
             $this->status = 'error: ===== Command not found. =====' . PHP_EOL;
             return;
@@ -37,7 +45,12 @@ class Console
             return;
         }
 
-        $result = $command->handle(array_slice($this->argv, 2));
+        $args = array_slice($this->argv, 2);
+        if ($modelName !== null) {
+            array_unshift($args, $modelName);
+        }
+
+        $result = $command->handle($args);
         if ($result !== null) {
             $this->status = $result['type'] . ': ' . $result['message'] . PHP_EOL;
         }

@@ -67,7 +67,7 @@ class HelpCommandTest extends TestCase
         $command->handle([]);
         $output = ob_get_clean();
 
-        $this->assertStringContainsString('user:seed', $output);
+        $this->assertStringContainsString('<model>:seed', $output);
     }
 
     public function testHelpOutputContainsMigrate(): void

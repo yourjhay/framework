@@ -42,7 +42,6 @@ class CommandRegistryTest extends TestCase
         $this->assertArrayHasKey('migrate', $commands);
         $this->assertArrayHasKey('migrate:fresh', $commands);
         $this->assertArrayHasKey('migrate:status', $commands);
-        $this->assertArrayHasKey('user:seed', $commands);
         $this->assertArrayHasKey('session:destroy', $commands);
         $this->assertArrayHasKey('cache:clear', $commands);
         $this->assertArrayHasKey('key:generate', $commands);
@@ -51,7 +50,7 @@ class CommandRegistryTest extends TestCase
 
     public function testAllReturnsSeventeenCommands(): void
     {
-        $this->assertCount(17, CommandRegistry::all());
+        $this->assertCount(16, CommandRegistry::all());
     }
 
     public function testHelpAndMinusHelpMapToSameClass(): void

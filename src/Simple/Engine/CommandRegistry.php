@@ -14,7 +14,6 @@ class CommandRegistry
         'migrate'          => Commands\MigrateCommand::class,
         'migrate:fresh'    => Commands\MigrateFreshCommand::class,
         'migrate:status'   => Commands\MigrateStatusCommand::class,
-        'user:seed'       => Commands\SeedCommand::class,
         'session:destroy' => Commands\SessionDestroyCommand::class,
         'cache:clear'     => Commands\CacheClearCommand::class,
         'serve'           => Commands\ServeCommand::class,
