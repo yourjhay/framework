@@ -12,13 +12,20 @@ class CacheClearCommand implements CommandInterface
         if (!is_dir($cacheDir)) {
             return ['type' => 'error', 'message' => 'Views cache directory not found.'];
         }
-        $files = glob($cacheDir . '/*');
-        if ($files === false) {
-            return ['type' => 'error', 'message' => 'Error reading views cache directory.'];
-        }
+        $files = array_merge(
+            glob($cacheDir . '/*.php') ?: [],
+            glob($cacheDir . '/**/*.php') ?: []
+        );
         foreach ($files as $file) {
             if (is_file($file)) {
                 unlink($file);
+            }
+        }
+
+        $dirs = glob($cacheDir . '/*', GLOB_ONLYDIR) ?: [];
+        foreach ($dirs as $dir) {
+            if (is_dir($dir) && count(scandir($dir)) <= 2) {
+                rmdir($dir);
             }
         }
         return ['type' => 'success', 'message' => 'Views cache cleared successfully.'];

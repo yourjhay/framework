@@ -43,13 +43,14 @@ class CacheClearCommandTest extends TestCase
         rmdir($dir);
     }
 
-    public function testClearsAllCacheFiles(): void
+    public function testClearsPhpCacheFiles(): void
     {
         $command = new CacheClearCommand();
         $result = $command->handle([]);
 
         $this->assertSame('success', $result['type']);
-        $this->assertCount(0, glob($this->tempDir . '/storage/framework/cache/views/*'));
+        $this->assertFileDoesNotExist($this->tempDir . '/storage/framework/cache/views/cache1.php');
+        $this->assertFileExists($this->tempDir . '/storage/framework/cache/views/.gitkeep');
     }
 
     public function testReturnsErrorWhenCacheDirMissing(): void
@@ -62,16 +63,17 @@ class CacheClearCommandTest extends TestCase
         $this->assertStringContainsString('not found', $result['message']);
     }
 
-    public function testLeavesSubdirectoriesIntact(): void
+    public function testClearsNestedSubdirectories(): void
     {
         mkdir($this->tempDir . '/storage/framework/cache/views/subdir', 0777, true);
         file_put_contents($this->tempDir . '/storage/framework/cache/views/subdir/other.php', 'data');
 
         $command = new CacheClearCommand();
-        $command->handle([]);
+        $result = $command->handle([]);
 
-        $this->assertFileExists($this->tempDir . '/storage/framework/cache/views/subdir');
-        $this->assertFileExists($this->tempDir . '/storage/framework/cache/views/subdir/other.php');
+        $this->assertSame('success', $result['type']);
+        $this->assertFileDoesNotExist($this->tempDir . '/storage/framework/cache/views/subdir/other.php');
+        $this->assertFileDoesNotExist($this->tempDir . '/storage/framework/cache/views/subdir');
     }
 
     public function testEmptyCacheDirDoesNotError(): void
