@@ -34,12 +34,23 @@ trait Connection
                 'prefix'   => '',
             ];
 
-            if ($dbConfig['driver'] === 'sqlite'
-                && $dbConfig['database'] !== ':memory:'
-                && $dbConfig['database'][0] !== '/'
-            ) {
-                $root = \Simple\Config::get('app.project_root', getcwd());
-                $dbConfig['database'] = $root . '/' . ltrim($dbConfig['database'], './');
+            if ($dbConfig['driver'] === 'sqlite') {
+                $database = $dbConfig['database'];
+
+                if ($database !== ':memory:' && $database[0] !== '/') {
+                    $root = \Simple\Config::get('app.project_root', getcwd());
+                    $database = $root . '/' . ltrim($database, './');
+                }
+
+                if ($database !== ':memory:' && !file_exists($database)) {
+                    $dir = dirname($database);
+                    if (!is_dir($dir)) {
+                        mkdir($dir, 0755, true);
+                    }
+                    touch($database);
+                }
+
+                $dbConfig['database'] = $database;
             }
 
             $capsule->addConnection($dbConfig);

@@ -1,0 +1,18 @@
+<?php
+
+use Simple\Database\Migrations\Migration;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        $this->schema()->create('{{tableName}}', function ($table) {
+            $table->id();
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        $this->schema()->dropIfExists('{{tableName}}');
+    }
+};

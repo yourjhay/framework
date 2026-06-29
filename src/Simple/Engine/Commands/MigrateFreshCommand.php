@@ -6,7 +6,7 @@ use Simple\Database\Connection;
 use Simple\Database\Migrations\MigrationRunner;
 use Simple\Engine\Contracts\CommandInterface;
 
-class MigrateCommand implements CommandInterface
+class MigrateFreshCommand implements CommandInterface
 {
     use Connection;
 
@@ -17,13 +17,13 @@ class MigrateCommand implements CommandInterface
         $path = $args[0] ?? 'database/migrations';
         $runner = new MigrationRunner($path);
 
-        $count = $runner->run();
+        $count = $runner->fresh();
 
         return [
             'type' => 'success',
             'message' => $count > 0
-                ? "Migrated $count migration(s) successfully"
-                : 'Nothing to migrate',
+                ? "Fresh migrated $count migration(s) successfully"
+                : 'No migrations found',
         ];
     }
 }

@@ -38,6 +38,10 @@ class CommandRegistryTest extends TestCase
         $this->assertArrayHasKey('make:observer', $commands);
         $this->assertArrayHasKey('make:request', $commands);
         $this->assertArrayHasKey('make:auth', $commands);
+        $this->assertArrayHasKey('make:migration', $commands);
+        $this->assertArrayHasKey('migrate', $commands);
+        $this->assertArrayHasKey('migrate:fresh', $commands);
+        $this->assertArrayHasKey('migrate:status', $commands);
         $this->assertArrayHasKey('user:seed', $commands);
         $this->assertArrayHasKey('session:destroy', $commands);
         $this->assertArrayHasKey('cache:clear', $commands);
@@ -45,9 +49,9 @@ class CommandRegistryTest extends TestCase
         $this->assertArrayHasKey('route:list', $commands);
     }
 
-    public function testAllReturnsFourteenCommands(): void
+    public function testAllReturnsSeventeenCommands(): void
     {
-        $this->assertCount(14, CommandRegistry::all());
+        $this->assertCount(17, CommandRegistry::all());
     }
 
     public function testHelpAndMinusHelpMapToSameClass(): void
